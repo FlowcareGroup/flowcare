@@ -1,0 +1,27 @@
+{
+  "name": "flowcare-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "FlowCare monorepo with backend (Express + Prisma) and frontend (Next.js)",
+  "scripts": {
+    "dev": "pnpm run dev:all",
+    "dev:backend": "pnpm --filter backend dev",
+    "dev:frontend": "pnpm --filter frontend dev",
+    "dev:all": "concurrently \"pnpm run dev:backend\" \"pnpm run dev:frontend\"",
+    "build": "pnpm --filter backend build && pnpm --filter frontend build",
+    "install:all": "pnpm install",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "prisma:generate": "pnpm --filter backend prisma:generate",
+    "prisma:push": "pnpm --filter backend prisma:push",
+    "prisma:studio": "pnpm --filter backend prisma:studio",
+    "clean": "pnpm -r exec rm -rf node_modules && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}
