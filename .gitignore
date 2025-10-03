@@ -50,5 +50,4 @@ coverage/
 *.tmp
 .cache/
 
-.docker-compose.yml
 .env
