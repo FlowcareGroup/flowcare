@@ -19,6 +19,7 @@ model User {
   id    Int    @id @default(autoincrement())
   email String @unique
   name  String?
+  password String @db.VarChar(255)
 }
 
 model Patient {
@@ -34,11 +35,11 @@ model Patient {
   // Datos Personales
   name_family String   @db.VarChar(100)
   name_given  String   @db.VarChar(100)
+  email       String   @unique @db.VarChar(100)
   gender      Gender
   birth_date  DateTime @db.Date
   
   // Contacto y Ubicación
-  telecom     String   @db.VarChar(100)
   address     String   @db.Text
   
   // Otros datos
