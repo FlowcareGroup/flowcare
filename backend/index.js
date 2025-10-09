@@ -1,10 +1,12 @@
 import express from "express";
 import usersRouter from "./example/routers/users.routing.js";
+import patientsRouter from "./src/routers/patients.routing.js";
 // import  prisma  from "./.lib/prisma.js";
 const app = express();
 
 app.use(express.json());
 app.use("/api/users", usersRouter);
+app.use("/api/patients", patientsRouter);
 // app.get("/", (req, res) => {
 //     res.send("Hello World!");
 // });
