@@ -1,6 +1,5 @@
 import express from "express";
 import usersRouter from "./example/routers/users.routing.js";
-
 // import  prisma  from "./.lib/prisma.js";
 const app = express();
 
