@@ -6,6 +6,7 @@ import { loginSchema, type LoginSchema } from "@/app/lib/validations_schema"
 import { signIn } from "next-auth/react"
 import { SingInGoogle } from "./components/SingInGoogle"
 import { useState } from "react"
+import Link from "next/link"
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false)
@@ -98,6 +99,19 @@ export default function Login() {
           {isLoading ? "Iniciando sesión..." : "Iniciar Sesión"}
         </button>
       </form>
+
+      {/* Link a Registro */}
+      <div className="mt-6 text-center">
+        <p className="text-sm text-gray-600">
+          ¿No tienes una cuenta?{" "}
+          <Link 
+            href="/auth/signUp" 
+            className="text-blue-500 hover:text-blue-600 font-medium"
+          >
+            Regístrate aquí
+          </Link>
+        </p>
+      </div>
 
       {/* Solo para desarrollo - ELIMINAR en producción */}
       <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded">
