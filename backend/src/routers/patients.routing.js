@@ -6,6 +6,9 @@ router.use(express.json());
 
 router.get("/", PatientsController.getAllPatients);
 router.post("/", PatientsController.createPatient);
+//POST /api/patients/login
+router.post("/login", PatientsController.loginPatient);
+
 
 
 export default router;
