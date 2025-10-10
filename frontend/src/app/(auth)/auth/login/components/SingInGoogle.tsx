@@ -1,17 +1,21 @@
-import { signIn } from "../../../../../../auth"
+"use client"
+import { signIn } from "next-auth/react"
 import React from 'react'
 
 export const SingInGoogle = () => {
+  const handleGoogleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault()
+    await signIn("google", {
+      callbackUrl: "/patient",
+      redirect: true,
+    })
+  }
+
   return (
-    <form
-          action={async () => {
-            "use server"
-            await signIn("google", {
-              redirectTo: "/patient"
-            })
-        }}
-        >
-          <button type="submit">Signin with Google</button>
-        </form>
+    <form onSubmit={handleGoogleSignIn}>
+      <button type="submit" className="w-full border border-gray-300 p-2 rounded hover:bg-gray-50">
+        Signin with Google
+      </button>
+    </form>
   )
 }

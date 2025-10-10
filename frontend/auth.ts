@@ -28,14 +28,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         // Aquí harás el fetch a tu backend
         // const res = await fetch("http://tu-backend/api/auth/login", {...})
 
-        // Por ahora, validación hardcoded
+        // Por ahora, validación hardcoded (desarrollo)
+        // Nota: "password" tiene exactamente 8 caracteres
         if (email === "prueva@preuva.com" && password === "password") {
+          console.log("✅ Credenciales correctas, creando sesión...");
           return {
             id: "1",
             name: "John Doe",
             email: "prueva@preuva.com",
           };
         }
+        
+        console.log("❌ Credenciales incorrectas");
 
         return null;
       },
