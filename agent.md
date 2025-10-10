@@ -1,22 +1,20 @@
-
 # Agent Instructions - FlowCare
 
 > Guía para asistentes de IA y automatización en el desarrollo del monorepo FlowCare.
 
 ## 🎯 Propósito del proyecto
 
-
 FlowCare es un **portal web para la gestión de citas médicas, historiales clínicos y teleasistencia** en clínicas y centros de salud.
 
 **Sector:** HealthTech
 **Tipo:** Monorepo web app (Backend + Frontend)
 
-
 ### Problema que resuelve
+
 Sistemas de salud fragmentados que generan duplicación de datos, errores de agenda y mala experiencia de usuario.
 
-
 ### Funcionalidades clave
+
 - Gestión de citas presenciales y virtuales con disponibilidad en tiempo real
 - Historiales médicos con integración FHIR
 - Teleconsultas (WebRTC/Zoom) con video y chat seguro
@@ -26,13 +24,12 @@ Sistemas de salud fragmentados que generan duplicación de datos, errores de age
 
 ---
 
-
 ## 🏗️ Arquitectura del proyecto
 
 ### Stack tecnológico
 
-
 **Backend:**
+
 - Node.js 22+ con Express 5
 - Prisma 5 como ORM
 - PostgreSQL 16 en Docker
@@ -40,6 +37,7 @@ Sistemas de salud fragmentados que generan duplicación de datos, errores de age
 - Validación con express-validator
 
 **Frontend:**
+
 - Next.js 15 (App Router)
 - React 19 con TypeScript 5
 - TailwindCSS 4 para estilos
@@ -48,11 +46,12 @@ Sistemas de salud fragmentados que generan duplicación de datos, errores de age
 - NextAuth para autenticación social y credenciales
 
 **Monorepo:**
+
 - pnpm workspaces
 - Estructura: `/backend` y `/frontend`
 
-
 ### Estructura de directorios
+
 ```
 FlowCare/
 ├── backend/
@@ -88,15 +87,14 @@ FlowCare/
 
 ---
 
-
 ## 📝 Convenciones de código
-
 
 ### Commits (Conventional Commits)
 
 **Formato:** `<tipo>(<scope>): <descripción>`
 
 **Tipos:**
+
 - `feat` - Nueva funcionalidad
 - `fix` - Corrección de bug
 - `docs` - Documentación
@@ -106,6 +104,7 @@ FlowCare/
 - `chore` - Mantenimiento
 
 **Scopes comunes:**
+
 - `appointments` - Sistema de citas
 - `auth` - Autenticación
 - `patients` - Gestión de pacientes
@@ -118,6 +117,7 @@ FlowCare/
 - `db` - Base de datos
 
 **Ejemplos:**
+
 ```
 feat(appointments): add real-time availability calendar
 fix(auth): resolve token expiration issue
@@ -125,10 +125,10 @@ docs(readme): update installation steps
 refactor(api): simplify user service logic
 ```
 
-
 ### Ramas
 
 **Estructura:**
+
 ```
 main                    # Producción
 ├── develop             # Desarrollo
@@ -139,16 +139,16 @@ main                    # Producción
 ```
 
 **Nomenclatura:**
+
 - `feature/patient-registration`
 - `fix/appointment-timezone-bug`
 - `refactor/auth-middleware`
 - `hotfix/database-connection`
 
-
 ### Estilo de código
 
-
 **Backend (JavaScript/Node.js):**
+
 - Usar `const` por defecto, `let` solo si es necesario
 - Funciones async/await en lugar de callbacks
 - Manejo de errores con try/catch
@@ -156,6 +156,7 @@ main                    # Producción
 - Validación de entrada con express-validator
 
 **Frontend (TypeScript/React):**
+
 - Componentes funcionales con hooks
 - Props tipadas con TypeScript
 - Nombres de componentes en PascalCase
@@ -165,11 +166,10 @@ main                    # Producción
 
 ---
 
-
 ## 🔧 Comandos importantes
 
-
 ### Instalación y configuración inicial
+
 ```bash
 pnpm install                # Instalar dependencias
 pnpm docker:up              # Levantar PostgreSQL
@@ -177,24 +177,24 @@ pnpm prisma:generate        # Generar cliente Prisma
 pnpm prisma:push            # Sincronizar esquema con BD
 ```
 
-
 ### Desarrollo
+
 ```bash
 pnpm dev                    # Backend + Frontend
 pnpm dev:backend            # Solo backend (puerto 4000)
 pnpm dev:frontend           # Solo frontend (puerto 3000)
 ```
 
-
 ### Base de datos
+
 ```bash
 pnpm prisma:studio          # GUI para la base de datos
 pnpm prisma:generate        # Regenerar cliente después de cambios
 pnpm prisma:push            # Aplicar cambios al esquema
 ```
 
-
 ### Gestión de dependencias
+
 ```bash
 # Backend
 pnpm --filter backend add <paquete>
@@ -208,11 +208,10 @@ pnpm add -D -w <paquete>
 
 ---
 
-
 ## 🎯 Prioridades de desarrollo (MVP)
 
-
 ### ✅ Completado
+
 - [x] Configuración del monorepo con pnpm
 - [x] Base de datos PostgreSQL en Docker
 - [x] Esquema inicial de Prisma
@@ -221,6 +220,7 @@ pnpm add -D -w <paquete>
 - [x] Login y registro en frontend
 
 ### ⬜ Pendiente (Must-have)
+
 - [ ] Sistema de autenticación (JWT + bcrypt en backend, NextAuth en frontend)
 - [ ] CRUD de médicos
 - [ ] Sistema de citas con disponibilidad
@@ -229,6 +229,7 @@ pnpm add -D -w <paquete>
 - [ ] Integración FHIR para historiales
 
 ### 🔮 Futuro (Nice-to-have)
+
 - [ ] Algoritmo de asignación de citas por prioridad
 - [ ] Módulo de facturación
 - [ ] Gestión de listas de espera
@@ -236,11 +237,10 @@ pnpm add -D -w <paquete>
 
 ---
 
-
 ## 🚨 Reglas importantes para agentes de IA
 
-
 ### Al generar código:
+
 1. **Siempre usar pnpm**, nunca npm o yarn
 2. **Instalar dependencias desde la raíz** del monorepo
 3. **Usar `--filter`** para comandos específicos de workspace
@@ -253,18 +253,21 @@ pnpm add -D -w <paquete>
 10. **Documentar** funciones complejas con JSDoc
 
 ### Al modificar la base de datos:
+
 1. Editar `backend/prisma/schema.prisma`
 2. Ejecutar `pnpm prisma:generate`
 3. Ejecutar `pnpm prisma:push` (dev) o crear migración (prod)
 4. Verificar cambios en Prisma Studio
 
 ### Al añadir rutas de API:
+
 1. Crear en `backend/src/routers/`
 2. Importar en `index.js`
 3. Usar middlewares de validación
 4. Documentar endpoint (método, ruta, body, respuesta)
 
 ### Al crear componentes de UI:
+
 1. Crear en `frontend/src/components/`
 2. Usar TypeScript con props tipadas
 3. Validar props con Zod si aplica
@@ -274,11 +277,10 @@ pnpm add -D -w <paquete>
 
 ---
 
-
 ## 🔐 Variables de entorno
 
-
 ### Backend (.env)
+
 ```env
 DATABASE_URL="postgresql://developer:password123@localhost:5432/flowcare_dev"
 NODE_ENV=development
@@ -288,14 +290,15 @@ JWT_EXPIRES_IN=7d
 ```
 
 ### Frontend (.env.local)
+
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:4000/api
 ```
 
 ---
 
-
 ## ✅ Checklist antes de hacer commit
+
 - [ ] El código compila sin errores
 - [ ] Seguí las convenciones de código
 - [ ] Añadí validación de entrada (si aplica)
@@ -306,7 +309,6 @@ NEXT_PUBLIC_API_URL=http://localhost:4000/api
 - [ ] Probé localmente la funcionalidad
 
 ---
-
 
 **Última actualización:** 2025-10-10
 **Versión del proyecto:** 1.0.0 (MVP en desarrollo)

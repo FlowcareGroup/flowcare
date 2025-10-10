@@ -5,6 +5,7 @@ import { signUpSchema, type SignUpSchema } from "@/app/lib/validations_schema";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { mockRegister } from "@/services/api/authMock";
 
 export default function SignUp() {
   const router = useRouter();
@@ -24,6 +25,15 @@ export default function SignUp() {
     setServerError(null);
 
     try {
+      const result = await mockRegister(
+        data.email,
+        data.password,
+        `${data.firstName} ${data.lastName}`
+      )
+
+      if (!result.success) {
+        throw new Error(result.error)
+      }
       // TODO: Aquí harás el fetch a tu backend
       // const response = await fetch("http://localhost:4000/api/auth/register", {
       //   method: "POST",
