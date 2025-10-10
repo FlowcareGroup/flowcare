@@ -17,7 +17,7 @@ export default function Login() {
           await signIn("credentials", {
             email: formData.get("email"),
             password: formData.get("password"),
-            redirectTo: "/", // Redirige a home (cambia a /dashboard cuando lo crees)
+            redirectTo: "/patient", // Redirige a home (cambia a /dashboard cuando lo crees)
           });
           // ⚠️ Este código nunca se ejecuta si el login es exitoso
         }}

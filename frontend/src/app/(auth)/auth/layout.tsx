@@ -6,6 +6,7 @@ export default function AuthLayout({
   children: React.ReactNode;
 }>) {
   return (
+
     <main className="flex min-h-screen flex-col items-center justify-center">
       <div className="flex items-center justify-between border border-gray-300 shadow-lg rounded-lg min-h-[600px] min-w-[800px] p-8">
         <div className="w-1/2">
@@ -19,7 +20,7 @@ export default function AuthLayout({
             height={400}
             priority
             className="w-auto h-auto"
-          />
+            />
         </div>
       </div>
     </main>

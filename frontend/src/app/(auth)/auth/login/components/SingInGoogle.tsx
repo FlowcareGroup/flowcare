@@ -6,7 +6,9 @@ export const SingInGoogle = () => {
     <form
           action={async () => {
             "use server"
-            await signIn("google")
+            await signIn("google", {
+              redirectTo: "/patient"
+            })
         }}
         >
           <button type="submit">Signin with Google</button>
