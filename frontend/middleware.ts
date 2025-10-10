@@ -5,11 +5,11 @@ export const config = {
   matcher: [
     /*
      * Match all request paths except:
-     * - /auth/* (rutas de autenticación)
+     * - /login, /signUp (rutas de autenticación)
      * - /_next/* (archivos estáticos de Next.js)
      * - /api/auth/* (endpoints de Auth.js)
      * - /*.* (archivos estáticos: favicon.ico, etc.)
      */
-    "/((?!auth|_next/static|_next/image|api/auth|favicon.ico|.*\\..*).+)",
+    "/((?!login|signUp|_next/static|_next/image|api/auth|favicon.ico|.*\\..*).+)",
   ],
 }

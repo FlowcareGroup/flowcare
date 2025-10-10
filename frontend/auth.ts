@@ -50,8 +50,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     strategy: "jwt",
   },
   pages: {
-    signIn: "/auth/login",
-    error: "/auth/login", // Para mostrar errores
+    signIn: "/login",
+    error: "/login", // Para mostrar errores
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -68,16 +68,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async authorized({ auth, request }) {
       const isLoggedIn = !!auth?.user;
-      const isOnAuthPage = request.nextUrl.pathname.startsWith('/auth');
+      const isOnLoginPage = request.nextUrl.pathname === '/login';
+      const isOnSignUpPage = request.nextUrl.pathname === '/signUp';
       
       // Permitir acceso a páginas de auth sin login
-      if (isOnAuthPage) {
+      if (isOnLoginPage || isOnSignUpPage) {
         return true;
       }
       
       // Proteger otras rutas
       if (!isLoggedIn) {
-        return Response.redirect(new URL('/auth/login', request.nextUrl));
+        return Response.redirect(new URL('/login', request.nextUrl));
       }
       
       return true;
