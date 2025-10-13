@@ -1,5 +1,6 @@
 import { validationResult } from "express-validator";
 
+
 // middleware que lee los errores y los devuelve en la respuesta, si los hubiera
 const validationChecker = (req, res, next) => {
   const result = validationResult(req);
@@ -12,3 +13,4 @@ const validationChecker = (req, res, next) => {
 };
 
 export default validationChecker;
+
