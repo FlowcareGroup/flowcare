@@ -1,12 +1,33 @@
 import express from "express";
-import { body } from "express-validator";
-import PatientsController from "../controllers/patients.controller.js";
-import validationCheck from "../middlewares/validationChecker.js";
+
+import PatientsController from '../controllers/patients.controller.js';
+import { body } from 'express-validator';
+import validationChecker from '../middlewares/validationChecker.js';
 const router = express.Router();
 
 router.use(express.json());
 
-router.get("/", PatientsController.getAllPatients);
+
+
+
+//POST /api/patients/login
+router.post("/login",[
+    body("email").isEmail().withMessage("Email no válido"),
+    body("password")
+      .isLength({ min: 8 })
+      .withMessage("La contraseña debe tener al menos 8 caracteres")
+      .matches(/[0-9]/)
+      .withMessage("La contraseña debe contener al menos un número")
+      .matches(/[!@#$%^&*(),.?":{}|<>]/)
+      .withMessage("La contraseña debe contener al menos un carácter especial")
+      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/)
+      .withMessage(
+        "La contraseña debe contener al menos una mayúscula, una minúscula"
+      ),
+    validationChecker,
+  ], PatientsController.loginPatient);
+
+//POST /api/patients/
 router.post("/",
     [
         body("identifier")
@@ -29,7 +50,8 @@ router.post("/",
         body("marital_status")
             .isIn(["single", "married", "divorced", "widowed", "unknown"]).withMessage("Invalid marital status value"),
     ],
-    validationCheck, PatientsController.createPatient);
+    validationChecker, PatientsController.createPatient);
+
 
 
 export default router;
