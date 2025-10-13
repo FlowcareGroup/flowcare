@@ -1,7 +1,9 @@
 import { loginSchema } from "@/app/lib/validations_schema";
+import { login } from "@/services/api/authServices";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
+
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -25,11 +27,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         const { email, password } = validateCredentials.data;
         console.log("✅ Validación Zod exitosa:", validateCredentials.data);
-        // Aquí harás el fetch a tu backend
-        // const res = await fetch("http://tu-backend/api/auth/login", {...})
+        
+        const loginResult = await login({ email, password });
+        if (loginResult.error || !loginResult.user) {
+          console.log("❌ Error en login:", loginResult.error);
+          return null;
+        }
 
-        // Por ahora, validación hardcoded (desarrollo)
-        // Nota: "password" tiene exactamente 8 caracteres
         if (email === "prueva@preuva.com" && password === "password") {
           console.log("✅ Credenciales correctas, creando sesión...");
           return {
