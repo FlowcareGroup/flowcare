@@ -35,7 +35,7 @@ const user = patient || doctor || clinic;
       return res.status(404).json({ error: "Usuario no encontrado" });
     }
 
-/*
+
 // Verificar contraseña — asumiendo que todos los tipos tienen campo password
      if (!user.password || !(await bcrypt.compare(password, user.password))) {
       return res.status(401).json({ error: "Correo o contraseña inválidos" });
@@ -68,34 +68,13 @@ const user = patient || doctor || clinic;
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
     });
 
-    // Construir usuario seguro para exponer al cliente
-    const usuarioExpuesto = {
-      id: user.id,
-      email: user.email,
-      role: rolPrincipal,
-    };
+  
 
     res.json({
       access_token: token,
       token_type: "Bearer",
-      user: usuarioExpuesto,
     });
 
-*/
-
-    if (!patient && !doctor) {
-      return res.status(200).json({ rol: "clinic", usuario: clinic });
-    }
-
-    if (!patient && doctor) {
-      return res.status(200).json({ rol: "doctor", usuario: doctor });
-    }
-
-    if (patient.role !== "Patient") {
-      return res.status(200).json({ rol: "admin", usuario: patient });
-    }
-
-    return res.status(200).json({ rol: "paciente", usuario: patient });
   } catch (error) {
     console.error("Tienes este error: ", error);
     res.status(500).json({ error: "Internal Server Error" });
