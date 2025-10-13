@@ -3,10 +3,6 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 const prisma = new PrismaClient();
 
-
-
-
-
 /*
  * login de un usuario
  * POST /api/patients/login
@@ -68,6 +64,7 @@ const user = patient || doctor || clinic;
 
     res.json({
       access_token: token,
+        role: rolPrincipal,
       token_type: "Bearer",
     });
 
@@ -106,6 +103,6 @@ const createPatient = async (req, res) => {
     }
 }
 
-const PatientsController = { getAllPatients, createPatient,loginPatient };
+const PatientsController = { createPatient,loginPatient };
 export default PatientsController;
 

@@ -50,7 +50,7 @@ router.post("/",
         body("marital_status")
             .isIn(["single", "married", "divorced", "widowed", "unknown"]).withMessage("Invalid marital status value"),
     ],
-    validationCheck, PatientsController.createPatient);
+    validationChecker, PatientsController.createPatient);
 
 
 
