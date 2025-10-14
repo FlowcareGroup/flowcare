@@ -37,6 +37,8 @@ export interface AuthResponse {
 
 export interface Session {
   user: User
+  token: string
+  role: string
   accessToken: string
   expiresAt: Date
 }
