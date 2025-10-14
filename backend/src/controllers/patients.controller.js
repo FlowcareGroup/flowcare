@@ -11,7 +11,7 @@ const loginPatient = async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!password || !email) {
-      return res.status(400).json({ error: "Faltan datos requeridos" });
+      return res.status(400).json({ error: "Required data missing" });
     }
 
    const [patient, doctor, clinic] = await prisma.$transaction([
@@ -24,13 +24,13 @@ const user = patient || doctor || clinic;
 
 
   if (!user) {
-      return res.status(404).json({ error: "Usuario no encontrado" });
+      return res.status(404).json({ error: "User not found" });
     }
 
 
 // Verificar contraseña — asumiendo que todos los tipos tienen campo password
      if (!user.password || !(await bcrypt.compare(password, user.password))) {
-      return res.status(401).json({ error: "Correo o contraseña inválidos" });
+      return res.status(401).json({ error: "Invalid credentials" });
     }
 
 
@@ -64,12 +64,11 @@ const user = patient || doctor || clinic;
 
     res.json({
       access_token: token,
-        role: rolPrincipal,
       token_type: "Bearer",
     });
 
   } catch (error) {
-    console.error("Tienes este error: ", error);
+    console.error("You have this error: ", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -83,11 +82,13 @@ const createPatient = async (req, res) => {
         const { identifier, email, password, name_family, name_given, gender, birth_date, address, marital_status} = req.body;
         console.log(req.body);
 
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(password, salt);
         const newPatient = await prisma.patient.create({
             data:{
                 identifier: identifier,
                 email: email,
-                password: password,
+                password: hashedPassword,
                 name_family: name_family,
                 name_given: name_given,
                 gender: gender,
@@ -98,7 +99,7 @@ const createPatient = async (req, res) => {
         });
         res.status(201).json(newPatient);
     } catch (error) {
-        console.error('Tienes este error: ', error);
+        console.error('You have this error: ', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }
