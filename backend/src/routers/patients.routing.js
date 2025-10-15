@@ -5,7 +5,7 @@ import { body } from "express-validator";
 import validationChecker from "../middlewares/validationChecker.js";
 const router = express.Router();
 
-router.use(express.json());
+
 
 //POST /api/patients/login
 router.post(

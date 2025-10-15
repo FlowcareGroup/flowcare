@@ -1,4 +1,3 @@
-
 import { PrismaClient } from "../../generated/prisma/index.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -13,7 +12,7 @@ const loginPatient = async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!password || !email) {
-      return res.status(400).json({ error: "Faltan datos requeridos" });
+      return res.status(400).json({ error: "Required data missing" });
     }
 
     const [patient, doctor, clinic] = await prisma.$transaction([
@@ -25,12 +24,12 @@ const loginPatient = async (req, res) => {
     const user = patient || doctor || clinic;
 
     if (!user) {
-      return res.status(404).json({ error: "Usuario no encontrado" });
+      return res.status(404).json({ error: "User not found" });
     }
 
     // Verificar contraseña — asumiendo que todos los tipos tienen campo password
     if (!user.password || !(await bcrypt.compare(password, user.password))) {
-      return res.status(401).json({ error: "Correo o contraseña inválidos" });
+      return res.status(401).json({ error: "Invalid credentials" });
     }
 
     // Determinar rol principal y subrol (si aplica)
@@ -69,7 +68,7 @@ const loginPatient = async (req, res) => {
       token_type: "Bearer",
     });
   } catch (error) {
-    console.error("Tienes este error: ", error);
+    console.error("You have this error: ", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -94,7 +93,6 @@ const createPatient = async (req, res) => {
       address,
       marital_status,
     } = req.body;
-    console.log(req.body);
 
     if (!email || !password || !name_given) {
       return res.status(400).json({ error: "Faltan datos requeridos" });
@@ -118,7 +116,7 @@ const createPatient = async (req, res) => {
     });
     res.status(201).json(newPatient);
   } catch (error) {
-    console.error("Tienes este error: ", error);
+    console.error("You have this error: ", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -159,4 +157,5 @@ export const getOrCreateUser = async (req, res) => {
 };
 
 const PatientsController = { createPatient, loginPatient, getOrCreateUser };
+
 export default PatientsController;

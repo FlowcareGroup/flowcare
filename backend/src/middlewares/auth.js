@@ -12,7 +12,7 @@ const getAuthUser = (req, res, next) => {
   // Verify the token
   try {
     const authUser = jwt.verify(tokenWithoutBearer, process.env.JWT_SECRET);
-    req.user = { id: authUser.id };
+    req.user = { id: authUser.id , role: authUser.role};
     next();
   } catch (e) {
     return res.status(401).json({ message: `No autorizado ${e}` });
