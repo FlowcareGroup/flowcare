@@ -3,8 +3,8 @@ import express from "express";
 import ClinicsController from "../controllers/clinics.controller.js";
 import { body } from "express-validator";
 import validationChecker from "../middlewares/validationChecker.js";
-import { requireRole } from "../middlewares/auth.rol.js";
-const { getAuthUser } = require("../middlewares/auth");
+//import { requireRole } from "../middlewares/auth.rol.js";
+//const  getAuthUser  = require("../middlewares/auth");
 const router = express.Router();
 
 //solo puede estrar si esta logueado
@@ -43,7 +43,7 @@ router.post(
       .isLength({ min: 8 })
       .isLength({ max: 20 })
       .withMessage("The NIF is required"),
-    body("telf").notEmpty().is.withMessage("The telf is required"),
+    body("telf").notEmpty().isLength({ min: 9, max: 15 }).withMessage("The telf is required"),
     validationChecker,
   ],
   ClinicsController.createClinic
@@ -74,7 +74,7 @@ router.put(
       .isLength({ min: 8 })
       .isLength({ max: 20 })
       .withMessage("The NIF is required"),
-    body("telf").optional().is.withMessage("The telf is required"),
+    body("telf").optional().isLength({ min: 9, max: 15 }).withMessage("The telf is required"),
     validationChecker,
   ],
   ClinicsController.editClinic
