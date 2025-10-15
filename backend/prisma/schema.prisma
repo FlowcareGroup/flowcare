@@ -28,22 +28,22 @@ model Patient {
   identifier String @unique @db.VarChar(100)
 
   // Autenticación y Rol
-  password String  @db.VarChar(255) // Aumentado para hashes de contraseña
+  password String?  @db.VarChar(255) // Aumentado para hashes de contraseña
   role     Role    @default(Patient)
   active   Boolean @default(false)
 
   // Datos Personales
-  name_family String   @db.VarChar(100)
-  name_given  String   @db.VarChar(100)
+  name_family String?   @db.VarChar(100)
+  name_given  String?  @db.VarChar(100)
   email       String   @unique @db.VarChar(100)
-  gender      Gender
-  birth_date  DateTime @db.Date
+  gender      Gender?
+  birth_date  DateTime? @db.Date
 
   // Contacto y Ubicación
-  address String @db.Text
+  address String? @db.Text
 
   // Otros datos
-  marital_status String @db.VarChar(50)
+  marital_status String? @db.VarChar(50)
   language       String? @db.VarChar(50)
 
   // Metadatos
