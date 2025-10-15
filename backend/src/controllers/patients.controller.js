@@ -79,7 +79,10 @@ const loginPatient = async (req, res) => {
  * POST /api/patients/
  */
 const createPatient = async (req, res) => {
+  
   try {
+    const passwordHash = await bcrypt.hash(req.body.password, 10);
+    req.body.password = passwordHash;
     const {
       identifier,
       email,
@@ -93,17 +96,24 @@ const createPatient = async (req, res) => {
     } = req.body;
     console.log(req.body);
 
+    if (!email || !password || !name_given) {
+      return res.status(400).json({ error: "Faltan datos requeridos" });
+    }
+
     const newPatient = await prisma.patient.create({
       data: {
-        identifier: identifier,
+        identifier: identifier || null,
         email: email,
-        password: password,
-        name_family: name_family,
+        password: passwordHash,
+        role: "Patient",
+        active: true,
+        // Datos opcionales
+        name_family: name_family || null,
         name_given: name_given,
-        gender: gender,
-        birth_date: new Date(birth_date),
-        address: address,
-        marital_status: marital_status,
+        gender: gender || null,
+        birth_date: null,
+        address: address || null,
+        marital_status: marital_status || null,
       },
     });
     res.status(201).json(newPatient);

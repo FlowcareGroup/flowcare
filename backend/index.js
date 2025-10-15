@@ -2,9 +2,12 @@ import express from "express";
 import usersRouter from "./example/routers/users.routing.js";
 import patientsRouter from "./src/routers/patients.routing.js";
 import { getOrCreateUser } from "./src/controllers/patients.controller.js";
+import cors from "cors";
 
 // import  prisma  from "./.lib/prisma.js";
 const app = express();
+
+app.use(cors());
 
 app.use(express.json());
 app.use("/api/users", usersRouter);
