@@ -8,20 +8,28 @@ const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:4000/api";
 
 export const login = async (credentials: LoginCredentials) => {
   try {
+    console.log("🔗 Conectando a:", `${API_PATIENTS_URL}/login`);
+    
     const response = await fetch(`${API_PATIENTS_URL}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(credentials),
     });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("❌ Error HTTP:", response.status, errorText);
+      throw new Error(`Error ${response.status}: ${errorText || "Error de autenticación"}`);
+    }
+    
     const data = await response.json();
-    console.log(data);
-    const user = data.user;
-    const accessToken = data.accessToken;
-    //const refreshToken = data.refresh_token;
-    return { user, accessToken };
-  } catch (error) {
-    console.error("Error en login:", error);
-    return { user: null, error: "Error en login" };
+    console.log("✅ Login exitoso, datos:", data);
+    
+    return data; // { user: {...}, accessToken: "..." }
+    
+  } catch (error: any) {
+    console.error("💥 Error en login:", error);
+    throw error; // Propagar el error
   }
 };
 
@@ -55,15 +63,15 @@ export const getOrCreateUser = async (email: string, name: string) => {
   }
 };
 
-export const register = async (userData: SignUpData) => {
+export const signUp = async (userData: SignUpData) => {
   try {
-    const response = await fetch(`${API_PATIENTS_URL}/register`, {
+    const response = await fetch(`${API_PATIENTS_URL}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(userData),
     });
     const data = await response.json();
-    return { user: data.user, ...data };
+    return { ...data };
   } catch (error) {
     console.error("Error en registro:", error);
     return { user: null, error: "Error en registro" };

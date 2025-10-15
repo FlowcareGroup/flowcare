@@ -18,18 +18,12 @@ export const loginSchema = z.object({
 export type LoginSchema = z.infer<typeof loginSchema>
 
 export const signUpSchema = z.object({
-  firstName: z
+  name_given: z
     .string()
     .trim()
     .min(1, "El nombre es obligatorio")
     .min(2, "El nombre debe tener al menos 2 caracteres")
     .max(50, "El nombre es demasiado largo"),
-  lastName: z
-    .string()
-    .trim()
-    .min(1, "El apellido es obligatorio")
-    .min(2, "El apellido debe tener al menos 2 caracteres")
-    .max(50, "El apellido es demasiado largo"),
   email: z
     .string()
     .trim()

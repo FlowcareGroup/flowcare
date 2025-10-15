@@ -5,8 +5,7 @@ import { signUpSchema, type SignUpSchema } from "@/app/lib/validations_schema";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { mockRegister } from "@/services/api/authMock";
-
+import { signUp } from "@/services/api/authServices";
 export default function SignUp() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -23,46 +22,14 @@ export default function SignUp() {
   const onSubmit = async (data: SignUpSchema) => {
     setIsLoading(true);
     setServerError(null);
-
     try {
-      const result = await mockRegister(
-        data.email,
-        data.password,
-        `${data.firstName} ${data.lastName}`
-      )
+      const response = await signUp(data);
 
-      if (!result.success) {
-        throw new Error(result.error)
-      }
-      // TODO: Aquí harás el fetch a tu backend
-      // const response = await fetch("http://localhost:4000/api/auth/register", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({
-      //     firstName: data.firstName,
-      //     lastName: data.lastName,
-      //     email: data.email,
-      //     password: data.password,
-      //   }),
-      // })
-
-      // if (!response.ok) {
-      //   const error = await response.json()
-      //   throw new Error(error.message || "Error al registrar usuario")
-      // }
-
-      // Por ahora, simulamos registro exitoso
-      console.log("📝 Datos de registro:", {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-      });
-
-      // Simular delay de red
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      alert("¡Registro exitoso! Redirigiendo al login...");
+       
+      console.log("✅ Registro exitoso, datos:", response);
+      setIsLoading(false);
       router.push("/auth/login");
+      
     } catch (error) {
       console.error("❌ Error en registro:", error);
       setServerError(
@@ -75,8 +42,7 @@ export default function SignUp() {
 
   return (
     <div className='p-8 w-full max-w-md'>
-      <h1 className='text-2xl font-bold mb-2'>Crear Cuenta</h1>
-      <p className='text-gray-600 mb-6'>Completa el formulario para registrarte en FlowCare</p>
+      <p className='text-gray-600 mb-2 text-center'>Completa el formulario para registrarte en FlowCare</p>
 
       {serverError && (
         <div className='mb-4 p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm'>
@@ -91,48 +57,27 @@ export default function SignUp() {
         {/* Nombre */}
         <div>
           <label
-            htmlFor='firstName'
+            htmlFor='name_given'
             className='block text-sm font-medium mb-1'
           >
-            Nombre
+            Nombre y Apellidos
           </label>
           <input
-            id='firstName'
+            id='name_given'
             type='text'
-            {...register("firstName")}
+            {...register("name_given")}
             placeholder='Juan'
             className={`border p-2 w-full rounded ${
-              errors.firstName ? "border-red-500" : "border-gray-300"
+              errors.name_given ? "border-red-500" : "border-gray-300"
             }`}
             disabled={isLoading}
           />
-          {errors.firstName && (
-            <p className='text-red-500 text-sm mt-1'>{errors.firstName.message}</p>
+          {errors.name_given && (
+            <p className='text-red-500 text-sm mt-1'>{errors.name_given.message}</p>
           )}
         </div>
 
-        {/* Apellido */}
-        <div>
-          <label
-            htmlFor='lastName'
-            className='block text-sm font-medium mb-1'
-          >
-            Apellido
-          </label>
-          <input
-            id='lastName'
-            type='text'
-            {...register("lastName")}
-            placeholder='Pérez'
-            className={`border p-2 w-full rounded ${
-              errors.lastName ? "border-red-500" : "border-gray-300"
-            }`}
-            disabled={isLoading}
-          />
-          {errors.lastName && (
-            <p className='text-red-500 text-sm mt-1'>{errors.lastName.message}</p>
-          )}
-        </div>
+        
 
         {/* Email */}
         <div>
@@ -227,15 +172,7 @@ export default function SignUp() {
         </p>
       </div>
 
-      {/* Nota de desarrollo */}
-      <div className='mt-6 p-4 bg-blue-50 border border-blue-200 rounded'>
-        <p className='text-xs text-blue-800'>
-          <strong>Nota de desarrollo:</strong>
-          <br />
-          El registro aún no está conectado al backend. Los datos se mostrarán en consola y
-          redirigirá al login.
-        </p>
-      </div>
+      
     </div>
   );
 }

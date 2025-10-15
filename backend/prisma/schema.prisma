@@ -25,7 +25,7 @@ model User {
 model Patient {
   // Clave Primaria y atributos únicos
   id         Int    @id @default(autoincrement())
-  identifier String @unique @db.VarChar(100)
+  identifier String? @unique @db.VarChar(100)
 
   // Autenticación y Rol
   password String?  @db.VarChar(255) // Aumentado para hashes de contraseña
