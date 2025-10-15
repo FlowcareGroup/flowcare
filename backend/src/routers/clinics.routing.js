@@ -3,11 +3,15 @@ import express from "express";
 import ClinicsController from "../controllers/clinics.controller.js";
 import { body } from "express-validator";
 import validationChecker from "../middlewares/validationChecker.js";
+import { requireRole } from "../middlewares/auth.rol.js";
 const { getAuthUser } = require("../middlewares/auth");
 const router = express.Router();
 
 //solo puede estrar si esta logueado
 // router.use(getAuthUser);
+
+//para que solo pueda entrar un admin
+//router.use(requireRole("admin"));
 
 //GET /api/clinics/getAllClinics
 router.get("/getAllClinics", ClinicsController.getAllClinics);

@@ -60,8 +60,6 @@ const user = patient || doctor || clinic;
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
     });
 
-  
-
     res.json({
       access_token: token,
       token_type: "Bearer",
