@@ -56,61 +56,43 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     strategy: "jwt",
   },
   pages: {
-    signIn: "/login",
-    error: "/login", // Para mostrar errores
+    signIn: "/auth/login",
+    error: "/auth/login", // Para mostrar errores
   },
   callbacks: {
-  async jwt({ token, user }) {
-    if (user && user.email) {
-      try {
-        // Usar tu servicio existente
-        const result = await getOrCreateUser(user.email, user.name || "");
-        
-        if (result.error || !result.user) {
-          throw new Error(result.error || "Usuario no encontrado/creado");
+    async jwt({ token, user }) {
+      if (user && user.email) {
+        try {
+          // Usar tu servicio existente
+          const result = await getOrCreateUser(user.email, user.name || "");
+
+          if (result.error || !result.user) {
+            throw new Error(result.error || "Usuario no encontrado/creado");
+          }
+
+          // Actualizar token con datos del usuario de la base de datos
+          token.id = result.user.id;
+          token.role = result.user.role;
+          token.name = result.user.name;
+          token.email = result.user.email;
+        } catch (error) {
+          console.error("Error en jwt callback:", error);
+          // Valores por defecto en caso de error
+          token.role = token.role || "patient";
+          token.id = token.id || user.id;
         }
-
-        // Actualizar token con datos del usuario de la base de datos
-        token.id = result.user.id;
-        token.role = result.user.role;
-        token.name = result.user.name;
-        token.email = result.user.email;
-        
-      } catch (error) {
-        console.error("Error en jwt callback:", error);
-        // Valores por defecto en caso de error
-        token.role = token.role || "patient";
-        token.id = token.id || user.id;
       }
-    }
-    return token;
-  },
+      return token;
+    },
 
-  async session({ session, token }) {
-    if (token) {
-      session.user.id = token.id as string;
-      session.user.email = token.email as string;
-      session.user.name = token.name as string;
-      session.user.role = token.role as string;
-    }
-    return session;
-  },
-    async authorized({ auth, request }) {
-      const isLoggedIn = !!auth?.user;
-      const isOnLoginPage = request.nextUrl.pathname === "/login";
-      const isOnSignUpPage = request.nextUrl.pathname === "/signUp";
-
-      // Permitir acceso a páginas de auth sin login
-      if (isOnLoginPage || isOnSignUpPage) {
-        return true;
+    async session({ session, token }) {
+      if (token) {
+        session.user.id = token.id as string;
+        session.user.email = token.email as string;
+        session.user.name = token.name as string;
+        session.user.role = token.role as string;
       }
-
-      // Proteger otras rutas
-      if (!isLoggedIn) {
-        return Response.redirect(new URL("/login", request.nextUrl));
-      }
-
-      return true;
+      return session;
     },
   },
 });

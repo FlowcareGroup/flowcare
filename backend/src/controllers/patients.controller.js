@@ -62,7 +62,7 @@ const loginPatient = async (req, res) => {
       user: {
         id: user.id,
         email: user.email,
-        name: user.name_given || user.email,
+        name: user.name_given || user.name,
         role: rolPrincipal,
       },
       accessToken: token,
