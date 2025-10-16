@@ -81,7 +81,7 @@ function getRoleBasedRoute(role: string | undefined): string {
     case "patient":
       return "/patient";
     case "doctor":
-      return "/patient"; // Hasta que exista /doctor
+      return "/doctor"; // Hasta que exista /doctor
     case "admin":
       return "/admin";
     case "clinic":
@@ -96,7 +96,7 @@ function checkRoleAccess(pathname: string, role: string | undefined): boolean {
 
   const roleAccess = {
     patient: ["/patient", "/home"],
-    doctor: ["/patient", "/home"],
+    doctor: ["/doctor", "/home"],
     admin: ["/admin", "/home"],
     clinic: ["/patient", "/home"],
   };
