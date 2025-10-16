@@ -29,7 +29,7 @@ model Patient {
 
   // Autenticación y Rol
   password String?  @db.VarChar(255) // Aumentado para hashes de contraseña
-  role     Role    @default(Patient)
+  role     Role    @default(patient)
   active   Boolean @default(false)
 
   // Datos Personales
@@ -163,7 +163,7 @@ model Observation {
 
 enum Role {
   admin
-  Patient
+  patient
 }
 
 enum Gender {

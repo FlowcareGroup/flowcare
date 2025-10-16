@@ -76,13 +76,13 @@ export default function AuthGuard({ children }: AuthGuardProps) {
 
 function getRoleBasedRoute(role: string | undefined): string {
   switch (role) {
-    case "PATIENT":
+    case "patient":
       return "/patient"
-    case "DOCTOR":
+    case "doctor":
       return "/patient" // Hasta que exista /doctor
-    case "ADMIN":
+    case "admin":
       return "/admin"
-    case "MEDICAL_CENTER":
+    case "clinic":
       return "/patient" // Hasta que exista /center
     default:
       return "/patient"
@@ -93,10 +93,10 @@ function checkRoleAccess(pathname: string, role: string | undefined): boolean {
   if (!role) return false
 
   const roleAccess = {
-    PATIENT: ["/patient", "/home"],
-    DOCTOR: ["/patient", "/home"],
-    ADMIN: ["/admin", "/patient", "/home"],
-    MEDICAL_CENTER: ["/patient", "/home"],
+    patient: ["/patient", "/home"],
+    doctor: ["/patient", "/home"],
+    admin: ["/admin", "/home"],
+    clinic: ["/patient", "/home"],
   }
 
   const allowedPaths = roleAccess[role as keyof typeof roleAccess] || []
