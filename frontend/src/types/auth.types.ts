@@ -11,10 +11,10 @@ export interface User {
 }
 
 export enum UserRole {
-  PATIENT = "PATIENT",
-  DOCTOR = "DOCTOR",
-  ADMIN = "ADMIN",
-  MEDICAL_CENTER = "MEDICAL_CENTER",
+   PATIENT = "patient",
+  DOCTOR = "doctor",
+  ADMIN = "admin",
+  CLINIC = "clinic",
 }
 
 export interface LoginCredentials {

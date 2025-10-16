@@ -138,7 +138,7 @@ export const getOrCreateUser = async (req, res) => {
           identifier: identifier,
           email: email,
           name_given: name || email,
-          role: "Patient",
+          role: "patient",
           active: true,
           password: null,
         },
