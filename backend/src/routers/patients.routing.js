@@ -56,4 +56,7 @@ router.post(
   PatientsController.createPatient
 );
 
+
 export default router;
+
+

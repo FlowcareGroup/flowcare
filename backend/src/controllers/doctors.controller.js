@@ -1,0 +1,73 @@
+import { PrismaClient } from "../../generated/prisma/index.js";
+import bcrypt from "bcrypt";
+const prisma = new PrismaClient();
+
+
+/*
+ * crear usuarios doctores
+ * POST /api/doctors/
+ */
+const createDoctor = async (req, res) => {
+  
+  try {
+    const passwordHash = await bcrypt.hash(req.body.password, 10);
+    req.body.password = passwordHash;
+    const {
+      identifier,
+      email,
+      password,
+      name_family,
+      name_given,
+      gender,
+      birth_date,
+      address,
+      marital_status,
+    } = req.body;
+
+    if (!email || !password || !name_given) {
+      return res.status(400).json({ error: "Faltan datos requeridos" });
+    }
+
+    const newPatient = await prisma.patient.create({
+      data: {
+        identifier: identifier || null,
+        email: email,
+        password: passwordHash,
+        role: "Patient",
+        active: true,
+        // Datos opcionales
+        name_family: name_family || null,
+        name_given: name_given,
+        gender: gender || null,
+        birth_date: null,
+        address: address || null,
+        marital_status: marital_status || null,
+      },
+    });
+    res.status(201).json(newPatient);
+  } catch (error) {
+    console.error("You have this error: ", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const doctorById = async (req, res) => {
+  const id  = parseInt(req.params.id);
+
+  try {
+    const doctor = await prisma.doctor.findUnique({
+      where: { id },
+    });
+    if (!doctor) {
+      return res.status(404).json({ error: "Doctor not found" });
+    }
+    res.json(doctor);
+  } catch (error) {
+    console.error("Error fetching doctor by ID:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const DoctorsController = { createDoctor, doctorById };
+
+export default DoctorsController;
