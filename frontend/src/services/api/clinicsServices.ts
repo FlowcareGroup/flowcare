@@ -1,7 +1,10 @@
+import { ClinicEditSchema, ClinicSchema } from "@/app/lib/validations_schema";
 import { clinics } from "@/types/auth.types";
 
-const API_CLINICS_URL = `${process.env.BACKEND_URL}/clinics`;
 
+const API_CLINICS_URL = process.env.BACKEND_URL //el .evn no funciona
+  ? `${process.env.BACKEND_URL}/clinics`
+  : "http://localhost:4000/api/clinics";
 
 export const getAllClinics = async () => {
   console.log("🔗 Conectando a:", `${API_CLINICS_URL}/getAllClinics`);
@@ -29,7 +32,7 @@ export const getClinicById = async (id: number) => {
 };
 
 
-export const createClinic = async (credentials: clinics) => {   
+export const createClinic = async (credentials: ClinicSchema) => {   
     const response = await fetch(`${API_CLINICS_URL}/createClinic`, {
       method: "POST",
       headers: { "Content-Type": "application/json"  /*, authorization: "Bearer " + token*/},
@@ -40,7 +43,7 @@ export const createClinic = async (credentials: clinics) => {
 }
 
 
-export const  editClinic= async (credentials: clinics , id: number) => {   
+export const  editClinic= async (credentials: ClinicEditSchema , id: number) => {   
     const response = await fetch(`${API_CLINICS_URL}/editClinic/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json"  /*, authorization: "Bearer " + token*/},

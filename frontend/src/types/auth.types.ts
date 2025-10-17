@@ -44,9 +44,22 @@ export interface Session {
 
 
 export interface clinics{
+id: number
 name : string
 email: string
 NIF: string 
 telf: number 
+doctors: Array<{ id: number; name: string }>
 password: string
+}
+
+export interface doctors{
+id: number
+name : string
+email: string
+specialty: string 
+telf: number 
+hours:Date
+password: string
+clinic: string
 }
