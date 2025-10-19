@@ -7,6 +7,8 @@ const router = express.Router();
 
 //GET /api/doctors/:id
 router.get("/:id" , DoctorsController.doctorById);
+//GET /api/doctors/:id/appointmentsbyday/:date
+router.get("/:id/appointmentsbyday/:date" , DoctorsController.getAllAppointmentsByDoctorByDay);
 //POST /api/doctors/
 router.post(
   "/",

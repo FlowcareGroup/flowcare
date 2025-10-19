@@ -2,13 +2,11 @@ import { PrismaClient } from "../../generated/prisma/index.js";
 import bcrypt from "bcrypt";
 const prisma = new PrismaClient();
 
-
 /*
  * crear usuarios doctores
  * POST /api/doctors/
  */
 const createDoctor = async (req, res) => {
-  
   try {
     const passwordHash = await bcrypt.hash(req.body.password, 10);
     req.body.password = passwordHash;
@@ -52,7 +50,7 @@ const createDoctor = async (req, res) => {
 };
 
 const doctorById = async (req, res) => {
-  const id  = parseInt(req.params.id);
+  const id = parseInt(req.params.id);
 
   try {
     const doctor = await prisma.doctor.findUnique({
@@ -68,6 +66,41 @@ const doctorById = async (req, res) => {
   }
 };
 
-const DoctorsController = { createDoctor, doctorById };
+const getAllAppointmentsByDoctorByDay = async (req, res) => {
+  const doctorId = parseInt(req.params.id);
+  const date = req.params.date;
+
+  try {
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const appointments = await prisma.appointment.findMany({
+      where: {
+        doctor_id: doctorId,
+        start_time: {
+          // <-- Cambiar de date a start_time
+          gte: startOfDay,
+          lt: endOfDay,
+        },
+      },
+      include: {
+        patient: true, // Incluir información del paciente
+      },
+      orderBy: {
+        start_time: "asc", // Ordenar por hora de inicio
+      },
+    });
+
+    res.status(200).json(appointments);
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const DoctorsController = { createDoctor, doctorById, getAllAppointmentsByDoctorByDay };
 
 export default DoctorsController;

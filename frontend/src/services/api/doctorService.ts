@@ -36,4 +36,31 @@ const getDoctorById = async (id: string, accessToken: string) => {
     }
 };
 
-export { getDoctorById };
+const getAllAppointmentsByDoctorByDay = async (doctorId: string, date: string, accessToken: string) => {
+    const requestOptions: RequestInit = {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${accessToken}`,
+        },
+        cache: 'no-store'
+    };
+
+    const response = await fetch(`${BACKEND_URL}/doctors/${doctorId}/appointmentsbyday/${date}`, requestOptions);
+    
+    try {
+        if (!response.ok) {
+            throw new Error(`Failed to fetch appointments: HTTP ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log("Fetched appointments data:", data);
+        return data;
+        
+    } catch (error) {
+        console.error("Error fetching appointments:", error);
+        throw error;
+    }
+}
+
+export { getDoctorById, getAllAppointmentsByDoctorByDay };

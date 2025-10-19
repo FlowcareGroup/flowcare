@@ -1,7 +1,7 @@
 // DoctorPage.tsx (Server Component, e.g., app/dashboard/doctor/page.tsx)
 
 // Corregir la ruta de importación: DEBE apuntar al archivo donde se inicializó NextAuth.
-import { getDoctorById } from "@/services/api/doctorService";
+import { getAllAppointmentsByDoctorByDay, getDoctorById } from "@/services/api/doctorService";
 import { auth } from "../../../../auth"; 
 import { SiGooglecalendar } from "react-icons/si";
 
@@ -26,7 +26,9 @@ export default async function DoctorPage() { // <-- Debe ser asíncrono!
     const accessToken: string = (session as any).accessToken;
     
     // **AQUÍ REALIZAS LA LLAMADA A LA API CON EL doctorId**
-    const dashboardData = await getDoctorById(doctorId, accessToken);
+    // const dashboardData = await getDoctorById(doctorId, accessToken);
+    const appointmentsbyDay = await getAllAppointmentsByDoctorByDay(doctorId, new Date().toISOString().split("T")[0], accessToken);
+    console.log("Appointments by Day:", appointmentsbyDay);
     
     return (
         <>
@@ -37,10 +39,11 @@ export default async function DoctorPage() { // <-- Debe ser asíncrono!
         <div className="p-8 w-full border border-gray-300 rounded-lg shadow-md bg-white">
             <h2 className="text-xl font-semibold mb-4">Tus proximas consultas:</h2>
             <ul>
-                {dashboardData?.appointments?.map((appointment: any) => (
-                    <li key={appointment.id} className="border-b border-gray-200 py-2">
-                        <p className="font-medium">{appointment.patientName}</p>
-                        <p className="text-sm text-gray-600">{appointment.date}</p>
+                {appointmentsbyDay.map((appointment: any) => (
+                    <li key={appointment.id} className="mb-2 p-4 border-b border-gray-200">
+                        <p><strong>Paciente:</strong> {appointment.patientName}</p>
+                        <p><strong>Fecha:</strong> {appointment.date}</p>
+                        <p><strong>Hora:</strong> {appointment.time}</p>
                     </li>
                 ))}
             </ul>
