@@ -11,7 +11,8 @@ export interface User {
 }
 
 export enum UserRole {
-  PATIENT = "patient",
+
+   PATIENT = "patient",
   DOCTOR = "doctor",
   ADMIN = "admin",
   CLINIC = "clinic",
