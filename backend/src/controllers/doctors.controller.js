@@ -66,41 +66,147 @@ const doctorById = async (req, res) => {
   }
 };
 
+// ...existing code...
+
 const getAllAppointmentsByDoctorByDay = async (req, res) => {
   const doctorId = parseInt(req.params.id);
-  const date = req.params.date;
+  const date = req.query.date || new Date().toISOString().split("T")[0];
+
+  // Parámetros de paginación
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 4;
+  const skip = (page - 1) * limit;
+
+  console.log("=== APPOINTMENTS REQUEST ===");
+  console.log("Doctor ID:", doctorId);
+  console.log("Date:", date);
+  console.log("Page:", page, "| Limit:", limit);
 
   try {
-    const startOfDay = new Date(date);
-    startOfDay.setHours(0, 0, 0, 0);
+    // Crear rangos de fecha
+    const startOfDay = new Date(`${date}T00:00:00Z`);
+    const endOfDay = new Date(`${date}T23:59:59Z`);
 
-    const endOfDay = new Date(date);
-    endOfDay.setHours(23, 59, 59, 999);
+    // Condición base de búsqueda
+    const whereClause = {
+      doctor_id: doctorId,
+      start_time: {
+        gte: startOfDay,
+        lte: endOfDay,
+      },
+    };
 
-    const appointments = await prisma.appointment.findMany({
-      where: {
-        doctor_id: doctorId,
-        start_time: {
-          // <-- Cambiar de date a start_time
-          gte: startOfDay,
-          lt: endOfDay,
-        },
-      },
-      include: {
-        patient: true, // Incluir información del paciente
-      },
-      orderBy: {
-        start_time: "asc", // Ordenar por hora de inicio
-      },
+    // Contar total de citas para esta fecha
+    const totalAppointments = await prisma.appointment.count({
+      where: whereClause,
     });
 
-    res.status(200).json(appointments);
+    // Obtener citas con paginación
+    const appointments = await prisma.appointment.findMany({
+      where: whereClause,
+      include: {
+        patient: {
+          select: {
+            id: true,
+            name_given: true,
+            name_family: true,
+            email: true,
+          },
+        },
+      },
+      orderBy: {
+        start_time: "asc",
+      },
+      skip: skip,
+      take: limit,
+    });
+
+    // Calcular metadata de paginación
+    const totalPages = Math.ceil(totalAppointments / limit);
+    const hasNextPage = page < totalPages;
+    const hasPreviousPage = page > 1;
+
+    console.log(`Found ${appointments.length} of ${totalAppointments} appointments`);
+
+    res.status(200).json({
+      data: appointments,
+      pagination: {
+        total: totalAppointments,
+        page: page,
+        limit: limit,
+        totalPages: totalPages,
+        hasNextPage: hasNextPage,
+        hasPreviousPage: hasPreviousPage,
+      },
+    });
   } catch (error) {
     console.error("Error fetching appointments:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
-const DoctorsController = { createDoctor, doctorById, getAllAppointmentsByDoctorByDay };
+// Actualizar fecha y hora de una cita
+const updateAppointmentTime = async (req, res) => {
+  const appointmentId = parseInt(req.params.appointmentId);
+  const { start_time, end_time } = req.body;
+
+  console.log("=== UPDATE APPOINTMENT ===");
+  console.log("Appointment ID:", appointmentId);
+  console.log("New start_time:", start_time);
+  console.log("New end_time:", end_time);
+
+  try {
+    // Validar que la cita existe
+    const existingAppointment = await prisma.appointment.findUnique({
+      where: { id: appointmentId },
+    });
+
+    if (!existingAppointment) {
+      return res.status(404).json({ error: "Appointment not found" });
+    }
+
+    // Validar fechas
+    const newStartTime = new Date(start_time);
+    const newEndTime = new Date(end_time);
+
+    if (newStartTime >= newEndTime) {
+      return res.status(400).json({ error: "End time must be after start time" });
+    }
+
+    // Actualizar la cita
+    const updatedAppointment = await prisma.appointment.update({
+      where: { id: appointmentId },
+      data: {
+        start_time: newStartTime,
+        end_time: newEndTime,
+      },
+      include: {
+        patient: {
+          select: {
+            id: true,
+            name_given: true,
+            name_family: true,
+            email: true,
+          },
+        },
+      },
+    });
+
+    console.log("Appointment updated successfully");
+    res.status(200).json(updatedAppointment);
+  } catch (error) {
+    console.error("Error updating appointment:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// ...existing code...
+
+const DoctorsController = {
+  createDoctor,
+  doctorById,
+  getAllAppointmentsByDoctorByDay,
+  updateAppointmentTime,
+};
 
 export default DoctorsController;

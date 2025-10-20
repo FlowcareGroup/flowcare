@@ -1,63 +1,62 @@
 // DoctorPage.tsx (Server Component, e.g., app/dashboard/doctor/page.tsx)
 
 // Corregir la ruta de importación: DEBE apuntar al archivo donde se inicializó NextAuth.
-import { getAllAppointmentsByDoctorByDay, getDoctorById } from "@/services/api/doctorService";
-import { auth } from "../../../../auth"; 
-import { SiGooglecalendar } from "react-icons/si";
+import { getAllAppointmentsByDoctorByDay } from "@/services/api/doctorService";
+import { auth } from "../../../../auth";
+import AppointmentCalendar from "./components/AppointmentCalendar";
 
+export default async function DoctorPage() {
+  // <-- Debe ser asíncrono!
 
-export default async function DoctorPage() { // <-- Debe ser asíncrono!
-    
-    // 1. Llama a auth() para obtener la sesión.
-    const session = await auth(); 
-    
-    if (!session || !session.user?.id || session.user?.role !== 'doctor') {
-        // Redirige o muestra un error si no está autorizado o no es doctor
-        // En Next.js 14, se recomienda usar 'redirect' de 'next/navigation'
-        // throw new Error("Acceso no autorizado."); 
-        return <div>Acceso no autorizado o ID de Doctor no encontrado.</div>;
-    }
-    
-    // Ahora tienes el ID del doctor disponible
-    const doctorId = session.user.id;
-    const doctorName = session.user.name;
+  // 1. Llama a auth() para obtener la sesión.
+  const session = await auth();
 
-    console.log(`Doctor ID: ${doctorId}, Role: ${session.user.role}`);
-    const accessToken: string = (session as any).accessToken;
-    
-    // **AQUÍ REALIZAS LA LLAMADA A LA API CON EL doctorId**
-    // const dashboardData = await getDoctorById(doctorId, accessToken);
-    const appointmentsbyDay = await getAllAppointmentsByDoctorByDay(doctorId, new Date().toISOString().split("T")[0], accessToken);
-    console.log("Appointments by Day:", appointmentsbyDay);
-    
-    return (
-        <>
-        <div className="p-8">
-            <h1 className="text-2xl font-bold mb-4">Bienvenido Dr. {doctorName} a tu Panel de atención medica</h1>
-            <p className="text-lg">Gestiona tu agenda, las consultas y los historiales médicos de pacientes.</p>
-        </div>
-        <div className="p-8 w-full border border-gray-300 rounded-lg shadow-md bg-white">
-            <h2 className="text-xl font-semibold mb-4">Tus proximas consultas:</h2>
-            <ul>
-                {appointmentsbyDay.map((appointment: any) => (
-                    <li key={appointment.id} className="mb-2 p-4 border-b border-gray-200">
-                        <p><strong>Paciente:</strong> {appointment.patientName}</p>
-                        <p><strong>Fecha:</strong> {appointment.date}</p>
-                        <p><strong>Hora:</strong> {appointment.time}</p>
-                    </li>
-                ))}
-            </ul>
-            <div>
-                <p className="flex gap-2 items-center text-sm"><SiGooglecalendar size={20} />Agenda sincronizada con Google Calendar
-                    
-                </p>
-            </div>
-        </div>
-        </>
-    );
+  if (!session || !session.user?.id || session.user?.role !== "doctor") {
+    // Redirige o muestra un error si no está autorizado o no es doctor
+    // En Next.js 14, se recomienda usar 'redirect' de 'next/navigation'
+    // throw new Error("Acceso no autorizado.");
+    return <div>Acceso no autorizado o ID de Doctor no encontrado.</div>;
+  }
+
+  // Ahora tienes el ID del doctor disponible
+  const doctorId = session.user.id;
+  const doctorName = session.user.name;
+
+  console.log(`Doctor ID: ${doctorId}, Role: ${session.user.role}`);
+  const accessToken: string = (session as any).accessToken;
+
+  // **AQUÍ REALIZAS LA LLAMADA A LA API CON EL doctorId**
+  const initialDate = new Date().toISOString().split("T")[0];
+  const appointmentsData = await getAllAppointmentsByDoctorByDay(
+    doctorId,
+    initialDate,
+    accessToken,
+    1, // página inicial
+    4 // 4 items por página por defecto
+  );
+
+  return (
+    <>
+      <div className='p-8'>
+        <h1 className='text-2xl font-bold mb-4'>
+          Bienvenido Dr. {doctorName} a tu Panel de atención medica
+        </h1>
+        <p className='text-lg'>
+          Gestiona tu agenda, las consultas y los historiales médicos de pacientes.
+        </p>
+      </div>
+
+      <AppointmentCalendar
+        doctorId={doctorId}
+        accessToken={accessToken}
+        initialData={appointmentsData}
+        initialDate={initialDate}
+      />
+    </>
+  );
 }
 
 // Nota: Si estás importando 'auth' directamente en el archivo de configuración,
 // asegúrate de que esa importación esté definida correctamente:
-// import { auth } from "@/app/api/auth/[...nextauth]/route"; 
+// import { auth } from "@/app/api/auth/[...nextauth]/route";
 // ^^^ Utiliza alias de ruta (@/) si los tienes configurados para evitar los '....'

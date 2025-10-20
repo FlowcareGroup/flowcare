@@ -6,9 +6,11 @@ import validationChecker from "../middlewares/validationChecker.js";
 const router = express.Router();
 
 //GET /api/doctors/:id
-router.get("/:id" , DoctorsController.doctorById);
-//GET /api/doctors/:id/appointmentsbyday/:date
-router.get("/:id/appointmentsbyday/:date" , DoctorsController.getAllAppointmentsByDoctorByDay);
+router.get("/:id", DoctorsController.doctorById);
+//GET /api/doctors/:id/appointments
+router.get("/:id/appointments", DoctorsController.getAllAppointmentsByDoctorByDay);
+//PUT /api/doctors/appointments/:appointmentId
+router.put("/appointments/:appointmentId", DoctorsController.updateAppointmentTime);
 //POST /api/doctors/
 router.post(
   "/",
