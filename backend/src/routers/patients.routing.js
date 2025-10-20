@@ -56,4 +56,7 @@ router.post(
   PatientsController.createPatient
 );
 
+router.get("/:idPatient", PatientsController.getAllAppointmentsByDate);
+
+
 export default router;
