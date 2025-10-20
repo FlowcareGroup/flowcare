@@ -84,11 +84,14 @@ const getAllAppointmentsByDoctorByDay = async (req, res) => {
   console.log("Page:", page, "| Limit:", limit);
 
   try {
-    // Crear rangos de fecha
+    // Crear rangos de fecha más amplios para capturar en cualquier timezone
     const startOfDay = new Date(`${date}T00:00:00Z`);
-    const endOfDay = new Date(`${date}T23:59:59Z`);
+    startOfDay.setUTCDate(startOfDay.getUTCDate() - 1); // Día anterior
 
-    // Condición base de búsqueda
+    const endOfDay = new Date(`${date}T23:59:59Z`);
+    endOfDay.setUTCDate(endOfDay.getUTCDate() + 1); // Día siguiente
+
+    // Condición base de búsqueda con rango amplio
     const whereClause = {
       doctor_id: doctorId,
       start_time: {
@@ -97,13 +100,8 @@ const getAllAppointmentsByDoctorByDay = async (req, res) => {
       },
     };
 
-    // Contar total de citas para esta fecha
-    const totalAppointments = await prisma.appointment.count({
-      where: whereClause,
-    });
-
-    // Obtener citas con paginación
-    const appointments = await prisma.appointment.findMany({
+    // Contar total de citas en el rango amplio
+    const appointmentsInRange = await prisma.appointment.findMany({
       where: whereClause,
       include: {
         patient: {
@@ -118,9 +116,17 @@ const getAllAppointmentsByDoctorByDay = async (req, res) => {
       orderBy: {
         start_time: "asc",
       },
-      skip: skip,
-      take: limit,
     });
+
+    // Filtrar para solo la fecha solicitada (por día calendario)
+    const appointmentsForDate = appointmentsInRange.filter((apt) => {
+      const aptDate = new Date(apt.start_time).toISOString().split("T")[0];
+      return aptDate === date;
+    });
+
+    // Aplicar paginación
+    const appointments = appointmentsForDate.slice(skip, skip + limit);
+    const totalAppointments = appointmentsForDate.length;
 
     // Calcular metadata de paginación
     const totalPages = Math.ceil(totalAppointments / limit);
@@ -237,6 +243,24 @@ const getAvailableSlots = async (req, res) => {
   console.log("Date:", date);
 
   try {
+    // DEBUG: Log all appointments for this doctor
+    const allAppointments = await prisma.appointment.findMany({
+      where: { doctor_id: doctorId },
+      select: {
+        id: true,
+        start_time: true,
+        end_time: true,
+        status: true,
+      },
+    });
+    console.log(
+      "DEBUG: All appointments for doctor",
+      doctorId,
+      ":",
+      allAppointments.length,
+      "total"
+    );
+
     // Verificar que el doctor existe
     const doctor = await prisma.doctor.findUnique({
       where: { id: doctorId },
@@ -247,10 +271,22 @@ const getAvailableSlots = async (req, res) => {
     }
 
     // Obtener todas las citas del doctor para esa fecha
+    // Usar un rango más amplio para capturar citas en cualquier timezone
+    // Desde inicio del día anterior en UTC hasta final del día siguiente
     const startOfDay = new Date(`${date}T00:00:00Z`);
-    const endOfDay = new Date(`${date}T23:59:59Z`);
+    startOfDay.setUTCDate(startOfDay.getUTCDate() - 1); // Día anterior
 
-    const appointments = await prisma.appointment.findMany({
+    const endOfDay = new Date(`${date}T23:59:59Z`);
+    endOfDay.setUTCDate(endOfDay.getUTCDate() + 1); // Día siguiente
+
+    console.log(
+      "DEBUG: Querying date range - Start:",
+      startOfDay.toISOString(),
+      "End:",
+      endOfDay.toISOString()
+    );
+
+    const appointmentsInRange = await prisma.appointment.findMany({
       where: {
         doctor_id: doctorId,
         start_time: {
@@ -265,6 +301,19 @@ const getAvailableSlots = async (req, res) => {
         status: true,
       },
     });
+
+    // Filtrar para solo la fecha solicitada (por día calendario)
+    const appointments = appointmentsInRange.filter((apt) => {
+      const aptDate = new Date(apt.start_time).toISOString().split("T")[0];
+      return aptDate === date;
+    });
+
+    console.log(
+      "DEBUG: Filtered appointments count:",
+      appointments.length,
+      "appointments:",
+      appointments
+    );
 
     // Generar todos los slots posibles del día
     const allSlots = [];
@@ -332,6 +381,93 @@ const getAvailableSlots = async (req, res) => {
   } catch (error) {
     console.error("Error fetching available slots:", error);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// Endpoint de debug: listar todas las citas de un doctor
+const getAllAppointmentsForDoctor = async (req, res) => {
+  const doctorId = parseInt(req.params.id);
+
+  console.log("=== LIST ALL APPOINTMENTS FOR DOCTOR ===");
+  console.log("Doctor ID:", doctorId);
+
+  try {
+    const doctor = await prisma.doctor.findUnique({ where: { id: doctorId } });
+    if (!doctor) return res.status(404).json({ error: "Doctor not found" });
+
+    const appointments = await prisma.appointment.findMany({
+      where: { doctor_id: doctorId },
+      include: {
+        patient: { select: { id: true, name_given: true, email: true } },
+      },
+      orderBy: { start_time: "asc" },
+    });
+
+    console.log("Found appointments:", appointments.length);
+    return res.status(200).json({
+      doctorId,
+      totalCount: appointments.length,
+      appointments: appointments.map((apt) => ({
+        id: apt.id,
+        date: new Date(apt.start_time).toISOString().split("T")[0],
+        time: new Date(apt.start_time).toISOString().split("T")[1].substring(0, 5),
+        status: apt.status,
+        patient: apt.patient.name_given,
+      })),
+    });
+  } catch (error) {
+    console.error("Error listing appointments:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// Endpoint de prueba: crear citas de prueba para hoy
+const createTestAppointments = async (req, res) => {
+  const doctorId = parseInt(req.params.id);
+  const today = new Date().toISOString().split("T")[0];
+
+  console.log("=== CREATE TEST APPOINTMENTS ===");
+  console.log("Doctor ID:", doctorId);
+  console.log("Date:", today);
+
+  try {
+    const doctor = await prisma.doctor.findUnique({ where: { id: doctorId } });
+    if (!doctor) return res.status(404).json({ error: "Doctor not found" });
+
+    // Crear 3 citas de prueba a diferentes horas para hoy
+    const testSlots = ["09:00", "10:30", "12:00"];
+    const createdAppointments = [];
+
+    for (const slot of testSlots) {
+      const [hour, minute] = slot.split(":").map(Number);
+      const startTime = new Date(`${today}T${slot}:00Z`);
+      const endTime = new Date(startTime.getTime() + 15 * 60 * 1000);
+
+      const apt = await prisma.appointment.create({
+        data: {
+          identifier: uuidv4(),
+          status: "booked",
+          service_type: "test",
+          start_time: startTime,
+          end_time: endTime,
+          description: "Test appointment",
+          patient_id: 1,
+          doctor_id: doctorId,
+        },
+        include: {
+          patient: { select: { id: true, name_given: true } },
+        },
+      });
+      createdAppointments.push(apt);
+    }
+
+    console.log("Created test appointments:", createdAppointments);
+    return res
+      .status(201)
+      .json({ message: "Test appointments created", data: createdAppointments });
+  } catch (error) {
+    console.error("Error creating test appointments:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -424,6 +560,8 @@ const DoctorsController = {
   updateAppointmentTime,
   getAvailableSlots,
   createAppointment,
+  createTestAppointments,
+  getAllAppointmentsForDoctor,
 };
 
 export default DoctorsController;
