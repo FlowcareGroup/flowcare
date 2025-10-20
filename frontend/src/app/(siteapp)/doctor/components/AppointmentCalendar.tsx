@@ -378,6 +378,8 @@ export default function AppointmentCalendar({
       {editingAppointment && (
         <AppointmentEditModal
           appointment={editingAppointment}
+          doctorId={doctorId}
+          accessToken={accessToken}
           onClose={handleCloseEditModal}
           onSave={handleSaveAppointment}
         />

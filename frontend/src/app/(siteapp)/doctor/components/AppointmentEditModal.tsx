@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FaTimes, FaSave, FaClock } from "react-icons/fa";
+import { FaTimes, FaSave, FaClock, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { getAvailableSlots } from "@/services/api/doctorService";
 
 interface Appointment {
   id: number;
@@ -16,6 +17,8 @@ interface Appointment {
 
 interface AppointmentEditModalProps {
   appointment: Appointment;
+  doctorId: string;
+  accessToken: string;
   onClose: () => void;
   onSave: (appointmentId: number, newStartTime: string, newEndTime: string) => Promise<void>;
 }
@@ -23,34 +26,42 @@ interface AppointmentEditModalProps {
 export default function AppointmentEditModal({
   appointment,
   onClose,
+  doctorId,
+  accessToken,
   onSave,
 }: AppointmentEditModalProps) {
   const [date, setDate] = useState("");
   const [startTime, setStartTime] = useState("");
+  const [isFetchingSlots, setIsFetchingSlots] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [availableSlots, setAvailableSlots] = useState<string[]>([]);
+  const [allSlots, setAllSlots] = useState<any[]>([]);
   const [error, setError] = useState("");
 
-  // Horario del doctor (puede venir de props o configuración)
-  const DOCTOR_START_HOUR = 8; // 8:00 AM
   const DOCTOR_END_HOUR = 14; // 2:00 PM
   const SESSION_DURATION = 15; // minutos
-
-  // Generar slots de tiempo en intervalos de 15 minutos dentro del horario del doctor
-  const generateTimeSlots = () => {
-    const slots: string[] = [];
-    for (let hour = DOCTOR_START_HOUR; hour < DOCTOR_END_HOUR; hour++) {
-      for (let minute = 0; minute < 60; minute += 15) {
-        const timeString = `${hour.toString().padStart(2, "0")}:${minute
-          .toString()
-          .padStart(2, "0")}`;
-        slots.push(timeString);
-      }
+  // Cargar slots disponibles cuando cambia la fecha
+  useEffect(() => {
+    if (date) {
+      loadAvailableSlots(date);
     }
-    return slots;
+  }, [date]);
+
+  // Función para cargar slots disponibles
+  const loadAvailableSlots = async (selectedDate: string) => {
+    setIsFetchingSlots(true);
+    try {
+      const slotsData = await getAvailableSlots(doctorId, selectedDate, accessToken);
+      setAvailableSlots(slotsData.availableSlots);
+      setAllSlots(slotsData.slots);
+    } catch (error) {
+      console.error("Error loading available slots:", error);
+      setAvailableSlots([]);
+      setAllSlots([]);
+    } finally {
+      setIsFetchingSlots(false);
+    }
   };
-
-  const timeSlots = generateTimeSlots();
-
   // Inicializar valores del formulario
   useEffect(() => {
     // Convertir a fecha local (sin UTC)
@@ -69,6 +80,9 @@ export default function AppointmentEditModal({
     const startTimeString = `${hours}:${minutes}`;
 
     setStartTime(startTimeString);
+
+    // Cargar slots para la fecha inicial
+    loadAvailableSlots(dateString);
   }, [appointment]);
 
   // Calcular hora de fin automáticamente (15 minutos después)
@@ -87,6 +101,7 @@ export default function AppointmentEditModal({
 
   // Manejar selección de hora (pill)
   const handleTimeSelect = (time: string) => {
+    // Permitir seleccionar incluso si está ocupado (para reprogramar)
     setStartTime(time);
     setError("");
   };
@@ -180,33 +195,61 @@ export default function AppointmentEditModal({
           {/* Hora de inicio con pills */}
           <div>
             <label className='block text-sm font-medium text-gray-700 mb-2'>
-              🕐 Hora de Inicio (Sesiones de 15 minutos)
+              🕐 Selecciona Hora de Inicio
             </label>
-            <div className='grid grid-cols-4 gap-2 max-h-64 overflow-y-auto p-2 border border-gray-200 rounded-md'>
-              {timeSlots.map((time) => {
-                const isSelected = time === startTime;
-                const endTime = calculateEndTime(time);
 
-                return (
-                  <button
-                    key={time}
-                    type='button'
-                    onClick={() => handleTimeSelect(time)}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                      isSelected
-                        ? "bg-blue-500 text-white shadow-md transform scale-105"
-                        : "bg-gray-100 text-gray-700 hover:bg-blue-100 hover:text-blue-700"
-                    }`}
-                  >
-                    {time}
-                  </button>
-                );
-              })}
+            {isFetchingSlots ? (
+              <div className='flex justify-center items-center h-32'>
+                <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500'></div>
+              </div>
+            ) : (
+              <div className='grid grid-cols-4 gap-2 max-h-64 overflow-y-auto p-2 border border-gray-200 rounded-md'>
+                {allSlots.map((slot) => {
+                  const isSelected = slot.time === startTime;
+                  const isAvailable = slot.available;
+                  const isCurrentAppointment = slot.appointmentId === appointment.id;
+
+                  return (
+                    <button
+                      key={slot.time}
+                      type='button'
+                      onClick={() => handleTimeSelect(slot.time)}
+                      disabled={!isAvailable && !isCurrentAppointment}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium transition-all relative ${
+                        isSelected
+                          ? "bg-blue-500 text-white shadow-md transform scale-105"
+                          : isAvailable || isCurrentAppointment
+                          ? "bg-green-100 text-green-700 hover:bg-green-200 border border-green-300"
+                          : "bg-red-100 text-red-400 cursor-not-allowed opacity-50"
+                      }`}
+                    >
+                      {slot.time}
+                      {isAvailable && !isSelected && (
+                        <FaCheckCircle className='absolute top-0 right-0 text-green-500 text-xs' />
+                      )}
+                      {!isAvailable && !isCurrentAppointment && (
+                        <FaTimesCircle className='absolute top-0 right-0 text-red-500 text-xs' />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            <div className='flex items-center gap-4 mt-2 text-xs text-gray-600'>
+              <span className='flex items-center gap-1'>
+                <div className='w-3 h-3 bg-green-100 border border-green-300 rounded'></div>
+                Disponible
+              </span>
+              <span className='flex items-center gap-1'>
+                <div className='w-3 h-3 bg-red-100 border border-red-300 rounded'></div>
+                Ocupado
+              </span>
+              <span className='flex items-center gap-1'>
+                <div className='w-3 h-3 bg-blue-500 rounded'></div>
+                Seleccionado
+              </span>
             </div>
-            <p className='text-xs text-gray-500 mt-2'>
-              <FaClock className='inline mr-1' />
-              Horario disponible: {DOCTOR_START_HOUR}:00 - {DOCTOR_END_HOUR}:00
-            </p>
           </div>
 
           {/* Hora de fin automática */}

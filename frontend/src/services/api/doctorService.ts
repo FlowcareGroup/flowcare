@@ -123,4 +123,105 @@ const updateAppointmentTime = async (
   }
 };
 
-export { getDoctorById, getAllAppointmentsByDoctorByDay, updateAppointmentTime };
+// Obtener slots disponibles y ocupados de un doctor para una fecha
+interface SlotInfo {
+  time: string;
+  available: boolean;
+  appointmentId: number | null;
+  status: string | null;
+}
+
+interface AvailableSlotsResponse {
+  date: string;
+  doctorId: number;
+  workingHours: {
+    start: string;
+    end: string;
+    sessionDuration: number;
+  };
+  slots: SlotInfo[];
+  summary: {
+    total: number;
+    available: number;
+    occupied: number;
+  };
+  availableSlots: string[];
+  occupiedSlots: SlotInfo[];
+}
+
+const getAvailableSlots = async (
+  doctorId: string,
+  date: string,
+  accessToken: string
+): Promise<AvailableSlotsResponse> => {
+  const requestOptions: RequestInit = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    cache: "no-store",
+  };
+
+  const url = `${BACKEND_URL}/doctors/${doctorId}/available-slots?date=${date}`;
+  console.log("Fetching available slots from:", url);
+
+  const response = await fetch(url, requestOptions);
+
+  try {
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.error(`Backend returned status ${response.status}: ${errorBody}`);
+      throw new Error(`Failed to fetch available slots: HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("Available slots data:", data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching available slots:", error);
+    throw error;
+  }
+};
+
+export { getDoctorById, getAllAppointmentsByDoctorByDay, updateAppointmentTime, getAvailableSlots };
+
+// Crear una cita para un paciente con un doctor
+interface CreateAppointmentPayload {
+  patient_id: number;
+  start_time: string; // ISO string
+  end_time: string; // ISO string
+  service_type?: string;
+  description?: string;
+}
+
+const createAppointment = async (
+  doctorId: number,
+  payload: CreateAppointmentPayload,
+  accessToken: string
+): Promise<any> => {
+  const requestOptions: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(payload),
+  };
+
+  const url = `${BACKEND_URL}/doctors/${doctorId}/appointments`;
+  console.log("Creating appointment:", url, payload);
+
+  const response = await fetch(url, requestOptions);
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    console.error(`Backend returned status ${response.status}: ${errorBody}`);
+    throw new Error(`Failed to create appointment: HTTP ${response.status}`);
+  }
+
+  return response.json();
+};
+
+export type { CreateAppointmentPayload };
+export { createAppointment };

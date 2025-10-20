@@ -9,6 +9,10 @@ const router = express.Router();
 router.get("/:id", DoctorsController.doctorById);
 //GET /api/doctors/:id/appointments
 router.get("/:id/appointments", DoctorsController.getAllAppointmentsByDoctorByDay);
+//POST /api/doctors/:id/appointments (book appointment)
+router.post("/:id/appointments", DoctorsController.createAppointment);
+//GET /api/doctors/:id/available-slots
+router.get("/:id/available-slots", DoctorsController.getAvailableSlots);
 //PUT /api/doctors/appointments/:appointmentId
 router.put("/appointments/:appointmentId", DoctorsController.updateAppointmentTime);
 //POST /api/doctors/
