@@ -8,11 +8,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { clinics } from "@/types/auth.types";
+import type { Resolver } from "react-hook-form";
 
 export default function editClinicPage() {
   const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<ClinicEditSchema>({
-    resolver: zodResolver(clinicEditSchema),
+    // Cast resolver to the react-hook-form Resolver type to avoid subtle optional/required
+    // discrepancy between Zod-inferred and RHF generic shapes.
+    resolver: zodResolver(clinicEditSchema) as unknown as Resolver<ClinicEditSchema>,
   });
   const router = useRouter();
   const params = useParams();
