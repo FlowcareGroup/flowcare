@@ -78,7 +78,7 @@ const loginPatient = async (req, res) => {
  * POST /api/patients/
  */
 const createPatient = async (req, res) => {
-  
+
   try {
     const passwordHash = await bcrypt.hash(req.body.password, 10);
     req.body.password = passwordHash;
@@ -156,6 +156,35 @@ export const getOrCreateUser = async (req, res) => {
   }
 };
 
-const PatientsController = { createPatient, loginPatient, getOrCreateUser };
+const getAllAppointmentsByDate = async (req, res) => {
+  try {
+    const { idPatient } = req.params.idPatient;
+    const {startDate , endDate } = req.query;
+    
+    const where = {
+      patientId: idPatient,
+      ...(startDate && endDate && {
+        created_at: {
+          gte: new Date(startDate),
+          lte: new Date(endDate),
+        },
+      }),
+    };
+
+    const appointments = await prisma.appointment.findMany({
+      where,
+      orderBy: { created_at: "desc" },
+    });
+
+    return res.json('------>>',appointments);
+
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+
+const PatientsController = { createPatient, loginPatient, getOrCreateUser, getAllAppointmentsByDate };
 
 export default PatientsController;
