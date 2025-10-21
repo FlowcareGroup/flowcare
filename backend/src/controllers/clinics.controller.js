@@ -1,7 +1,5 @@
 import { PrismaClient } from "../../generated/prisma/index.js";
 import bcrypt from "bcrypt";
-import e from "express";
-import jwt from "jsonwebtoken";
 const prisma = new PrismaClient();
 
 /*
@@ -88,7 +86,7 @@ const createClinic = async (req, res) => {
       where: { email: email, NIF: NIF },
     });
     if (clinics) {
-      return res.status(200).json({ error: "Clinic already exists" });
+      return res.status(400).json({ error: "Clinic already exists" });
     }
 
     const newClinic = await prisma.clinic.create({
