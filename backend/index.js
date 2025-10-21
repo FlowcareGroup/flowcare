@@ -2,7 +2,7 @@ import express from "express";
 import usersRouter from "./example/routers/users.routing.js";
 import patientsRouter from "./src/routers/patients.routing.js";
 import clinicsRouter from "./src/routers/clinics.routing.js";
-
+import doctorsRouter from "./src/routers/doctors.routing.js";
 import { getOrCreateUser } from "./src/controllers/patients.controller.js";
 import cors from "cors";
 
@@ -19,6 +19,7 @@ app.use("/api/users", usersRouter);
 
 app.use("/api/patients", patientsRouter);
 app.use("/api/clinics", clinicsRouter);
+app.use("/api/doctors", doctorsRouter);
 app.get("/api/get-or-create-user", getOrCreateUser);
 
 // app.get("/", (req, res) => {
