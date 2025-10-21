@@ -813,6 +813,192 @@ const addObservationToAppointment = async (req, res) => {
   }
 };
 
+// Agregar prescripción a una cita
+const addPrescriptionToAppointment = async (req, res) => {
+  const appointmentId = parseInt(req.params.appointmentId);
+  const doctorId = parseInt(req.params.id);
+  const { medication, dose, frequency, duration, instructions } = req.body;
+
+  console.log("=== ADD PRESCRIPTION ===");
+  console.log("Appointment ID:", appointmentId, "Doctor ID:", doctorId);
+
+  try {
+    // Verificar que la cita existe
+    const appointment = await prisma.appointment.findUnique({
+      where: { id: appointmentId },
+    });
+
+    if (!appointment) {
+      return res.status(404).json({ error: "Appointment not found" });
+    }
+
+    // Validar campos requeridos
+    if (!medication || !dose || !frequency || !duration) {
+      return res.status(400).json({
+        error: "Missing required fields: medication, dose, frequency, duration",
+      });
+    }
+
+    // Crear prescripción
+    const prescription = await prisma.prescription.create({
+      data: {
+        identifier: uuidv4(),
+        medication,
+        dose,
+        frequency,
+        duration,
+        instructions: instructions || "",
+        status: "active",
+        appointment_id: appointmentId,
+        patient_id: appointment.patient_id,
+        doctor_id: doctorId,
+      },
+    });
+
+    res.status(201).json({
+      message: "Prescription added successfully",
+      prescription: prescription,
+    });
+  } catch (error) {
+    console.error("Error adding prescription:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// Obtener prescripciones de una cita
+const getPrescriptionsForAppointment = async (req, res) => {
+  const appointmentId = parseInt(req.params.appointmentId);
+
+  console.log("=== GET PRESCRIPTIONS ===");
+  console.log("Appointment ID:", appointmentId);
+
+  try {
+    const prescriptions = await prisma.prescription.findMany({
+      where: { appointment_id: appointmentId },
+      orderBy: { created_at: "desc" },
+    });
+
+    res.status(200).json({
+      prescriptions: prescriptions,
+    });
+  } catch (error) {
+    console.error("Error fetching prescriptions:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// Buscar pacientes del doctor (para búsqueda)
+const searchPatients = async (req, res) => {
+  const doctorId = parseInt(req.params.id);
+  const { search } = req.query;
+
+  console.log("=== SEARCH PATIENTS ===");
+  console.log("Doctor ID:", doctorId, "Search:", search);
+
+  try {
+    if (!search || search.trim() === "") {
+      return res.status(400).json({ error: "Search query is required" });
+    }
+
+    // Buscar pacientes que hayan tenido citas con este doctor
+    const patients = await prisma.patient.findMany({
+      where: {
+        OR: [
+          { name_given: { contains: search, mode: "insensitive" } },
+          { name_family: { contains: search, mode: "insensitive" } },
+          { email: { contains: search, mode: "insensitive" } },
+        ],
+        appointments: {
+          some: { doctor_id: doctorId },
+        },
+      },
+      select: {
+        id: true,
+        name_given: true,
+        name_family: true,
+        email: true,
+        birth_date: true,
+      },
+      take: 10,
+    });
+
+    res.status(200).json({
+      patients: patients,
+    });
+  } catch (error) {
+    console.error("Error searching patients:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// Obtener estadísticas del doctor
+const getDoctorStatistics = async (req, res) => {
+  const doctorId = parseInt(req.params.id);
+
+  console.log("=== GET DOCTOR STATISTICS ===");
+  console.log("Doctor ID:", doctorId);
+
+  try {
+    // Citas de hoy
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const appointmentsToday = await prisma.appointment.findMany({
+      where: {
+        doctor_id: doctorId,
+        start_time: {
+          gte: today,
+          lt: tomorrow,
+        },
+      },
+    });
+
+    const completedToday = appointmentsToday.filter(
+      (apt) => apt.status === "completed" || apt.status === "fulfilled"
+    ).length;
+    const pendingToday = appointmentsToday.filter(
+      (apt) => apt.status === "pending" || apt.status === "booked"
+    ).length;
+    const cancelledToday = appointmentsToday.filter((apt) => apt.status === "cancelled").length;
+
+    // Citas totales (últimos 30 días)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const appointmentsMonth = await prisma.appointment.findMany({
+      where: {
+        doctor_id: doctorId,
+        start_time: {
+          gte: thirtyDaysAgo,
+        },
+      },
+    });
+
+    // Pacientes únicos (últimos 30 días)
+    const uniquePatients = new Set(appointmentsMonth.map((apt) => apt.patient_id));
+
+    res.status(200).json({
+      statistics: {
+        today: {
+          total: appointmentsToday.length,
+          completed: completedToday,
+          pending: pendingToday,
+          cancelled: cancelledToday,
+        },
+        lastMonth: {
+          total: appointmentsMonth.length,
+          uniquePatients: uniquePatients.size,
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching statistics:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 const DoctorsController = {
   createDoctor,
   doctorById,
@@ -826,6 +1012,10 @@ const DoctorsController = {
   getAppointmentDetails,
   updateAppointmentStatus,
   addObservationToAppointment,
+  addPrescriptionToAppointment,
+  getPrescriptionsForAppointment,
+  searchPatients,
+  getDoctorStatistics,
 };
 
 export default DoctorsController;

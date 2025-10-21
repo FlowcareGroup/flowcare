@@ -17,8 +17,10 @@ import {
   getAppointmentDetails,
   updateAppointmentStatus,
   addObservationToAppointment,
+  addPrescriptionToAppointment,
+  getPrescriptionsForAppointment,
 } from "@/services/api/doctorService";
-import type { AddObservationPayload } from "@/services/api/doctorService";
+import type { AddObservationPayload, AddPrescriptionPayload } from "@/services/api/doctorService";
 
 interface Appointment {
   id: number;
@@ -57,6 +59,18 @@ interface Observation {
   createdAt: string;
 }
 
+interface Prescription {
+  id: number;
+  identifier: string;
+  medication: string;
+  dose: string;
+  frequency: string;
+  duration: string;
+  instructions?: string;
+  status: string;
+  created_at: string;
+}
+
 export default function AppointmentDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -64,10 +78,13 @@ export default function AppointmentDetailPage() {
 
   const appointmentId = parseInt(params.id as string);
   const doctorId = parseInt((session?.user as any)?.id || "0");
+  const doctorIdStr = (session?.user as any)?.id || "0";
 
   const [appointment, setAppointment] = useState<Appointment | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"details" | "observations" | "history">("details");
+  const [activeTab, setActiveTab] = useState<
+    "details" | "observations" | "prescriptions" | "history"
+  >("details");
   const [statusUpdating, setStatusUpdating] = useState(false);
   const [observationForm, setObservationForm] = useState<AddObservationPayload>({
     category: "clinical",
@@ -77,6 +94,15 @@ export default function AppointmentDetailPage() {
     notes: "",
   });
   const [submittingObservation, setSubmittingObservation] = useState(false);
+  const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
+  const [prescriptionForm, setPrescriptionForm] = useState<AddPrescriptionPayload>({
+    medication: "",
+    dose: "",
+    frequency: "",
+    duration: "",
+    instructions: "",
+  });
+  const [submittingPrescription, setSubmittingPrescription] = useState(false);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -86,14 +112,29 @@ export default function AppointmentDetailPage() {
 
     if (status === "authenticated" && doctorId && appointmentId) {
       fetchAppointmentDetails();
+      fetchPrescriptions();
     }
   }, [status, doctorId, appointmentId]);
+
+  const fetchPrescriptions = async () => {
+    try {
+      const accessToken = (session as any).accessToken;
+      const data = await getPrescriptionsForAppointment(
+        doctorIdStr,
+        appointmentId,
+        accessToken as string
+      );
+      setPrescriptions(data.prescriptions || []);
+    } catch (error) {
+      console.error("Error fetching prescriptions:", error);
+    }
+  };
 
   const fetchAppointmentDetails = async (showLoading = true) => {
     try {
       if (showLoading) setLoading(true);
       const accessToken = (session as any).accessToken;
-      const data = await getAppointmentDetails(doctorId, appointmentId, accessToken as string);
+      const data = await getAppointmentDetails(doctorIdStr, appointmentId, accessToken as string);
       setAppointment(data.data);
     } catch (error) {
       console.error("Error fetching appointment:", error);
@@ -110,7 +151,7 @@ export default function AppointmentDetailPage() {
       setStatusUpdating(true);
       const accessToken = (session as any).accessToken;
       await updateAppointmentStatus(
-        doctorId,
+        doctorIdStr,
         appointmentId,
         newStatus as "pending" | "confirmed" | "completed" | "cancelled" | "noshow",
         accessToken as string
@@ -137,7 +178,7 @@ export default function AppointmentDetailPage() {
       setSubmittingObservation(true);
       const accessToken = (session as any).accessToken;
       await addObservationToAppointment(
-        doctorId,
+        doctorIdStr,
         appointmentId,
         observationForm,
         accessToken as string
@@ -161,6 +202,55 @@ export default function AppointmentDetailPage() {
       alert("Error al agregar la observación");
     } finally {
       setSubmittingObservation(false);
+    }
+  };
+
+  const handleAddPrescription = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (
+      !prescriptionForm.medication.trim() ||
+      !prescriptionForm.dose.trim() ||
+      !prescriptionForm.frequency.trim() ||
+      !prescriptionForm.duration.trim()
+    ) {
+      alert("Todos los campos son requeridos");
+      return;
+    }
+
+    try {
+      setSubmittingPrescription(true);
+      const accessToken = (session as any).accessToken;
+      await addPrescriptionToAppointment(
+        doctorIdStr,
+        appointmentId,
+        prescriptionForm,
+        accessToken as string
+      );
+
+      // Refresh prescriptions list
+      const response = await getPrescriptionsForAppointment(
+        doctorIdStr,
+        appointmentId,
+        accessToken as string
+      );
+      setPrescriptions(response.prescriptions || []);
+
+      // Reset form
+      setPrescriptionForm({
+        medication: "",
+        dose: "",
+        frequency: "",
+        duration: "",
+        instructions: "",
+      });
+
+      alert("Prescripción agregada correctamente");
+    } catch (error) {
+      console.error("Error adding prescription:", error);
+      alert("Error al agregar la prescripción");
+    } finally {
+      setSubmittingPrescription(false);
     }
   };
 
@@ -303,9 +393,15 @@ export default function AppointmentDetailPage() {
               {/* Observations Count */}
               <div className='pt-4 border-t'>
                 <p className='text-sm text-gray-500'>Observaciones</p>
-                <p className='text-2xl font-bold text-indigo-600'>
+                <p className='text-2xl font-bold text-primary'>
                   {appointment.observations.length}
                 </p>
+              </div>
+
+              {/* Prescriptions Count */}
+              <div className='pt-4 border-t'>
+                <p className='text-sm text-gray-500'>Prescripciones</p>
+                <p className='text-2xl font-bold text-success'>{prescriptions.length}</p>
               </div>
             </div>
           </div>
@@ -319,7 +415,7 @@ export default function AppointmentDetailPage() {
                   onClick={() => setActiveTab("details")}
                   className={`flex-1 px-6 py-4 font-semibold transition ${
                     activeTab === "details"
-                      ? "border-b-2 border-indigo-600 text-indigo-600"
+                      ? "border-b-2 border-primary text-primary"
                       : "text-gray-600 hover:text-gray-800"
                   }`}
                 >
@@ -329,17 +425,27 @@ export default function AppointmentDetailPage() {
                   onClick={() => setActiveTab("observations")}
                   className={`flex-1 px-6 py-4 font-semibold transition ${
                     activeTab === "observations"
-                      ? "border-b-2 border-indigo-600 text-indigo-600"
+                      ? "border-b-2 border-primary text-primary"
                       : "text-gray-600 hover:text-gray-800"
                   }`}
                 >
                   Observaciones ({appointment.observations.length})
                 </button>
                 <button
+                  onClick={() => setActiveTab("prescriptions")}
+                  className={`flex-1 px-6 py-4 font-semibold transition ${
+                    activeTab === "prescriptions"
+                      ? "border-b-2 border-primary text-primary"
+                      : "text-gray-600 hover:text-gray-800"
+                  }`}
+                >
+                  Prescripciones ({prescriptions.length})
+                </button>
+                <button
                   onClick={() => setActiveTab("history")}
                   className={`flex-1 px-6 py-4 font-semibold transition ${
                     activeTab === "history"
-                      ? "border-b-2 border-indigo-600 text-indigo-600"
+                      ? "border-b-2 border-primary text-primary"
                       : "text-gray-600 hover:text-gray-800"
                   }`}
                 >
@@ -414,7 +520,7 @@ export default function AppointmentDetailPage() {
 
                     {/* Status Change Buttons */}
                     <div>
-                      <h3 className='text-lg font-bold text-gray-800 mb-4'>Cambiar Estado</h3>
+                      <h3 className='text-lg font-bold text-darker mb-4'>Cambiar Estado</h3>
                       <div className='grid grid-cols-2 gap-3'>
                         {["pending", "confirmed", "completed", "noshow", "cancelled"].map(
                           (status) => (
@@ -424,8 +530,8 @@ export default function AppointmentDetailPage() {
                               disabled={statusUpdating || appointment.status === status}
                               className={`px-4 py-2 rounded font-semibold transition ${
                                 appointment.status === status
-                                  ? "bg-indigo-600 text-white cursor-not-allowed"
-                                  : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                                  ? "bg-primary text-white cursor-not-allowed"
+                                  : "btn-secondary"
                               }`}
                             >
                               {getStatusLabel(status)}
@@ -530,13 +636,13 @@ export default function AppointmentDetailPage() {
                             }
                             placeholder='Observaciones adicionales...'
                             rows={3}
-                            className='w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-600'
+                            className='input-primary'
                           ></textarea>
                         </div>
                         <button
                           type='submit'
                           disabled={submittingObservation}
-                          className='w-full bg-indigo-600 text-white font-semibold py-2 rounded hover:bg-indigo-700 transition disabled:bg-gray-400'
+                          className='btn-primary w-full disabled:opacity-50'
                         >
                           {submittingObservation ? "Guardando..." : "Guardar Observación"}
                         </button>
@@ -546,7 +652,7 @@ export default function AppointmentDetailPage() {
                     {/* Observations List */}
                     {appointment.observations.length > 0 ? (
                       <div>
-                        <h3 className='text-lg font-bold text-gray-800 mb-4'>
+                        <h3 className='text-lg font-bold text-darker mb-4'>
                           Observaciones Registradas
                         </h3>
                         <div className='space-y-3'>
@@ -580,6 +686,161 @@ export default function AppointmentDetailPage() {
                     ) : (
                       <p className='text-gray-600 text-center py-8'>
                         No hay observaciones registradas aún
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* Prescriptions Tab */}
+                {activeTab === "prescriptions" && (
+                  <div className='space-y-6'>
+                    {/* Add Prescription Form */}
+                    <div className='bg-green-50 p-6 rounded border border-green-200'>
+                      <h3 className='text-lg font-bold text-darker mb-4 flex items-center gap-2'>
+                        <FaPlus /> Agregar Prescripción
+                      </h3>
+                      <form
+                        onSubmit={handleAddPrescription}
+                        className='space-y-4'
+                      >
+                        <div className='grid grid-cols-2 gap-4'>
+                          <div>
+                            <label className='block text-sm font-semibold text-gray-700 mb-2'>
+                              Medicamento *
+                            </label>
+                            <input
+                              type='text'
+                              value={prescriptionForm.medication}
+                              onChange={(e) =>
+                                setPrescriptionForm({
+                                  ...prescriptionForm,
+                                  medication: e.target.value,
+                                })
+                              }
+                              placeholder='Ej: Amoxicilina'
+                              required
+                              className='input-primary'
+                            />
+                          </div>
+                          <div>
+                            <label className='block text-sm font-semibold text-gray-700 mb-2'>
+                              Dosis *
+                            </label>
+                            <input
+                              type='text'
+                              value={prescriptionForm.dose}
+                              onChange={(e) =>
+                                setPrescriptionForm({ ...prescriptionForm, dose: e.target.value })
+                              }
+                              placeholder='Ej: 500mg'
+                              required
+                              className='input-primary'
+                            />
+                          </div>
+                        </div>
+                        <div className='grid grid-cols-2 gap-4'>
+                          <div>
+                            <label className='block text-sm font-semibold text-gray-700 mb-2'>
+                              Frecuencia *
+                            </label>
+                            <input
+                              type='text'
+                              value={prescriptionForm.frequency}
+                              onChange={(e) =>
+                                setPrescriptionForm({
+                                  ...prescriptionForm,
+                                  frequency: e.target.value,
+                                })
+                              }
+                              placeholder='Ej: Cada 8 horas'
+                              required
+                              className='input-primary'
+                            />
+                          </div>
+                          <div>
+                            <label className='block text-sm font-semibold text-gray-700 mb-2'>
+                              Duración *
+                            </label>
+                            <input
+                              type='text'
+                              value={prescriptionForm.duration}
+                              onChange={(e) =>
+                                setPrescriptionForm({
+                                  ...prescriptionForm,
+                                  duration: e.target.value,
+                                })
+                              }
+                              placeholder='Ej: 7 días'
+                              required
+                              className='input-primary'
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label className='block text-sm font-semibold text-gray-700 mb-2'>
+                            Instrucciones Especiales
+                          </label>
+                          <textarea
+                            value={prescriptionForm.instructions}
+                            onChange={(e) =>
+                              setPrescriptionForm({
+                                ...prescriptionForm,
+                                instructions: e.target.value,
+                              })
+                            }
+                            placeholder='Ej: Tomar con alimentos, evitar leche...'
+                            rows={3}
+                            className='input-primary'
+                          ></textarea>
+                        </div>
+                        <button
+                          type='submit'
+                          disabled={submittingPrescription}
+                          className='btn-success w-full disabled:opacity-50'
+                        >
+                          {submittingPrescription ? "Guardando..." : "Guardar Prescripción"}
+                        </button>
+                      </form>
+                    </div>
+
+                    {/* Prescriptions List */}
+                    {prescriptions.length > 0 ? (
+                      <div>
+                        <h3 className='text-lg font-bold text-darker mb-4'>
+                          Prescripciones Registradas
+                        </h3>
+                        <div className='space-y-3'>
+                          {prescriptions.map((presc) => (
+                            <div
+                              key={presc.id}
+                              className='bg-light border-l-4 border-success p-4 rounded'
+                            >
+                              <div className='flex justify-between items-start mb-2'>
+                                <div>
+                                  <p className='font-semibold text-darker'>{presc.medication}</p>
+                                  <div className='text-sm text-gray-600 mt-1 space-y-1'>
+                                    <p>Dosis: {presc.dose}</p>
+                                    <p>Frecuencia: {presc.frequency}</p>
+                                    <p>Duración: {presc.duration}</p>
+                                  </div>
+                                </div>
+                                <span className='text-xs text-gray-500'>
+                                  {new Date(presc.created_at).toLocaleDateString("es-ES")}
+                                </span>
+                              </div>
+                              {presc.instructions && (
+                                <p className='text-sm text-gray-700 mt-2 bg-white p-2 rounded border border-green-100'>
+                                  <span className='font-semibold'>Instrucciones: </span>
+                                  {presc.instructions}
+                                </p>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <p className='text-gray-600 text-center py-8'>
+                        No hay prescripciones registradas aún
                       </p>
                     )}
                   </div>

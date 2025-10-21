@@ -1,9 +1,15 @@
 // DoctorPage.tsx (Server Component, e.g., app/dashboard/doctor/page.tsx)
 
 // Corregir la ruta de importación: DEBE apuntar al archivo donde se inicializó NextAuth.
-import { getAllAppointmentsByDoctorByDay } from "@/services/api/doctorService";
+import {
+  getAllAppointmentsByDoctorByDay,
+  searchPatients,
+  getDoctorStatistics,
+} from "@/services/api/doctorService";
 import { auth } from "../../../../auth";
 import AppointmentCalendar from "./components/AppointmentCalendar";
+import DoctorDashboard from "./components/DoctorDashboard";
+import PatientSearch from "./components/PatientSearch";
 
 export default async function DoctorPage() {
   // <-- Debe ser asíncrono!
@@ -19,7 +25,8 @@ export default async function DoctorPage() {
   }
 
   // Ahora tienes el ID del doctor disponible
-  const doctorId = session.user.id;
+  const doctorId = session.user.id; // Keep as string for API
+  const doctorIdNum = parseInt(session.user.id); // Convert to number for components if needed
   const doctorName = session.user.name;
 
   console.log(`Doctor ID: ${doctorId}, Role: ${session.user.role}`);
@@ -35,15 +42,36 @@ export default async function DoctorPage() {
     4 // 4 items por página por defecto
   );
 
+  // Fetch doctor statistics
+  const statisticsData = await getDoctorStatistics(doctorId, accessToken).catch(() => ({
+    statistics: {
+      today: { total: 0, completed: 0, pending: 0, cancelled: 0 },
+      lastMonth: { total: 0, uniquePatients: 0 },
+    },
+  }));
+
   return (
     <>
       <div className='p-8'>
         <h1 className='text-2xl font-bold mb-4'>
           Bienvenido Dr. {doctorName} a tu Panel de atención medica
         </h1>
-        <p className='text-lg'>
+        <p className='text-lg mb-8'>
           Gestiona tu agenda, las consultas y los historiales médicos de pacientes.
         </p>
+
+        {/* Statistics Dashboard */}
+        <DoctorDashboard
+          doctorId={doctorId}
+          accessToken={accessToken}
+          initialStatistics={statisticsData.statistics}
+        />
+
+        {/* Patient Search */}
+        <PatientSearch
+          doctorId={doctorId}
+          accessToken={accessToken}
+        />
       </div>
 
       <AppointmentCalendar

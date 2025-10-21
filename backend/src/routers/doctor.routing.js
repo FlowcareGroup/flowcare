@@ -31,6 +31,20 @@ router.post(
   "/:id/appointments/:appointmentId/observations",
   DoctorsController.addObservationToAppointment
 );
+//POST /api/doctors/:id/appointments/:appointmentId/prescriptions (add prescription)
+router.post(
+  "/:id/appointments/:appointmentId/prescriptions",
+  DoctorsController.addPrescriptionToAppointment
+);
+//GET /api/doctors/:id/appointments/:appointmentId/prescriptions (get prescriptions)
+router.get(
+  "/:id/appointments/:appointmentId/prescriptions",
+  DoctorsController.getPrescriptionsForAppointment
+);
+//GET /api/doctors/:id/search-patients (search patients)
+router.get("/:id/search-patients", DoctorsController.searchPatients);
+//GET /api/doctors/:id/statistics (doctor statistics)
+router.get("/:id/statistics", DoctorsController.getDoctorStatistics);
 //POST /api/doctors/
 router.post(
   "/",

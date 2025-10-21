@@ -254,7 +254,7 @@ export { cancelAppointment };
 
 // Obtener detalles de una cita específica
 const getAppointmentDetails = async (
-  doctorId: number,
+  doctorId: string,
   appointmentId: number,
   accessToken: string
 ): Promise<any> => {
@@ -285,7 +285,7 @@ export { getAppointmentDetails };
 
 // Actualizar estado de una cita
 const updateAppointmentStatus = async (
-  doctorId: number,
+  doctorId: string,
   appointmentId: number,
   status: "pending" | "confirmed" | "completed" | "cancelled" | "noshow",
   accessToken: string
@@ -325,7 +325,7 @@ interface AddObservationPayload {
 }
 
 const addObservationToAppointment = async (
-  doctorId: number,
+  doctorId: string,
   appointmentId: number,
   observation: AddObservationPayload,
   accessToken: string
@@ -355,3 +355,135 @@ const addObservationToAppointment = async (
 
 export type { AddObservationPayload };
 export { addObservationToAppointment };
+
+// Agregar prescripción a una cita
+interface AddPrescriptionPayload {
+  medication: string;
+  dose: string;
+  frequency: string;
+  duration: string;
+  instructions?: string;
+}
+
+const addPrescriptionToAppointment = async (
+  doctorId: string,
+  appointmentId: number,
+  prescription: AddPrescriptionPayload,
+  accessToken: string
+): Promise<any> => {
+  const requestOptions: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(prescription),
+  };
+
+  const url = `${BACKEND_URL}/doctors/${doctorId}/appointments/${appointmentId}/prescriptions`;
+  console.log("Adding prescription to appointment:", url, prescription);
+
+  const response = await fetch(url, requestOptions);
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    console.error(`Backend returned status ${response.status}: ${errorBody}`);
+    throw new Error(`Failed to add prescription: HTTP ${response.status}`);
+  }
+
+  return response.json();
+};
+
+export type { AddPrescriptionPayload };
+export { addPrescriptionToAppointment };
+
+// Obtener prescripciones de una cita
+const getPrescriptionsForAppointment = async (
+  doctorId: string,
+  appointmentId: number,
+  accessToken: string
+): Promise<any> => {
+  const requestOptions: RequestInit = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    cache: "no-store",
+  };
+
+  const url = `${BACKEND_URL}/doctors/${doctorId}/appointments/${appointmentId}/prescriptions`;
+  console.log("Fetching prescriptions:", url);
+
+  const response = await fetch(url, requestOptions);
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    console.error(`Backend returned status ${response.status}: ${errorBody}`);
+    throw new Error(`Failed to fetch prescriptions: HTTP ${response.status}`);
+  }
+
+  return response.json();
+};
+
+export { getPrescriptionsForAppointment };
+
+// Buscar pacientes del doctor
+const searchPatients = async (
+  doctorId: string,
+  searchQuery: string,
+  accessToken: string
+): Promise<any> => {
+  const requestOptions: RequestInit = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    cache: "no-store",
+  };
+
+  const url = `${BACKEND_URL}/doctors/${doctorId}/search-patients?search=${encodeURIComponent(
+    searchQuery
+  )}`;
+  console.log("Searching patients:", url);
+
+  const response = await fetch(url, requestOptions);
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    console.error(`Backend returned status ${response.status}: ${errorBody}`);
+    throw new Error(`Failed to search patients: HTTP ${response.status}`);
+  }
+
+  return response.json();
+};
+
+export { searchPatients };
+
+// Obtener estadísticas del doctor
+const getDoctorStatistics = async (doctorId: string, accessToken: string): Promise<any> => {
+  const requestOptions: RequestInit = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    cache: "no-store",
+  };
+
+  const url = `${BACKEND_URL}/doctors/${doctorId}/statistics`;
+  console.log("Fetching doctor statistics:", url);
+
+  const response = await fetch(url, requestOptions);
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    console.error(`Backend returned status ${response.status}: ${errorBody}`);
+    throw new Error(`Failed to fetch statistics: HTTP ${response.status}`);
+  }
+
+  return response.json();
+};
+
+export { getDoctorStatistics };
