@@ -393,9 +393,7 @@ export default function AppointmentDetailPage() {
               {/* Observations Count */}
               <div className='pt-4 border-t'>
                 <p className='text-sm text-gray-500'>Observaciones</p>
-                <p className='text-2xl font-bold text-primary'>
-                  {appointment.observations.length}
-                </p>
+                <p className='text-2xl font-bold text-primary'>{appointment.observations.length}</p>
               </div>
 
               {/* Prescriptions Count */}

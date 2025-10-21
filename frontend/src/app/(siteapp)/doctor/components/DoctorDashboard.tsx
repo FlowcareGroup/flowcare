@@ -63,7 +63,7 @@ export default function DoctorDashboard({
     value: number;
     color: string;
   }) => (
-    <div className="card flex items-center gap-4">
+    <div className='card flex items-center gap-4'>
       <div className={`${color} p-4 rounded-lg text-white text-2xl`}>
         <Icon />
       </div>
@@ -122,7 +122,10 @@ export default function DoctorDashboard({
         <div className='grid grid-cols-2 gap-4'>
           <div className='card'>
             <div className='flex items-center gap-4'>
-              <div style={{backgroundColor: 'var(--color-primary)'}} className='p-4 rounded-lg text-white text-2xl'>
+              <div
+                style={{ backgroundColor: "var(--color-primary)" }}
+                className='p-4 rounded-lg text-white text-2xl'
+              >
                 <FaClipboardList />
               </div>
               <div>
@@ -133,7 +136,10 @@ export default function DoctorDashboard({
           </div>
           <div className='card'>
             <div className='flex items-center gap-4'>
-              <div style={{backgroundColor: 'var(--color-success)'}} className='p-4 rounded-lg text-white text-2xl'>
+              <div
+                style={{ backgroundColor: "var(--color-success)" }}
+                className='p-4 rounded-lg text-white text-2xl'
+              >
                 <FaUsers />
               </div>
               <div>
