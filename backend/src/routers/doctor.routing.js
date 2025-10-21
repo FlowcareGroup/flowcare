@@ -5,6 +5,11 @@ import { body } from "express-validator";
 import validationChecker from "../middlewares/validationChecker.js";
 const router = express.Router();
 
+//PATCH /api/doctors/appointments/:appointmentId/cancel
+router.patch("/appointments/:appointmentId/cancel", DoctorsController.cancelAppointment);
+//PUT /api/doctors/appointments/:appointmentId
+router.put("/appointments/:appointmentId", DoctorsController.updateAppointmentTime);
+
 //GET /api/doctors/:id
 router.get("/:id", DoctorsController.doctorById);
 //GET /api/doctors/:id/appointments
@@ -17,8 +22,15 @@ router.get("/:id/available-slots", DoctorsController.getAvailableSlots);
 router.post("/:id/test-appointments", DoctorsController.createTestAppointments);
 //POST /api/doctors/:id/appointments (book appointment)
 router.post("/:id/appointments", DoctorsController.createAppointment);
-//PUT /api/doctors/appointments/:appointmentId
-router.put("/appointments/:appointmentId", DoctorsController.updateAppointmentTime);
+//GET /api/doctors/:id/appointments/:appointmentId (appointment details)
+router.get("/:id/appointments/:appointmentId", DoctorsController.getAppointmentDetails);
+//PATCH /api/doctors/:id/appointments/:appointmentId/status (update appointment status)
+router.patch("/:id/appointments/:appointmentId/status", DoctorsController.updateAppointmentStatus);
+//POST /api/doctors/:id/appointments/:appointmentId/observations (add observation)
+router.post(
+  "/:id/appointments/:appointmentId/observations",
+  DoctorsController.addObservationToAppointment
+);
 //POST /api/doctors/
 router.post(
   "/",

@@ -4,10 +4,12 @@ import { useState } from "react";
 import {
   getAllAppointmentsByDoctorByDay,
   updateAppointmentTime,
+  cancelAppointment,
 } from "@/services/api/doctorService";
 import { SiGooglecalendar } from "react-icons/si";
-import { FaCalendarAlt, FaChevronLeft, FaChevronRight, FaEdit } from "react-icons/fa";
+import { FaCalendarAlt, FaChevronLeft, FaChevronRight, FaEdit, FaTrash } from "react-icons/fa";
 import AppointmentEditModal from "./AppointmentEditModal";
+import Link from "next/link";
 
 interface Appointment {
   id: number;
@@ -15,6 +17,7 @@ interface Appointment {
   end_time: string;
   status: string;
   patient: {
+    id: number;
     name_given: string;
     name_family: string;
   };
@@ -49,6 +52,7 @@ export default function AppointmentCalendar({
   const [appointments, setAppointments] = useState<Appointment[]>(initialData.data);
   const [pagination, setPagination] = useState<PaginationInfo>(initialData.pagination);
   const [isLoading, setIsLoading] = useState(false);
+  const [cancellingId, setCancellingId] = useState<number | null>(null);
 
   // Estados de paginación
   const [currentPage, setCurrentPage] = useState(1);
@@ -143,6 +147,23 @@ export default function AppointmentCalendar({
     setSelectedDate(today);
     setCurrentPage(1);
     loadAppointments(today, 1, itemsPerPage);
+  };
+
+  // Cancelar cita
+  const handleCancelAppointment = async (appointmentId: number) => {
+    if (confirm("¿Estás seguro de que deseas cancelar esta cita?")) {
+      setCancellingId(appointmentId);
+      try {
+        await cancelAppointment(appointmentId, accessToken);
+        // Recargar citas
+        await loadAppointments(selectedDate, currentPage, itemsPerPage);
+      } catch (error) {
+        console.error("Error cancelling appointment:", error);
+        alert("Error al cancelar la cita");
+      } finally {
+        setCancellingId(null);
+      }
+    }
   };
 
   // Formatear fecha para mostrar
@@ -288,9 +309,11 @@ export default function AppointmentCalendar({
                   >
                     <div className='flex justify-between items-start gap-4'>
                       <div className='flex-1'>
-                        <p className='text-lg font-semibold text-gray-800'>
-                          {appointment.patient.name_given} {appointment.patient.name_family}
-                        </p>
+                        <Link href={`/doctor/patient_data/${appointment.patient.id}`}>
+                          <p className='text-lg font-semibold text-gray-800'>
+                            {appointment.patient.name_given} {appointment.patient.name_family}
+                          </p>
+                        </Link>
                         <p className='text-sm text-gray-600 mt-1'>
                           <strong>Hora:</strong> {formattedTime} - {formattedEndTime}
                         </p>
@@ -313,12 +336,22 @@ export default function AppointmentCalendar({
                             : appointment.status}
                         </span>
 
+                        <Link href={`/doctor/appointment/${appointment.id}`}>
+                          <button
+                            className='p-2 text-blue-600 hover:bg-blue-50 rounded-md transition'
+                            title='Ver y gestionar cita'
+                          >
+                            <FaEdit size={16} />
+                          </button>
+                        </Link>
+
                         <button
-                          onClick={() => handleEditAppointment(appointment)}
-                          className='p-2 text-blue-600 hover:bg-blue-50 rounded-md transition'
-                          title='Modificar fecha/hora'
+                          onClick={() => handleCancelAppointment(appointment.id)}
+                          disabled={cancellingId === appointment.id}
+                          className='p-2 text-red-600 hover:bg-red-50 rounded-md transition disabled:opacity-50'
+                          title='Cancelar cita'
                         >
-                          <FaEdit size={16} />
+                          <FaTrash size={16} />
                         </button>
                       </div>
                     </div>

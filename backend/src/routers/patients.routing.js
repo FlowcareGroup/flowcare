@@ -5,8 +5,6 @@ import { body } from "express-validator";
 import validationChecker from "../middlewares/validationChecker.js";
 const router = express.Router();
 
-
-
 //POST /api/patients/login
 router.post(
   "/login",
@@ -56,9 +54,7 @@ router.post(
   PatientsController.createPatient
 );
 
-router.get("/:idPatient", PatientsController.getAllAppointmentsByDate);
-
+//GET /api/patients/:id (get patient profile with appointments and observations)
+router.get("/:id", PatientsController.getPatientProfile);
 
 export default router;
-
-

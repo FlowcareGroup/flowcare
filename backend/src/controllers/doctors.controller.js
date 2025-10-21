@@ -553,6 +553,266 @@ const createAppointment = async (req, res) => {
   }
 };
 
+// Cancelar una cita
+const cancelAppointment = async (req, res) => {
+  const appointmentId = parseInt(req.params.appointmentId);
+
+  console.log("=== CANCEL APPOINTMENT ===");
+  console.log("Appointment ID:", appointmentId);
+
+  try {
+    // Verificar que la cita existe
+    const appointment = await prisma.appointment.findUnique({
+      where: { id: appointmentId },
+    });
+
+    if (!appointment) {
+      return res.status(404).json({ error: "Appointment not found" });
+    }
+
+    // No permitir cancelar si ya está cancelada
+    if (appointment.status === "cancelled") {
+      return res.status(400).json({ error: "Appointment is already cancelled" });
+    }
+
+    // Cancelar la cita
+    const updated = await prisma.appointment.update({
+      where: { id: appointmentId },
+      data: { status: "cancelled" },
+      include: {
+        patient: {
+          select: { id: true, name_given: true, name_family: true, email: true },
+        },
+        doctor: {
+          select: { id: true, name: true, email: true },
+        },
+      },
+    });
+
+    console.log("Appointment cancelled successfully");
+    return res.status(200).json({
+      message: "Appointment cancelled successfully",
+      appointment: updated,
+    });
+  } catch (error) {
+    console.error("Error cancelling appointment:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// Obtener detalles completos de una cita específica
+const getAppointmentDetails = async (req, res) => {
+  const appointmentId = parseInt(req.params.appointmentId);
+
+  console.log("=== GET APPOINTMENT DETAILS ===");
+  console.log("Appointment ID:", appointmentId);
+
+  try {
+    // Obtener la cita con detalles del paciente y doctor
+    const appointment = await prisma.appointment.findUnique({
+      where: { id: appointmentId },
+      include: {
+        patient: {
+          select: {
+            id: true,
+            name_given: true,
+            name_family: true,
+            email: true,
+            gender: true,
+            birth_date: true,
+            address: true,
+          },
+        },
+        doctor: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            specialty: true,
+          },
+        },
+      },
+    });
+
+    if (!appointment) {
+      return res.status(404).json({ error: "Appointment not found" });
+    }
+
+    // Obtener observaciones del paciente (todas sus observaciones)
+    const observations = await prisma.observation.findMany({
+      where: { patient_id: appointment.patient_id },
+      orderBy: { created_at: "desc" },
+    });
+
+    // Obtener últimas 5 citas del paciente (excluyendo esta)
+    const previousAppointments = await prisma.appointment.findMany({
+      where: {
+        patient_id: appointment.patient_id,
+        id: { not: appointmentId },
+      },
+      include: {
+        doctor: {
+          select: { id: true, name: true },
+        },
+      },
+      orderBy: { start_time: "desc" },
+      take: 5,
+    });
+
+    // Formatear fechas
+    const formattedAppointment = {
+      ...appointment,
+      start_time: new Date(appointment.start_time).toLocaleString("es-ES"),
+      end_time: new Date(appointment.end_time).toLocaleString("es-ES"),
+    };
+
+    res.status(200).json({
+      data: {
+        id: appointment.id,
+        start_time: appointment.start_time,
+        end_time: appointment.end_time,
+        status: appointment.status,
+        service_type: appointment.service_type,
+        description: appointment.description,
+        patient_id: appointment.patient_id,
+        doctor_id: appointment.doctor_id,
+        createdAt: appointment.created_at,
+        patient: {
+          id: appointment.patient.id,
+          name: `${appointment.patient.name_given} ${appointment.patient.name_family}`,
+          email: appointment.patient.email,
+          phone: appointment.patient.address || "",
+          date_of_birth: appointment.patient.birth_date,
+        },
+        doctor: {
+          id: appointment.doctor.id,
+          name: appointment.doctor.name,
+          speciality: appointment.doctor.specialty,
+        },
+        observations: observations.map((obs) => ({
+          id: obs.identifier || obs.id.toString(),
+          category: obs.category,
+          code: obs.code,
+          value_string: obs.value_string,
+          value_unit: obs.value_unit,
+          notes: obs.code_display,
+          status: obs.status,
+          createdAt: obs.created_at,
+        })),
+        previousAppointments: previousAppointments.map((apt) => ({
+          id: apt.id,
+          start_time: apt.start_time,
+          end_time: apt.end_time,
+          status: apt.status,
+          service_type: apt.service_type,
+          description: apt.description,
+        })),
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching appointment details:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// Actualizar estado de la cita
+const updateAppointmentStatus = async (req, res) => {
+  const appointmentId = parseInt(req.params.appointmentId);
+  const { status } = req.body;
+
+  console.log("=== UPDATE APPOINTMENT STATUS ===");
+  console.log("Appointment ID:", appointmentId, "New status:", status);
+
+  try {
+    const validStatuses = [
+      "pending",
+      "confirmed",
+      "booked",
+      "arrived",
+      "fulfilled",
+      "cancelled",
+      "noshow",
+    ];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({
+        error: `Invalid status. Must be one of: ${validStatuses.join(", ")}`,
+      });
+    }
+
+    const appointment = await prisma.appointment.findUnique({
+      where: { id: appointmentId },
+    });
+
+    if (!appointment) {
+      return res.status(404).json({ error: "Appointment not found" });
+    }
+
+    const updated = await prisma.appointment.update({
+      where: { id: appointmentId },
+      data: { status: status },
+      include: {
+        patient: {
+          select: { name_given: true, name_family: true },
+        },
+      },
+    });
+
+    res.status(200).json({
+      message: "Appointment status updated successfully",
+      appointment: updated,
+    });
+  } catch (error) {
+    console.error("Error updating appointment status:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// Agregar observación a una cita
+const addObservationToAppointment = async (req, res) => {
+  const appointmentId = parseInt(req.params.appointmentId);
+  const doctorId = parseInt(req.params.id);
+  const { category, code, value_string, value_unit, notes } = req.body;
+
+  console.log("=== ADD OBSERVATION ===");
+  console.log("Appointment ID:", appointmentId, "Doctor ID:", doctorId);
+
+  try {
+    // Verificar que la cita existe
+    const appointment = await prisma.appointment.findUnique({
+      where: { id: appointmentId },
+    });
+
+    if (!appointment) {
+      return res.status(404).json({ error: "Appointment not found" });
+    }
+
+    // Crear observación
+    const observation = await prisma.observation.create({
+      data: {
+        identifier: uuidv4(),
+        status: "registered",
+        category: category || "general",
+        code: code || "",
+        code_display: notes || code || "",
+        effective_datetime: new Date(),
+        issued_datetime: new Date(),
+        value_string: value_string || "",
+        value_unit: value_unit || "",
+        patient_id: appointment.patient_id,
+        doctor_id: doctorId,
+      },
+    });
+
+    res.status(201).json({
+      message: "Observation added successfully",
+      observation: observation,
+    });
+  } catch (error) {
+    console.error("Error adding observation:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 const DoctorsController = {
   createDoctor,
   doctorById,
@@ -562,6 +822,10 @@ const DoctorsController = {
   createAppointment,
   createTestAppointments,
   getAllAppointmentsForDoctor,
+  cancelAppointment,
+  getAppointmentDetails,
+  updateAppointmentStatus,
+  addObservationToAppointment,
 };
 
 export default DoctorsController;

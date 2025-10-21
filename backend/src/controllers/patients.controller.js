@@ -78,7 +78,6 @@ const loginPatient = async (req, res) => {
  * POST /api/patients/
  */
 const createPatient = async (req, res) => {
-
   try {
     const passwordHash = await bcrypt.hash(req.body.password, 10);
     req.body.password = passwordHash;
@@ -159,16 +158,17 @@ export const getOrCreateUser = async (req, res) => {
 const getAllAppointmentsByDate = async (req, res) => {
   try {
     const { idPatient } = req.params.idPatient;
-    const {startDate , endDate } = req.query;
-    
+    const { startDate, endDate } = req.query;
+
     const where = {
       patientId: idPatient,
-      ...(startDate && endDate && {
-        created_at: {
-          gte: new Date(startDate),
-          lte: new Date(endDate),
-        },
-      }),
+      ...(startDate &&
+        endDate && {
+          created_at: {
+            gte: new Date(startDate),
+            lte: new Date(endDate),
+          },
+        }),
     };
 
     const appointments = await prisma.appointment.findMany({
@@ -176,15 +176,96 @@ const getAllAppointmentsByDate = async (req, res) => {
       orderBy: { created_at: "desc" },
     });
 
-    return res.json('------>>',appointments);
-
+    return res.json("------>>", appointments);
   } catch (error) {
     console.error("Error fetching appointments:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
-}
+};
 
+// Obtener perfil del paciente con citas y observaciones
+const getPatientProfile = async (req, res) => {
+  const patientId = parseInt(req.params.id);
 
-const PatientsController = { createPatient, loginPatient, getOrCreateUser, getAllAppointmentsByDate };
+  console.log("=== GET PATIENT PROFILE ===");
+  console.log("Patient ID:", patientId);
+
+  try {
+    // Obtener datos del paciente
+    const patient = await prisma.patient.findUnique({
+      where: { id: patientId },
+      include: {
+        appointments: {
+          include: {
+            doctor: {
+              select: { id: true, name: true, specialty: true },
+            },
+          },
+          orderBy: { start_time: "desc" },
+        },
+        observations: {
+          include: {
+            doctor: {
+              select: { id: true, name: true },
+            },
+          },
+          orderBy: { created_at: "desc" },
+        },
+      },
+    });
+
+    if (!patient) {
+      return res.status(404).json({ error: "Patient not found" });
+    }
+
+    // Estructura mejorada para el frontend
+    const profileData = {
+      id: patient.id,
+      personalData: {
+        name_given: patient.name_given,
+        name_family: patient.name_family,
+        email: patient.email,
+        gender: patient.gender,
+        birth_date: patient.birth_date,
+        address: patient.address,
+        marital_status: patient.marital_status,
+        identifier: patient.identifier,
+      },
+      appointments: patient.appointments.map((apt) => ({
+        id: apt.id,
+        date: new Date(apt.start_time).toISOString().split("T")[0],
+        time: new Date(apt.start_time).toISOString().split("T")[1].substring(0, 5),
+        endTime: new Date(apt.end_time).toISOString().split("T")[1].substring(0, 5),
+        status: apt.status,
+        doctor: apt.doctor.name,
+        service_type: apt.service_type,
+        description: apt.description,
+      })),
+      observations: patient.observations.map((obs) => ({
+        id: obs.id,
+        date: new Date(obs.created_at).toISOString().split("T")[0],
+        time: new Date(obs.created_at).toISOString().split("T")[1].substring(0, 5),
+        category: obs.category,
+        code: obs.code,
+        value: obs.value_string || obs.value_quantity,
+        unit: obs.value_unit,
+        doctor: obs.doctor.name,
+      })),
+    };
+
+    res.status(200).json(profileData);
+  } catch (error) {
+    console.error("Error fetching patient profile:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const PatientsController = {
+  createPatient,
+  loginPatient,
+  getOrCreateUser,
+  getAllAppointmentsByDate,
+  getPatientProfile,
+};
 
 export default PatientsController;

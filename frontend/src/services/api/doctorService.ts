@@ -225,3 +225,133 @@ const createAppointment = async (
 
 export type { CreateAppointmentPayload };
 export { createAppointment };
+
+// Cancelar una cita
+const cancelAppointment = async (appointmentId: number, accessToken: string): Promise<any> => {
+  const requestOptions: RequestInit = {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+  };
+
+  const url = `${BACKEND_URL}/doctors/appointments/${appointmentId}/cancel`;
+  console.log("Cancelling appointment:", url);
+
+  const response = await fetch(url, requestOptions);
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    console.error(`Backend returned status ${response.status}: ${errorBody}`);
+    throw new Error(`Failed to cancel appointment: HTTP ${response.status}`);
+  }
+
+  return response.json();
+};
+
+export { cancelAppointment };
+
+// Obtener detalles de una cita específica
+const getAppointmentDetails = async (
+  doctorId: number,
+  appointmentId: number,
+  accessToken: string
+): Promise<any> => {
+  const requestOptions: RequestInit = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    cache: "no-store",
+  };
+
+  const url = `${BACKEND_URL}/doctors/${doctorId}/appointments/${appointmentId}`;
+  console.log("Fetching appointment details:", url);
+
+  const response = await fetch(url, requestOptions);
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    console.error(`Backend returned status ${response.status}: ${errorBody}`);
+    throw new Error(`Failed to fetch appointment details: HTTP ${response.status}`);
+  }
+
+  return response.json();
+};
+
+export { getAppointmentDetails };
+
+// Actualizar estado de una cita
+const updateAppointmentStatus = async (
+  doctorId: number,
+  appointmentId: number,
+  status: "pending" | "confirmed" | "completed" | "cancelled" | "noshow",
+  accessToken: string
+): Promise<any> => {
+  const requestOptions: RequestInit = {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({ status }),
+  };
+
+  const url = `${BACKEND_URL}/doctors/${doctorId}/appointments/${appointmentId}/status`;
+  console.log("Updating appointment status:", url, status);
+
+  const response = await fetch(url, requestOptions);
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    console.error(`Backend returned status ${response.status}: ${errorBody}`);
+    throw new Error(`Failed to update appointment status: HTTP ${response.status}`);
+  }
+
+  return response.json();
+};
+
+export { updateAppointmentStatus };
+
+// Agregar observación a una cita
+interface AddObservationPayload {
+  category: string;
+  code: string;
+  value_string?: string;
+  value_unit?: string;
+  notes?: string;
+}
+
+const addObservationToAppointment = async (
+  doctorId: number,
+  appointmentId: number,
+  observation: AddObservationPayload,
+  accessToken: string
+): Promise<any> => {
+  const requestOptions: RequestInit = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(observation),
+  };
+
+  const url = `${BACKEND_URL}/doctors/${doctorId}/appointments/${appointmentId}/observations`;
+  console.log("Adding observation to appointment:", url, observation);
+
+  const response = await fetch(url, requestOptions);
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    console.error(`Backend returned status ${response.status}: ${errorBody}`);
+    throw new Error(`Failed to add observation: HTTP ${response.status}`);
+  }
+
+  return response.json();
+};
+
+export type { AddObservationPayload };
+export { addObservationToAppointment };
