@@ -1,15 +1,15 @@
-import { User } from "./user.types"
+import { User } from "./user.types";
 
 export interface AuthResponse {
-  user: User
-  token: string
-  refreshToken?: string
+  user: User;
+  token: string;
+  refreshToken?: string;
 }
 
 export interface Session {
-  user: User
-  token: string
-  role: string
-  accessToken: string
-  expiresAt: Date
+  user: User;
+  token: string;
+  role: string;
+  accessToken: string;
+  expiresAt: Date;
 }

@@ -53,23 +53,25 @@ export default function DoctorDashboard({
   };
 
   const StatCard = ({
-    icon: Icon,
+    Icon,
     title,
     value,
     color,
   }: {
-    icon: any;
+    Icon: React.ComponentType<{ className?: string }>; // ✅ Tipo correcto
     title: string;
     value: number;
     color: string;
   }) => (
-    <div className='card flex items-center gap-4'>
-      <div className={`${color}  hidden sm:block p-4 rounded-lg text-white text-2xl`}>
-        <Icon />
+    <div className='card flex items-center gap-4 p-4'>
+      <div
+        className={`${color} flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-lg text-white`}
+      >
+        <Icon size={20} /> {/* ✅ Cambiar de icon a Icon (mayúscula) */}
       </div>
-      <div>
-        <p className='text-gray-600 text-sm font-semibold'>{title}</p>
-        <p className='text-3xl font-bold text-primary'>{value}</p>
+      <div className='flex-1'>
+        <p className='text-gray-600 text-xs font-semibold'>{title}</p>
+        <p className='text-2xl font-bold text-primary'>{value}</p>
       </div>
     </div>
   );
@@ -90,25 +92,25 @@ export default function DoctorDashboard({
         </div>
         <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
           <StatCard
-            icon={FaClipboardList}
+            Icon={FaClipboardList}
             title='Total de Citas'
             value={statistics.today.total}
             color='bg-primary'
           />
           <StatCard
-            icon={FaCheckCircle}
+            Icon={FaCheckCircle}
             title='Completadas'
             value={statistics.today.completed}
             color='bg-success'
           />
           <StatCard
-            icon={FaClock}
+            Icon={FaClock}
             title='Pendientes'
             value={statistics.today.pending}
             color='bg-warning'
           />
           <StatCard
-            icon={FaTimesCircle}
+            Icon={FaTimesCircle}
             title='Canceladas'
             value={statistics.today.cancelled}
             color='bg-error'
