@@ -1,11 +1,11 @@
-const requireRole = (requiredRole) => {
+export const requireRole = (requiredRole) => {
   return (req, res, next) => {
     try {
       // asegúrate de que req.user exista (usuario autenticado)
       if (!req.user) {
         return res.status(401).json({ message: "No authenticated" });
       }
-      const rol = req.user.rol;
+      console.log(req.user);
       if (rol !== requiredRole) {
         return res.status(403).json({ message: "No tienes permiso para esa acción" });
       }
@@ -15,5 +15,3 @@ const requireRole = (requiredRole) => {
     }
   };
 };
-
-module.exports = { requireRole };
