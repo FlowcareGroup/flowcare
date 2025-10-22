@@ -66,23 +66,23 @@ export default function PatientSearch({ doctorId, accessToken }: PatientSearchPr
   };
 
   return (
-    <div className='card mb-12'>
+    <div className='card mb-10'>
       <h2 className='text-xl font-bold text-darker mb-4'>Buscar Pacientes</h2>
 
       {/* Search Form */}
       <form
         onSubmit={handleSearch}
-        className='mb-6'
+        className='mb-2'
       >
-        <div className='flex gap-2'>
+        <div className='flex flex-col sm:items-center sm:flex-row gap-2'>
           <div className='flex-1 relative'>
             <FaSearch className='absolute left-3 top-3 text-gray-400' />
             <input
               type='text'
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder='Busca por nombre o email del paciente...'
-              className='input-primary pl-10'
+              placeholder='Nombre o email del paciente...'
+              className='input-primary pl-10 w-full input-sm'
             />
           </div>
           <button

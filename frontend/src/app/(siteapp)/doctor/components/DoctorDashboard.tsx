@@ -63,11 +63,11 @@ export default function DoctorDashboard({
     value: number;
     color: string;
   }) => (
-    <div className='card flex items-center gap-4 p-4'>
+    <div className='card flex items-center gap-4 p-2'>
       <div
-        className={`${color} flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-lg text-white`}
+        className={`${color} hidden  flex-shrink-0 sm:flex items-center justify-center w-10 h-10 rounded-lg text-white`}
       >
-        <Icon size={20} /> {/* ✅ Cambiar de icon a Icon (mayúscula) */}
+        <Icon /> {/* ✅ Cambiar de icon a Icon (mayúscula) */}
       </div>
       <div className='flex-1'>
         <p className='text-gray-600 text-xs font-semibold'>{title}</p>
@@ -81,16 +81,16 @@ export default function DoctorDashboard({
       {/* Today's Statistics */}
       <div className='mb-8'>
         <div className='flex items-center justify-between mb-4'>
-          <h2 className='text-xl font-bold text-darker'>Estadísticas de Hoy</h2>
+          <h2 className='text-sm sm:text-xl font-bold text-darker'>Estadísticas de Hoy</h2>
           <button
             onClick={refreshStatistics}
             disabled={loading}
-            className='btn-secondary px-4 py-2 disabled:opacity-50'
+            className='btn-secondary px-2 py-2 disabled:opacity-50'
           >
             {loading ? "Actualizando..." : "Actualizar"}
           </button>
         </div>
-        <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
+        <div className='grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4'>
           <StatCard
             Icon={FaClipboardList}
             title='Total de Citas'
@@ -101,19 +101,19 @@ export default function DoctorDashboard({
             Icon={FaCheckCircle}
             title='Completadas'
             value={statistics.today.completed}
-            color='bg-success'
+            color='bg-green-500' // ✅ Cambiar de bg-success
           />
           <StatCard
             Icon={FaClock}
             title='Pendientes'
             value={statistics.today.pending}
-            color='bg-warning'
+            color='bg-yellow-500' // ✅ Cambiar de bg-warning
           />
           <StatCard
             Icon={FaTimesCircle}
             title='Canceladas'
             value={statistics.today.cancelled}
-            color='bg-error'
+            color='bg-red-500' // ✅ Cambiar de bg-error
           />
         </div>
       </div>
@@ -126,7 +126,7 @@ export default function DoctorDashboard({
             <div className='flex items-center gap-4'>
               <div
                 style={{ backgroundColor: "var(--color-primary)" }}
-                className='p-4 rounded-lg text-white text-2xl'
+                className='hidden sm:flex p-4 rounded-lg text-white text-xl'
               >
                 <FaClipboardList />
               </div>
@@ -140,7 +140,7 @@ export default function DoctorDashboard({
             <div className='flex items-center gap-4'>
               <div
                 style={{ backgroundColor: "var(--color-success)" }}
-                className='p-4 rounded-lg text-white text-2xl'
+                className='hidden sm:flex p-4 rounded-lg text-white text-xl'
               >
                 <FaUsers />
               </div>
