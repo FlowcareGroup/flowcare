@@ -64,7 +64,7 @@ export default function DoctorDashboard({
     color: string;
   }) => (
     <div className='card flex items-center gap-4'>
-      <div className={`${color} p-4 rounded-lg text-white text-2xl`}>
+      <div className={`${color}  hidden sm:block p-4 rounded-lg text-white text-2xl`}>
         <Icon />
       </div>
       <div>

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { FaSearch, FaPhone, FaEnvelope, FaCalendar } from "react-icons/fa";
 import { searchPatients } from "@/services/api/doctorService";
+import { useRouter } from "next/navigation";
 
 interface PatientSummary {
   id: number;
@@ -24,6 +25,8 @@ export default function PatientSearch({ doctorId, accessToken }: PatientSearchPr
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const [error, setError] = useState("");
+  const router = useRouter();
+ 
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,6 +56,13 @@ export default function PatientSearch({ doctorId, accessToken }: PatientSearchPr
     setPatients([]);
     setSearched(false);
     setError("");
+  };
+
+  const handlePatientClick = (patientId: number) => {
+    router.push(`/doctor/patient_data/${patientId}`);
+    console.log("Clicked on patient ID:", patientId);
+   
+    // Aquí puedes navegar a la página de detalles del paciente
   };
 
   return (
@@ -132,8 +142,7 @@ export default function PatientSearch({ doctorId, accessToken }: PatientSearchPr
                       </div>
                       <button
                         onClick={() => {
-                          // TODO: Navigate to patient detail or create appointment
-                          console.log("Create appointment with patient", patient.id);
+                          handlePatientClick(patient.id);
                         }}
                         className='btn-success'
                       >
