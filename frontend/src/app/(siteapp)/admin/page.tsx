@@ -1,8 +1,10 @@
+
 "use client";
 import { deleteClinic, getAllClinics } from "@/services/api/clinicsServices";
 import { clinics } from "@/types/auth.types";
 import {  useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+
 
 export default function AdminPage() {
    const router = useRouter();
@@ -49,6 +51,7 @@ const [dataClinics, setdataClinics] = useState<clinics[]>([]);
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Panel de Administración</h1>
+
       <p>
         Bienvenido al panel de administración. Aquí puedes gestionar usuarios,
         roles y configuraciones del sistema.
@@ -66,6 +69,7 @@ const [dataClinics, setdataClinics] = useState<clinics[]>([]);
         </div>
        ))}
         <button onClick={() => {createClinicHandler()}}className="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">crear</button> 
+
 
     </div>
   );

@@ -24,18 +24,18 @@ model User {
 
 model Patient {
   // Clave Primaria y atributos únicos
-  id         Int    @id @default(autoincrement())
+  id         Int     @id @default(autoincrement())
   identifier String? @unique @db.VarChar(100)
 
   // Autenticación y Rol
-  password String?  @db.VarChar(255) // Aumentado para hashes de contraseña
+  password String? @db.VarChar(255) // Aumentado para hashes de contraseña
   role     Role    @default(patient)
   active   Boolean @default(false)
 
   // Datos Personales
   name_family String?   @db.VarChar(100)
-  name_given  String?  @db.VarChar(100)
-  email       String   @unique @db.VarChar(100)
+  name_given  String?   @db.VarChar(100)
+  email       String    @unique @db.VarChar(100)
   gender      Gender?
   birth_date  DateTime? @db.Date
 
@@ -51,8 +51,9 @@ model Patient {
   updated_at DateTime @updatedAt @db.Timestamp(0)
 
   // Relaciones
-  appointments Appointment[]
-  observations Observation[]
+  appointments  Appointment[]
+  observations  Observation[]
+  prescriptions Prescription[]
 
   @@map("Patients")
 }
@@ -67,7 +68,8 @@ model Doctor {
 
   // Datos de contacto y profesionales
   telf      String       @db.VarChar(20)
-  hours     DateTime[] @db.Timestamp(0)
+  hours     DateTime     @db.Date
+
   specialty String       @db.VarChar(100)
   status    DoctorStatus @default(active)
 
@@ -76,8 +78,9 @@ model Doctor {
   clinic    Clinic @relation(fields: [clinic_id], references: [id], onDelete: Cascade)
 
   // Relaciones
-  appointments Appointment[]
-  observations Observation[]
+  appointments  Appointment[]
+  observations  Observation[]
+  prescriptions Prescription[]
 
   @@map("Doctors")
 }
@@ -120,13 +123,16 @@ model Appointment {
   patient Patient @relation(fields: [patient_id], references: [id], onDelete: Cascade)
   doctor  Doctor  @relation(fields: [doctor_id], references: [id], onDelete: Cascade)
 
+  // Relación con Prescriptions
+  prescriptions Prescription[]
+
   @@map("Appointments")
 }
 
 // Tabla: Observations (Observaciones médicas)
 model Observation {
   // Clave Primaria y atributos únicos
-  id       Int    @id @default(autoincrement())
+  id         Int    @id @default(autoincrement())
   identifier String @unique @db.VarChar(100)
 
   // Detalles de la observación
@@ -159,6 +165,36 @@ model Observation {
   doctor  Doctor  @relation(fields: [doctor_id], references: [id], onDelete: Cascade)
 
   @@map("Observations")
+}
+
+// Tabla: Prescriptions (Prescripciones médicas)
+model Prescription {
+  // Clave Primaria y atributos únicos
+  id         Int    @id @default(autoincrement())
+  identifier String @unique @db.VarChar(100)
+
+  // Detalles de la prescripción
+  medication   String  @db.VarChar(200) // Nombre del medicamento
+  dose         String  @db.VarChar(100) // Dosis (ej: 500mg)
+  frequency    String  @db.VarChar(100) // Frecuencia (ej: 2 veces al día)
+  duration     String  @db.VarChar(100) // Duración (ej: 7 días)
+  instructions String? @db.Text // Instrucciones especiales
+  status       String  @default("active") @db.VarChar(50)
+
+  // Metadatos
+  created_at DateTime @default(now()) @db.Timestamp(0)
+  updated_at DateTime @updatedAt @db.Timestamp(0)
+
+  // Relaciones (Muchos a Uno)
+  appointment_id Int
+  patient_id     Int
+  doctor_id      Int
+
+  appointment Appointment @relation(fields: [appointment_id], references: [id], onDelete: Cascade)
+  patient     Patient     @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+  doctor      Doctor      @relation(fields: [doctor_id], references: [id], onDelete: Cascade)
+
+  @@map("Prescriptions")
 }
 
 enum Role {

@@ -18,14 +18,36 @@ FlowCare es una plataforma web integral que permite a clínicas y centros de sal
 - **Gestión de agendas médicas** para profesionales de la salud
 
 ### Sector
+
 **HealthTech** - Solución de gestión clínica y teleasistencia
 
 ### Problema que resuelve
+
 Muchos sistemas de salud actuales son fragmentados, generando duplicación de datos, errores de agenda y mala experiencia de usuario. FlowCare centraliza la gestión de citas, historiales y comunicación paciente-médico en una única plataforma segura e interoperable.
 
 ---
 
-## 🚀 Inicio rápido
+## � Cambios Recientes (Octubre 2025)
+
+### ✨ Nuevas Funcionalidades
+
+#### 🎯 Edición de Citas
+
+- ✅ **Botón "Editar"** en página de detalles de cita
+- ✅ **Modal de edición** con selector de fecha/hora
+- ✅ **Validación de slots** disponibles
+- ✅ **Auto-refresco** de datos post-guardar
+
+#### 🎨 Mejora de Navegación
+
+- ✅ **Tarjeta clickeable** en calendario de citas
+- ✅ **Efectos visuales** mejorados (hover states)
+- ✅ **UX optimizada** para acceso a detalles
+- ✅ **Separación de acciones** (ver vs cancelar)
+
+### 📚 Documentación Nueva
+
+- `QUICK_REFERENCE_EDIT_CITAS.md` - Guía rápida ⭐ **EMPIEZA AQUÍ**\n- `BEFORE_AFTER_COMPARISON.md` - Comparación visual\n- `IMPLEMENTATION_EDIT_FLOW.md` - Flujo técnico completo\n- `TESTING_APPOINTMENT_EDIT.md` - Guía de testing\n- `IMPLEMENTATION_SUMMARY_EDIT_CITAS.md` - Resumen ejecutivo\n\n### 🔧 Cambios Técnicos\n- Importación de `AppointmentEditModal` en página de detalles\n- Nuevo estado `editingAppointment` para control de modal\n- Integración de `updateAppointmentTime` service\n- Refactor de tarjetas de cita para mejor UX\n\n👉 **Ver `QUICK_REFERENCE_EDIT_CITAS.md` para más detalles**\n\n---\n\n## �🚀 Inicio rápido
 
 ### Requisitos previos
 
@@ -77,6 +99,7 @@ pnpm dev
 ```
 
 Accede a:
+
 - **Frontend:** http://localhost:3000
 - **Backend API:** http://localhost:4000
 - **Prisma Studio:** Ejecuta `pnpm prisma:studio`
@@ -132,33 +155,33 @@ pnpm --filter backend update
 
 ### Desarrollo
 
-| Script | Descripción |
-|--------|-------------|
-| `pnpm dev` | Inicia backend y frontend simultáneamente |
-| `pnpm dev:backend` | Solo backend (Express en puerto 4000) |
-| `pnpm dev:frontend` | Solo frontend (Next.js en puerto 3000) |
-| `pnpm build` | Construye backend y frontend para producción |
+| Script              | Descripción                                  |
+| ------------------- | -------------------------------------------- |
+| `pnpm dev`          | Inicia backend y frontend simultáneamente    |
+| `pnpm dev:backend`  | Solo backend (Express en puerto 4000)        |
+| `pnpm dev:frontend` | Solo frontend (Next.js en puerto 3000)       |
+| `pnpm build`        | Construye backend y frontend para producción |
 
 ### Base de datos
 
-| Script | Descripción |
-|--------|-------------|
-| `pnpm prisma:generate` | Genera el cliente de Prisma |
-| `pnpm prisma:push` | Sincroniza el esquema con la base de datos |
-| `pnpm prisma:studio` | Abre Prisma Studio (GUI para la BD) |
+| Script                 | Descripción                                |
+| ---------------------- | ------------------------------------------ |
+| `pnpm prisma:generate` | Genera el cliente de Prisma                |
+| `pnpm prisma:push`     | Sincroniza el esquema con la base de datos |
+| `pnpm prisma:studio`   | Abre Prisma Studio (GUI para la BD)        |
 
 ### Docker
 
-| Script | Descripción |
-|--------|-------------|
-| `pnpm docker:up` | Levanta PostgreSQL en Docker |
-| `pnpm docker:down` | Detiene los contenedores |
+| Script             | Descripción                  |
+| ------------------ | ---------------------------- |
+| `pnpm docker:up`   | Levanta PostgreSQL en Docker |
+| `pnpm docker:down` | Detiene los contenedores     |
 
 ### Utilidades
 
-| Script | Descripción |
-|--------|-------------|
-| `pnpm clean` | Elimina todos los node_modules |
+| Script             | Descripción                      |
+| ------------------ | -------------------------------- |
+| `pnpm clean`       | Elimina todos los node_modules   |
 | `pnpm install:all` | Reinstala todas las dependencias |
 
 ---
@@ -218,6 +241,7 @@ hotfix/problema-critico       # Corrección urgente
 ```
 
 **Ejemplos:**
+
 ```bash
 feature/patient-registration
 fix/appointment-timezone-bug
@@ -239,17 +263,17 @@ Seguimos el estándar [Conventional Commits](https://www.conventionalcommits.org
 
 #### Tipos de commit
 
-| Tipo | Descripción | Ejemplo |
-|------|-------------|---------|
-| `feat` | Nueva funcionalidad | `feat(appointments): add video call integration` |
-| `fix` | Corrección de bug | `fix(auth): resolve token expiration issue` |
-| `docs` | Documentación | `docs(readme): update installation steps` |
-| `style` | Formato (sin cambios de código) | `style(frontend): apply prettier formatting` |
-| `refactor` | Refactorización | `refactor(api): simplify user service logic` |
-| `perf` | Mejora de rendimiento | `perf(db): add index to appointments table` |
-| `test` | Tests | `test(auth): add unit tests for login` |
-| `chore` | Mantenimiento | `chore(deps): update prisma to v5.1.0` |
-| `ci` | Integración continua | `ci(github): add automated testing workflow` |
+| Tipo       | Descripción                     | Ejemplo                                          |
+| ---------- | ------------------------------- | ------------------------------------------------ |
+| `feat`     | Nueva funcionalidad             | `feat(appointments): add video call integration` |
+| `fix`      | Corrección de bug               | `fix(auth): resolve token expiration issue`      |
+| `docs`     | Documentación                   | `docs(readme): update installation steps`        |
+| `style`    | Formato (sin cambios de código) | `style(frontend): apply prettier formatting`     |
+| `refactor` | Refactorización                 | `refactor(api): simplify user service logic`     |
+| `perf`     | Mejora de rendimiento           | `perf(db): add index to appointments table`      |
+| `test`     | Tests                           | `test(auth): add unit tests for login`           |
+| `chore`    | Mantenimiento                   | `chore(deps): update prisma to v5.1.0`           |
+| `ci`       | Integración continua            | `ci(github): add automated testing workflow`     |
 
 #### Scopes comunes
 
@@ -340,6 +364,7 @@ pnpm --filter backend test:coverage
 ## 🏗️ Stack tecnológico
 
 ### Backend
+
 - **Runtime:** Node.js 18+
 - **Framework:** Express 5
 - **ORM:** Prisma 5
@@ -347,6 +372,7 @@ pnpm --filter backend test:coverage
 - **Autenticación:** JWT (a implementar)
 
 ### Frontend
+
 - **Framework:** Next.js 15 (App Router)
 - **UI Library:** React 19
 - **Lenguaje:** TypeScript 5
@@ -354,6 +380,7 @@ pnpm --filter backend test:coverage
 - **Linting:** ESLint 9
 
 ### DevOps
+
 - **Monorepo:** pnpm workspaces
 - **Containerización:** Docker & Docker Compose
 - **Control de versiones:** Git
@@ -363,6 +390,7 @@ pnpm --filter backend test:coverage
 ## 🎯 Funcionalidades planificadas
 
 ### Must-have (MVP)
+
 - ✅ Configuración del monorepo
 - ✅ Base de datos PostgreSQL
 - ✅ Esquema inicial de Prisma
@@ -373,6 +401,7 @@ pnpm --filter backend test:coverage
 - ⬜ Integración con sistemas EHR (FHIR)
 
 ### Nice-to-have (Futuro)
+
 - ⬜ Algoritmo de asignación de citas según prioridad médica
 - ⬜ Módulo de facturación automática
 - ⬜ Panel de gestión de listas de espera
@@ -383,11 +412,13 @@ pnpm --filter backend test:coverage
 ## 🐛 Troubleshooting
 
 ### Error: "pnpm: command not found"
+
 ```bash
 npm install -g pnpm
 ```
 
 ### Error al conectar con PostgreSQL
+
 ```bash
 # Verificar que Docker esté corriendo
 docker ps
@@ -398,12 +429,14 @@ pnpm docker:up
 ```
 
 ### Prisma no genera el cliente
+
 ```bash
 # Desde la raíz del proyecto
 pnpm prisma:generate
 ```
 
 ### Puerto 3000 o 4000 ya en uso
+
 ```bash
 # Windows
 netstat -ano | findstr :3000

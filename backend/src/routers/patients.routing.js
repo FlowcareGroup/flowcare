@@ -1,11 +1,9 @@
 import express from "express";
 
 import PatientsController from "../controllers/patients.controller.js";
-import { body, param, query } from "express-validator";
+import { body } from "express-validator";
 import validationChecker from "../middlewares/validationChecker.js";
 const router = express.Router();
-
-
 
 //POST /api/patients/login
 router.post(
@@ -56,33 +54,7 @@ router.post(
   PatientsController.createPatient
 );
 
-router.get("/:idPatient/allAppointmentsByDate",
-  [
-    param("idPatient").isInt().withMessage("Patient ID must be a number"),
-    query("startDate")
-      .notEmpty().withMessage("startDate is required"),
-    query("endDate")
-      .notEmpty().withMessage("endDate is required"),
-  ],
-  PatientsController.getAllAppointmentsByDate
-);
-router.get("/:idPatient/allAppointments",
-  [
-    body("idPatient").isInt().withMessage("Patient ID must be a number")
-  ],
-  PatientsController.getAllAppointmentsByIdPatient);
-
-router.put("/:idPatient/EditProfile",
-  [
-    body("idPatient").isInt().withMessage("Patient ID must be a number")
-  ],
-  PatientsController.editPatientProfile);
-
-router.post("/:idPatient/NewAppointment",
-  [
-    body("idPatient").isInt().withMessage("Patient ID must be a number")
-  ],
-  PatientsController.createNewAppointment);
-
+//GET /api/patients/:id (get patient profile with appointments and observations)
+router.get("/:id", PatientsController.getPatientProfile);
 
 export default router;
