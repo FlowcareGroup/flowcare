@@ -19,8 +19,10 @@ import {
   addObservationToAppointment,
   addPrescriptionToAppointment,
   getPrescriptionsForAppointment,
+  updateAppointmentTime,
 } from "@/services/api/doctorService";
 import type { AddObservationPayload, AddPrescriptionPayload } from "@/services/api/doctorService";
+import AppointmentEditModal from "@/app/(siteapp)/doctor/components/AppointmentEditModal";
 
 interface Appointment {
   id: number;
@@ -86,6 +88,7 @@ export default function AppointmentDetailPage() {
     "details" | "observations" | "prescriptions" | "history"
   >("details");
   const [statusUpdating, setStatusUpdating] = useState(false);
+  const [editingAppointment, setEditingAppointment] = useState(false);
   const [observationForm, setObservationForm] = useState<AddObservationPayload>({
     category: "clinical",
     code: "",
@@ -147,13 +150,26 @@ export default function AppointmentDetailPage() {
   const handleStatusChange = async (newStatus: string) => {
     if (!appointment) return;
 
+    console.log("Changing status to:", newStatus);
     try {
       setStatusUpdating(true);
       const accessToken = (session as any).accessToken;
+      console.log("Calling updateAppointmentStatus with:", {
+        doctorIdStr,
+        appointmentId,
+        newStatus,
+      });
       await updateAppointmentStatus(
         doctorIdStr,
         appointmentId,
-        newStatus as "pending" | "confirmed" | "completed" | "cancelled" | "noshow",
+        newStatus as
+          | "pending"
+          | "confirmed"
+          | "booked"
+          | "arrived"
+          | "fulfilled"
+          | "cancelled"
+          | "noshow",
         accessToken as string
       );
       setAppointment({ ...appointment, status: newStatus as any });
@@ -254,6 +270,25 @@ export default function AppointmentDetailPage() {
     }
   };
 
+  const handleEditAppointment = async (
+    appointmentId: number,
+    newStartTime: string,
+    newEndTime: string
+  ) => {
+    try {
+      const accessToken = (session as any).accessToken;
+      await updateAppointmentTime(appointmentId, newStartTime, newEndTime, accessToken as string);
+
+      // Refresh appointment details
+      await fetchAppointmentDetails(false);
+      setEditingAppointment(false);
+      alert("Cita actualizada correctamente");
+    } catch (error) {
+      console.error("Error updating appointment:", error);
+      alert("Error al actualizar la cita");
+    }
+  };
+
   if (loading) {
     return (
       <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8'>
@@ -323,7 +358,9 @@ export default function AppointmentDetailPage() {
     const labels: { [key: string]: string } = {
       pending: "Pendiente",
       confirmed: "Confirmada",
-      completed: "Completada",
+      booked: "Reservada",
+      arrived: "Llegó",
+      fulfilled: "Completada",
       cancelled: "Cancelada",
       noshow: "No presentarse",
     };
@@ -342,8 +379,33 @@ export default function AppointmentDetailPage() {
             <FaArrowLeft /> Volver
           </button>
           <h1 className='text-3xl font-bold text-gray-800'>Detalle de Cita</h1>
-          <div className='w-24'></div>
+          <button
+            onClick={() => setEditingAppointment(true)}
+            className='flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700'
+          >
+            <FaEdit /> Editar
+          </button>
         </div>
+
+        {/* Edit Modal */}
+        {editingAppointment && appointment && (
+          <AppointmentEditModal
+            appointment={{
+              id: appointment.id,
+              start_time: appointment.start_time,
+              end_time: appointment.end_time,
+              status: appointment.status,
+              patient: {
+                name_given: appointment.patient.name.split(" ")[0],
+                name_family: appointment.patient.name.split(" ").slice(1).join(" "),
+              },
+            }}
+            doctorId={doctorIdStr}
+            accessToken={(session as any).accessToken}
+            onClose={() => setEditingAppointment(false)}
+            onSave={handleEditAppointment}
+          />
+        )}
 
         <div className='grid grid-cols-1 lg:grid-cols-4 gap-6'>
           {/* Sidebar - Quick Info */}
@@ -520,22 +582,28 @@ export default function AppointmentDetailPage() {
                     <div>
                       <h3 className='text-lg font-bold text-darker mb-4'>Cambiar Estado</h3>
                       <div className='grid grid-cols-2 gap-3'>
-                        {["pending", "confirmed", "completed", "noshow", "cancelled"].map(
-                          (status) => (
-                            <button
-                              key={status}
-                              onClick={() => handleStatusChange(status)}
-                              disabled={statusUpdating || appointment.status === status}
-                              className={`px-4 py-2 rounded font-semibold transition ${
-                                appointment.status === status
-                                  ? "bg-primary text-white cursor-not-allowed"
-                                  : "btn-secondary"
-                              }`}
-                            >
-                              {getStatusLabel(status)}
-                            </button>
-                          )
-                        )}
+                        {[
+                          "pending",
+                          "confirmed",
+                          "booked",
+                          "arrived",
+                          "fulfilled",
+                          "cancelled",
+                          "noshow",
+                        ].map((status) => (
+                          <button
+                            key={status}
+                            onClick={() => handleStatusChange(status)}
+                            disabled={statusUpdating || appointment.status === status}
+                            className={`px-4 py-2 rounded font-semibold transition ${
+                              appointment.status === status
+                                ? "bg-primary text-white cursor-not-allowed"
+                                : "btn-secondary"
+                            }`}
+                          >
+                            {getStatusLabel(status)}
+                          </button>
+                        ))}
                       </div>
                     </div>
                   </div>

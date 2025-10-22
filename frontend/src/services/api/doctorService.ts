@@ -287,7 +287,7 @@ export { getAppointmentDetails };
 const updateAppointmentStatus = async (
   doctorId: string,
   appointmentId: number,
-  status: "pending" | "confirmed" | "completed" | "cancelled" | "noshow",
+  status: "pending" | "confirmed" | "booked" | "arrived" | "fulfilled" | "cancelled" | "noshow",
   accessToken: string
 ): Promise<any> => {
   const requestOptions: RequestInit = {

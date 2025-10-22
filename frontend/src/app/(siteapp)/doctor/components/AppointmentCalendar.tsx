@@ -336,14 +336,13 @@ export default function AppointmentCalendar({
                             : appointment.status}
                         </span>
 
-                        <Link href={`/doctor/appointment/${appointment.id}`}>
-                          <button
-                            className='p-2 text-blue-600 hover:bg-blue-50 rounded-md transition'
-                            title='Ver y gestionar cita'
-                          >
-                            <FaEdit size={16} />
-                          </button>
-                        </Link>
+                        <button
+                          onClick={() => handleEditAppointment(appointment)}
+                          className='p-2 text-blue-600 hover:bg-blue-50 rounded-md transition'
+                          title='Editar cita'
+                        >
+                          <FaEdit size={16} />
+                        </button>
 
                         <button
                           onClick={() => handleCancelAppointment(appointment.id)}
