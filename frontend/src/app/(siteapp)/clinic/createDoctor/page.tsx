@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { createDoctor } from "@/services/api/doctorServices";
+import { useSession } from "next-auth/react";
 
 export default function createDoctorPage() {
   const {
@@ -15,6 +16,7 @@ export default function createDoctorPage() {
     resolver: zodResolver(doctorSchema),
   });
   const router = useRouter();
+  const { data: session, status } = useSession();
    // if (status === "loading" || !session) return <p>Cargando o no autenticado</p>;
   //const backendToken = session.accessToken;
   const backendToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJTYW5qdWFuQGdtYWlsLmNvbSIsInJvbGUiOiJjbGluaWMiLCJpYXQiOjE3NjExMTk4MzB9.bWBuoyQ9osVkCb7Rm0cdBX6n6KNiSMsET7qHrw6uksI"
