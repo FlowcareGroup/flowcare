@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { FaSearch, FaPhone, FaEnvelope, FaCalendar } from "react-icons/fa";
 import { searchPatients } from "@/services/api/doctorService";
+import { useRouter } from "next/navigation";
 
 interface PatientSummary {
   id: number;
@@ -24,6 +25,8 @@ export default function PatientSearch({ doctorId, accessToken }: PatientSearchPr
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const [error, setError] = useState("");
+  const router = useRouter();
+ 
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,24 +58,31 @@ export default function PatientSearch({ doctorId, accessToken }: PatientSearchPr
     setError("");
   };
 
+  const handlePatientClick = (patientId: number) => {
+    router.push(`/doctor/patient_data/${patientId}`);
+    console.log("Clicked on patient ID:", patientId);
+   
+    // Aquí puedes navegar a la página de detalles del paciente
+  };
+
   return (
-    <div className='card mb-12'>
+    <div className='card mb-10'>
       <h2 className='text-xl font-bold text-darker mb-4'>Buscar Pacientes</h2>
 
       {/* Search Form */}
       <form
         onSubmit={handleSearch}
-        className='mb-6'
+        className='mb-2'
       >
-        <div className='flex gap-2'>
+        <div className='flex flex-col sm:items-center sm:flex-row gap-2'>
           <div className='flex-1 relative'>
             <FaSearch className='absolute left-3 top-3 text-gray-400' />
             <input
               type='text'
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder='Busca por nombre o email del paciente...'
-              className='input-primary pl-10'
+              placeholder='Nombre o email del paciente...'
+              className='input-primary pl-10 w-full input-sm'
             />
           </div>
           <button
@@ -132,8 +142,7 @@ export default function PatientSearch({ doctorId, accessToken }: PatientSearchPr
                       </div>
                       <button
                         onClick={() => {
-                          // TODO: Navigate to patient detail or create appointment
-                          console.log("Create appointment with patient", patient.id);
+                          handlePatientClick(patient.id);
                         }}
                         className='btn-success'
                       >

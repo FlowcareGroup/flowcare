@@ -52,7 +52,7 @@ export default async function DoctorPage() {
 
   return (
     <>
-      <div className='p-8'>
+      <div className='p-4 max-w-6xl mx-auto'>
         <h1 className='text-2xl font-bold mb-4'>
           Bienvenido Dr. {doctorName} a tu Panel de atención medica
         </h1>
