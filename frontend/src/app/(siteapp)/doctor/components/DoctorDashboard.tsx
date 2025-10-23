@@ -53,23 +53,25 @@ export default function DoctorDashboard({
   };
 
   const StatCard = ({
-    icon: Icon,
+    Icon,
     title,
     value,
     color,
   }: {
-    icon: any;
+    Icon: React.ComponentType<{ className?: string }>; // ✅ Tipo correcto
     title: string;
     value: number;
     color: string;
   }) => (
-    <div className='card flex items-center gap-4'>
-      <div className={`${color} p-4 rounded-lg text-white text-2xl`}>
-        <Icon />
+    <div className='card flex items-center gap-4 p-2'>
+      <div
+        className={`${color} hidden  flex-shrink-0 sm:flex items-center justify-center w-10 h-10 rounded-lg text-white`}
+      >
+        <Icon /> {/* ✅ Cambiar de icon a Icon (mayúscula) */}
       </div>
-      <div>
-        <p className='text-gray-600 text-sm font-semibold'>{title}</p>
-        <p className='text-3xl font-bold text-primary'>{value}</p>
+      <div className='flex-1'>
+        <p className='text-gray-600 text-xs font-semibold'>{title}</p>
+        <p className='text-2xl font-bold text-primary'>{value}</p>
       </div>
     </div>
   );
@@ -79,39 +81,39 @@ export default function DoctorDashboard({
       {/* Today's Statistics */}
       <div className='mb-8'>
         <div className='flex items-center justify-between mb-4'>
-          <h2 className='text-xl font-bold text-darker'>Estadísticas de Hoy</h2>
+          <h2 className='text-sm sm:text-xl font-bold text-darker'>Estadísticas de Hoy</h2>
           <button
             onClick={refreshStatistics}
             disabled={loading}
-            className='btn-secondary px-4 py-2 disabled:opacity-50'
+            className='btn-secondary px-2 py-2 disabled:opacity-50'
           >
             {loading ? "Actualizando..." : "Actualizar"}
           </button>
         </div>
-        <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
+        <div className='grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4'>
           <StatCard
-            icon={FaClipboardList}
+            Icon={FaClipboardList}
             title='Total de Citas'
             value={statistics.today.total}
             color='bg-primary'
           />
           <StatCard
-            icon={FaCheckCircle}
+            Icon={FaCheckCircle}
             title='Completadas'
             value={statistics.today.completed}
-            color='bg-success'
+            color='bg-green-500' // ✅ Cambiar de bg-success
           />
           <StatCard
-            icon={FaClock}
+            Icon={FaClock}
             title='Pendientes'
             value={statistics.today.pending}
-            color='bg-warning'
+            color='bg-yellow-500' // ✅ Cambiar de bg-warning
           />
           <StatCard
-            icon={FaTimesCircle}
+            Icon={FaTimesCircle}
             title='Canceladas'
             value={statistics.today.cancelled}
-            color='bg-error'
+            color='bg-red-500' // ✅ Cambiar de bg-error
           />
         </div>
       </div>
@@ -124,7 +126,7 @@ export default function DoctorDashboard({
             <div className='flex items-center gap-4'>
               <div
                 style={{ backgroundColor: "var(--color-primary)" }}
-                className='p-4 rounded-lg text-white text-2xl'
+                className='hidden sm:flex p-4 rounded-lg text-white text-xl'
               >
                 <FaClipboardList />
               </div>
@@ -138,7 +140,7 @@ export default function DoctorDashboard({
             <div className='flex items-center gap-4'>
               <div
                 style={{ backgroundColor: "var(--color-success)" }}
-                className='p-4 rounded-lg text-white text-2xl'
+                className='hidden sm:flex p-4 rounded-lg text-white text-xl'
               >
                 <FaUsers />
               </div>
