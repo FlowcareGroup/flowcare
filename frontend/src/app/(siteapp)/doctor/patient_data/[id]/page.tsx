@@ -13,6 +13,7 @@ interface PageProps {
 }
 
 export default function PatientDataPage({ params }: PageProps) {
+  console.log(params)
   const { data: session } = useSession();
   const accessToken = (session as any)?.accessToken;
   const patientId = parseInt(params.id);

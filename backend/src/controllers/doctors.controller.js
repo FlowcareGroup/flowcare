@@ -2,6 +2,12 @@ import { PrismaClient } from "../../generated/prisma/index.js";
 import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
 const prisma = new PrismaClient();
+import sendEmail from "../services/emailService.js";
+import {
+  templateCancelledAppointment,
+  templateNewAppointment,
+  templateRescheduledAppointment,
+} from "../templetes/emailTempletes.js";
 
 /*
  * crear usuarios doctores
@@ -217,8 +223,49 @@ const updateAppointmentTime = async (req, res) => {
             email: true,
           },
         },
+        doctor: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
       },
     });
+
+    const emailDoctor = await prisma.doctor.findUnique({
+      where: { id: updatedAppointment.doctor_id },
+      select: { email: true },
+    });
+    const emailPatient = await prisma.patient.findUnique({
+      where: { id: updatedAppointment.patient_id },
+      select: { email: true },
+    });
+
+    if (emailDoctor) {
+      sendEmail(
+        emailDoctor.email,
+        templateRescheduledAppointment(
+          updatedAppointment.doctor.name,
+          updatedAppointment.patient.name_given,
+          updatedAppointment.start_time,
+          updatedAppointment.end_time
+        )
+      );
+    }
+
+    // Enviar correo de confirmación al paciente
+    if (emailPatient) {
+      sendEmail(
+        emailPatient.email,
+        templateRescheduledAppointment(
+          updatedAppointment.doctor.name,
+          updatedAppointment.patient.name_given,
+          updatedAppointment.start_time,
+          updatedAppointment.end_time
+        )
+      );
+    }
 
     console.log("Appointment updated successfully");
     res.status(200).json(updatedAppointment);
@@ -545,6 +592,25 @@ const createAppointment = async (req, res) => {
       },
     });
 
+    const emailDoctor = await prisma.doctor.findUnique({
+      where: { id: doctorId },
+      select: {
+        email: true,
+      },
+    });
+
+    if (emailDoctor) {
+      sendEmail(
+        emailDoctor.email,
+        templateNewAppointment(
+          created.doctor.name,
+          created.patient.name_given,
+          created.start_time,
+          created.end_time
+        )
+      );
+    }
+
     console.log("Appointment created successfully", created.id);
     return res.status(201).json(created);
   } catch (error) {
@@ -588,7 +654,24 @@ const cancelAppointment = async (req, res) => {
         },
       },
     });
+    const emailDoctor = await prisma.doctor.findUnique({
+      where: { id: updated.doctor_id },
+      select: {
+        email: true,
+      },
+    });
 
+    if (emailDoctor) {
+      sendEmail(
+        emailDoctor.email,
+        templateCancelledAppointment(
+          updated.doctor.name,
+          updated.patient.name_given,
+          updated.start_time,
+          updated.end_time
+        )
+      );
+    }
     console.log("Appointment cancelled successfully");
     return res.status(200).json({
       message: "Appointment cancelled successfully",
