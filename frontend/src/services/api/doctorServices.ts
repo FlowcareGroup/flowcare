@@ -45,7 +45,7 @@ export const createDoctor = async (doctor: DoctorSchema, token: string) => {
     return response.json();
   };
 
-
+//pasarlo 
 export const editDoctor = async (id: number, doctor: DoctorEditSchema, token: string) => {
     const response = await fetch(`${API_CLINICS_URL}/editDoctor/${id}`, {
       method: "PUT",
