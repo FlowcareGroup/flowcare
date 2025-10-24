@@ -1,6 +1,6 @@
 "use client";
 
-import { deleteDoctor, getAllDoctors } from "@/services/api/doctorServices";
+import { deleteDoctor, getAllDoctorsBYClinic } from "@/services/api/doctorService";
 import { doctors } from "@/types/auth.types";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -20,7 +20,7 @@ export default function ClinicPage() {
 
   const doctorsAll = async () => {
     try {
-      const response = await getAllDoctors(backendToken);
+      const response = await getAllDoctorsBYClinic(backendToken);
       setDataDoctors(response);
       console.log("✅ Get data:", response);
     } catch (error) {

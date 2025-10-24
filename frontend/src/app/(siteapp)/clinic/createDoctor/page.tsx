@@ -4,8 +4,8 @@ import { doctorSchema, type DoctorSchema } from "@/app/lib/validations_schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { createDoctor } from "@/services/api/doctorServices";
 import { useSession } from "next-auth/react";
+import { createDoctor } from "@/services/api/doctorService";
 
 export default function createDoctorPage() {
   const {

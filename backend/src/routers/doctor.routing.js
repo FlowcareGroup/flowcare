@@ -5,6 +5,28 @@ import { body } from "express-validator";
 import validationChecker from "../middlewares/validationChecker.js";
 const router = express.Router();
 
+//solo puede estrar si esta logueado
+router.use(getAuthUser);
+
+//GET /api/doctors/getAllDoctors
+router.get("/getAllDoctorsBYClinic", DoctorsController.getAllDoctorsBYClinic);
+
+//GET /api/doctors/getAllDoctors
+router.get("/getAllDoctors", DoctorsController.getAllDoctors);
+
+//GET /api/doctors/getDoctorByIdClinic/:id
+router.get("/getDoctorByIdClinic/:id", DoctorsController.getDoctorByIdClinic);
+
+//POST /api/doctors/createDoctor
+router.post("/createDoctor", DoctorsController.createDoctor);
+
+
+//PUT /api/doctors/editDoctor/:id
+router.put("/editDoctor/:id", DoctorsController.editDoctor);
+
+//DELETE /api/doctors/deleteDoctor/:id
+router.delete("/deleteDoctor/:id", DoctorsController.deleteDoctor);
+
 //PATCH /api/doctors/appointments/:appointmentId/cancel
 router.patch("/appointments/:appointmentId/cancel", DoctorsController.cancelAppointment);
 //PUT /api/doctors/appointments/:appointmentId
@@ -45,9 +67,9 @@ router.get(
 router.get("/:id/search-patients", DoctorsController.searchPatients);
 //GET /api/doctors/:id/statistics (doctor statistics)
 router.get("/:id/statistics", DoctorsController.getDoctorStatistics);
-//POST /api/doctors/
+//POST /api/doctors/createDoctorAndPatient
 router.post(
-  "/",
+  "/createDoctorAndPatient",
   [
     body("email").isEmail().withMessage("Invalid email format"),
     body("password")
@@ -57,7 +79,7 @@ router.post(
     body("speciality").notEmpty().withMessage("Speciality is required"),
     validationChecker,
   ],
-  DoctorsController.createDoctor
+  DoctorsController.createDoctorAndPatient
 );
 
 export default router;
