@@ -1,5 +1,3 @@
-import SidebarPatient from './components/SidebarPatient'
-
 export default function PatientLayout({
   children
 }: {
