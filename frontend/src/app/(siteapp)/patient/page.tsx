@@ -1,131 +1,99 @@
-"use client";
-import { useEffect, useMemo, useState } from "react";
-import { useSession, signOut } from "next-auth/react";
-import {
-  getAvailableSlots,
-  createAppointment,
-  type CreateAppointmentPayload,
-} from "@/services/api/doctorService";
+// app/dashboard/patient/page.tsx
+import { auth } from '../../../../auth'
+import { getPatientProfile } from '@/services/api/patientService'
+import PatientAppointments from './components/PatientAppointments'
+import PatientMiniCards from './components/PatientMiniCards'
 
-export default function Patient() {
-  const { data: session } = useSession();
-  const accessToken = (session as any)?.accessToken as string | undefined;
-  const patientId = Number((session as any)?.user?.id);
+export default async function PatientPage() {
+  // 1️⃣ Autenticación
+  const session = await auth()
 
-  // Simple controls to test bookings against a fixed doctor
-  const [doctorId, setDoctorId] = useState<number>(1);
-  const [date, setDate] = useState<string>(new Date().toISOString().split("T")[0]);
-  const [slots, setSlots] = useState<{ time: string; available: boolean }[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
+  if (!session || !session.user?.id || session.user?.role !== 'patient') {
+    return <div>Acceso no autorizado o ID de paciente no encontrado.</div>
+  }
 
-  useEffect(() => {
-    const loadSlots = async () => {
-      if (!accessToken) return;
-      setLoading(true);
-      setMessage(null);
-      try {
-        const res = await getAvailableSlots(String(doctorId), date, accessToken);
-        setSlots(res.slots.map((s) => ({ time: s.time, available: s.available })));
-      } catch (e: any) {
-        setMessage(e?.message || "Error loading slots");
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadSlots();
-  }, [doctorId, date, accessToken]);
+  // 2️⃣ Variables del usuario autenticado
+  const patientId = Number(session.user.id)
+  const patientName = session.user.name
+  const accessToken: string = (session as any).accessToken
 
-  const handleBook = async (time: string) => {
-    if (!accessToken) return setMessage("Missing access token");
-    if (!patientId) return setMessage("Missing patient id");
+  console.log(`Patient ID: ${patientId}, Role: ${session.user.role}`)
 
-    // Build ISO start/end using UTC to match backend expectation
-    const startIso = new Date(`${date}T${time}:00Z`).toISOString();
-    const endIso = new Date(
-      new Date(`${date}T${time}:00Z`).getTime() + 15 * 60 * 1000
-    ).toISOString();
+  // 3️⃣ Llamada al backend (perfil completo del paciente)
+  let patientData
+  try {
+    patientData = await getPatientProfile(patientId, accessToken)
+  } catch (err) {
+    console.error('Error al obtener perfil del paciente:', err)
+    return <div>Error al cargar datos del paciente.</div>
+  }
 
-    const payload: CreateAppointmentPayload = {
-      patient_id: patientId,
-      start_time: startIso,
-      end_time: endIso,
-      service_type: "general",
-      description: "Online booking",
-    };
-
-    setLoading(true);
-    setMessage(null);
-    try {
-      const created = await createAppointment(doctorId, payload, accessToken);
-      setMessage(`Cita creada #${created.id} a las ${time}`);
-      // refresh slots
-      const res = await getAvailableSlots(String(doctorId), date, accessToken);
-      setSlots(res.slots.map((s) => ({ time: s.time, available: s.available })));
-    } catch (e: any) {
-      setMessage(e?.message || "Error creating appointment");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // 4️⃣ Render del Dashboard (estructura espejo del DoctorPage)
   return (
-    <div className='p-4 space-y-4'>
-      <div className='flex items-center justify-between'>
-        <h1 className='text-xl font-semibold'>Patient</h1>
-        <button
-          className='border px-3 py-1 rounded'
-          onClick={() => signOut()}
-        >
-          Logout
-        </button>
+    <>
+      <div className='p-8'>
+        <h1 className='text-2xl font-bold mb-4'>
+          Bienvenido/a {patientName} a tu panel de salud
+        </h1>
+        <p className='text-lg mb-8'>
+          Gestiona tus citas médicas, revisa tu historial y accede a tus
+          consultas en línea.
+        </p>
+
+        <PatientAppointments />
+        <PatientMiniCards patientId={patientId} />
       </div>
-
-      {session ? (
-        <div className='text-sm opacity-80'>
-          <p>ID: {(session as any)?.user?.id}</p>
-          <p>Email: {(session as any)?.user?.email}</p>
-          <p>Name: {(session as any)?.user?.name}</p>
-          <p>Role: {(session as any)?.user?.role}</p>
-        </div>
-      ) : (
-        <p>No user information available</p>
-      )}
-
-      <div className='flex items-center gap-3'>
-        <label className='text-sm'>Doctor ID</label>
-        <input
-          type='number'
-          className='border px-2 py-1 rounded w-24'
-          value={doctorId}
-          onChange={(e) => setDoctorId(Number(e.target.value))}
-        />
-        <label className='text-sm ml-4'>Fecha</label>
-        <input
-          type='date'
-          className='border px-2 py-1 rounded'
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-        />
-      </div>
-
-      {message && <div className='text-sm'>{message}</div>}
-      {loading && <div className='text-sm'>Cargando…</div>}
-
-      <div className='grid grid-cols-4 gap-2'>
-        {slots.map(({ time, available }) => (
-          <button
-            key={time}
-            className={`px-3 py-2 rounded text-sm ${
-              available ? "bg-emerald-100 hover:bg-emerald-200" : "bg-red-200 cursor-not-allowed"
-            }`}
-            disabled={!available || loading}
-            onClick={() => handleBook(time)}
-          >
-            {time}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
+    </>
+  )
 }
+
+// // app/dashboard/patient/page.tsx
+// import { auth } from '../../../../auth'
+// import { getPatientProfile } from '@/services/api/patientService'
+// import PatientAppointments from './components/PatientAppointments'
+// import PatientMiniCards from './components/PatientMiniCards'
+
+// export default async function PatientPage() {
+//   const session = await auth()
+
+//   // 1️⃣ Validar sesión y rol
+//   if (!session || !session.user?.id || session.user?.role !== 'patient') {
+//     return <div>Acceso no autorizado o sesión inválida.</div>
+//   }
+
+//   const patientId = Number(session.user.id)
+//   const accessToken: string = (session as any).accessToken
+
+//   // 2️⃣ Obtener datos del paciente desde tu API
+//   let patientData
+//   try {
+//     patientData = await getPatientProfile(patientId, accessToken)
+//   } catch (error: any) {
+//     console.error('Error al obtener el perfil del paciente:', error)
+//     return <div>Error al cargar los datos del paciente.</div>
+//   }
+
+//   const patientName = patientData.personalData?.name_given || session.user.name
+
+//   // 3️⃣ Render del dashboard
+//   return (
+//     <div className='p-8 space-y-8'>
+//       {/* Encabezado */}
+//       <div>
+//         <h1 className='text-2xl font-bold'>
+//           Hola {patientName}, te damos la bienvenida a tu espacio de salud
+//         </h1>
+//         <p className='text-gray-600 mt-2'>
+//           Gestiona tus próximas citas, accede a tus consultas virtuales y revisa
+//           tu historial médico.
+//         </p>
+//       </div>
+
+//       {/* Citas pendientes */}
+//       <PatientAppointments appointments={patientData.appointments} />
+
+//       {/* 3 Secciones inferiores */}
+//       <PatientMiniCards patientId={patientId} />
+//     </div>
+//   )
+// }
