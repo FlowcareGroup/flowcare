@@ -1,6 +1,6 @@
 "use client";
 
-import { deleteDoctor, getAllDoctors } from "@/services/api/doctorServices";
+import { deleteDoctor, getAllDoctorsBYClinic } from "@/services/api/doctorService";
 import { doctors } from "@/types/auth.types";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -10,17 +10,17 @@ export default function ClinicPage() {
   const router = useRouter();
   const [dataDoctors, setDataDoctors] = useState<doctors[]>([]);
   const { data: session, status } = useSession();
-  // if (status === "loading" || !session) return <p>Cargando o no autenticado</p>;
-  //const backendToken = session.accessToken;
-  const backendToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJTYW5qdWFuQGdtYWlsLmNvbSIsInJvbGUiOiJjbGluaWMiLCJpYXQiOjE3NjExMTk4MzB9.bWBuoyQ9osVkCb7Rm0cdBX6n6KNiSMsET7qHrw6uksI"
-
+   if (status === "loading" || !session) return <p>Cargando o no autenticado</p>;
+  const backendToken = session.accessToken;
+ // const backendToken = "hash"
+ 
   useEffect(() => {
     doctorsAll();
   }, [dataDoctors]);
 
   const doctorsAll = async () => {
     try {
-      const response = await getAllDoctors(backendToken);
+      const response = await getAllDoctorsBYClinic(backendToken);
       setDataDoctors(response);
       console.log("✅ Get data:", response);
     } catch (error) {

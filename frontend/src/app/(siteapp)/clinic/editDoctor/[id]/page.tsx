@@ -6,8 +6,8 @@ import { useForm } from "react-hook-form";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import type { Resolver } from "react-hook-form";
-import {  editDoctor, getDoctorById } from "@/services/api/doctorServices";
 import { useSession } from "next-auth/react";
+import { editDoctor, getDoctorByIdClinic } from "@/services/api/doctorService";
 
 export default function editDoctorPage() {
   const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<DoctorEditSchema>({
@@ -16,10 +16,9 @@ export default function editDoctorPage() {
   
   const router = useRouter();
   const { data: session, status } = useSession();
-   // if (status === "loading" || !session) return <p>Cargando o no autenticado</p>;
-  //const backendToken = session.accessToken;
-  const backendToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJTYW5qdWFuQGdtYWlsLmNvbSIsInJvbGUiOiJjbGluaWMiLCJpYXQiOjE3NjExMTk4MzB9.bWBuoyQ9osVkCb7Rm0cdBX6n6KNiSMsET7qHrw6uksI"
-
+     if (status === "loading" || !session) return <p>Cargando o no autenticado</p>;
+  const backendToken = session.accessToken;
+ // const backendToken = "hash"
   const params = useParams();
   const id = Number(params.id);
 
@@ -29,7 +28,7 @@ export default function editDoctorPage() {
 
   const DoctorById = async (id: number) => {
     try {
-        const response = await getDoctorById(id,backendToken);
+        const response = await getDoctorByIdClinic(id,backendToken);
         console.log("✅ Doctor obtenido:", response);
         const formattedResponse = {
       ...response,
