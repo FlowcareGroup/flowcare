@@ -322,6 +322,8 @@ interface AddObservationPayload {
   value_string?: string;
   value_unit?: string;
   notes?: string;
+  date?: string;
+  time?: string;
 }
 
 const addObservationToAppointment = async (
