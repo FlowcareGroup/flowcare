@@ -3,6 +3,7 @@ import express from "express";
 import DoctorsController from "../controllers/doctors.controller.js";
 import { body } from "express-validator";
 import validationChecker from "../middlewares/validationChecker.js";
+import { getAuthUser } from "../middlewares/auth.js";
 const router = express.Router();
 
 //solo puede estrar si esta logueado
@@ -19,7 +20,6 @@ router.get("/getDoctorByIdClinic/:id", DoctorsController.getDoctorByIdClinic);
 
 //POST /api/doctors/createDoctor
 router.post("/createDoctor", DoctorsController.createDoctor);
-
 
 //PUT /api/doctors/editDoctor/:id
 router.put("/editDoctor/:id", DoctorsController.editDoctor);
