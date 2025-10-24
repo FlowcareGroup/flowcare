@@ -13,7 +13,7 @@ const getAllClinics = async (req, res) => {
         id: true,
         name: true,
         email: true,
-        NIF: false,
+        NIF: true,
         telf: true,
         //pongo los datos de los doctores?
         doctors: {
@@ -42,13 +42,14 @@ const getClinics = async (req, res) => {
     if (!id) {
       return res.status(400).json({ error: "Required data missing" });
     }
+
     const clinics = await prisma.clinic.findUnique({
       where: { id: Number(id) },
       select: {
         id: true,
         name: true,
         email: true,
-        NIF: false,
+        NIF: true,
         telf: true,
         //pongo los datos de los doctores?
         doctors: {
@@ -98,7 +99,7 @@ const createClinic = async (req, res) => {
         password: hashedPassword,
       },
     });
-    res.status(201).json(newClinic);
+    res.status(201).json("New clinic created: " + newClinic);
   } catch (error) {
     console.error("You have this error: ", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -147,7 +148,7 @@ const editClinic = async (req, res) => {
     res.status(200).json(updatedClinic);
   } catch (error) {
     console.error(error);
-   res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -162,15 +163,16 @@ const deleteClinic = async (req, res) => {
       return res.status(400).json({ error: "Required data missing" });
     }
 
+    await prisma.doctor.deleteMany({
+      where: { clinic_id: Number(id) },
+    });
     // Consulta de borrado
     await prisma.clinic.delete({
-       where: { id: Number(id) },
+      where: { id: Number(id) },
     });
 
-    
     res.status(200).send();
   } catch (error) {
-    
     console.error(error);
     res.status(500).json({ error: "Failed to delete the clinic." });
   }

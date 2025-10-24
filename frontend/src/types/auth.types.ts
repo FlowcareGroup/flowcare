@@ -6,7 +6,17 @@
 // Or use: import * from './index'
 
 
+<<<<<<< HEAD
 export * from "./user.types";
 export * from "./credentials.types";
 export * from "./response.types";
+=======
+
+
+export * from "./user.types";
+export * from "./credentials.types";
+export * from "./response.types";
+export * from "./clinic.types";
+export * from "./doctor.types";
+>>>>>>> dev
 
