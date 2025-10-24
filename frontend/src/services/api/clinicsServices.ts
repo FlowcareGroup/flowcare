@@ -1,5 +1,4 @@
 import { ClinicEditSchema, ClinicSchema } from "@/app/lib/validations_schema";
-import { clinics } from "@/types/auth.types";
 
 
 const API_CLINICS_URL = process.env.BACKEND_URL //el .evn no funciona
