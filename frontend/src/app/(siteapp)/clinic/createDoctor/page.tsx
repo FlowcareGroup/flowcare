@@ -17,9 +17,9 @@ export default function createDoctorPage() {
   });
   const router = useRouter();
   const { data: session, status } = useSession();
-   // if (status === "loading" || !session) return <p>Cargando o no autenticado</p>;
-  //const backendToken = session.accessToken;
-  const backendToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJTYW5qdWFuQGdtYWlsLmNvbSIsInJvbGUiOiJjbGluaWMiLCJpYXQiOjE3NjExMTk4MzB9.bWBuoyQ9osVkCb7Rm0cdBX6n6KNiSMsET7qHrw6uksI"
+   if (status === "loading" || !session) return <p>Cargando o no autenticado</p>;
+  const backendToken = session.accessToken;
+ // const backendToken = "hash"
 
 
   const onSubmit = async (data: DoctorSchema) => {
