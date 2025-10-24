@@ -1,0 +1,92 @@
+"use client";
+
+import { deleteDoctor, getAllDoctors } from "@/services/api/doctorServices";
+import { doctors } from "@/types/auth.types";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+export default function ClinicPage() {
+  const router = useRouter();
+  const [dataDoctors, setDataDoctors] = useState<doctors[]>([]);
+  const { data: session, status } = useSession();
+  // if (status === "loading" || !session) return <p>Cargando o no autenticado</p>;
+  //const backendToken = session.accessToken;
+  const backendToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJTYW5qdWFuQGdtYWlsLmNvbSIsInJvbGUiOiJjbGluaWMiLCJpYXQiOjE3NjExMTk4MzB9.bWBuoyQ9osVkCb7Rm0cdBX6n6KNiSMsET7qHrw6uksI"
+
+  useEffect(() => {
+    doctorsAll();
+  }, [dataDoctors]);
+
+  const doctorsAll = async () => {
+    try {
+      const response = await getAllDoctors(backendToken);
+      setDataDoctors(response);
+      console.log("✅ Get data:", response);
+    } catch (error) {
+      console.error("❌ Error in getAllDoctors:", error);
+    }
+  };
+
+
+  const createDoctorHandler = async () => {
+     router.push("/clinic/createDoctor");
+  };
+
+  const editDoctorHandler = async (id: number) => {
+     router.push(`/clinic/editDoctor/${id}`);
+  };
+
+  const deleteDoctorHandler = async (id: number) => {
+    try {
+      const response = await deleteDoctor(id, backendToken);
+      console.log("✅ Delete data:", response);
+    } catch (error) {
+      console.error("❌ Error in deleteDoctor:", error);
+    }
+  };
+
+  return (
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Panel de Administración</h1>
+      <p>
+        Bienvenido al panel de clicicas 
+      </p>
+
+      {dataDoctors.map((doctor) => (
+        <div key={doctor.id} className="border p-4 my-2 rounded">
+          <h2 className="text-xl font-semibold">{doctor.name}</h2>
+          <p className="text-gray-600">{doctor.email}</p>
+          <p className="text-gray-600">Teléfono: {doctor.telf}</p>
+          <p className="text-gray-600">Especialidad: {doctor.specialty}</p>
+          <p className="text-gray-600">Horario: {doctor.hours}</p>
+          <button
+            onClick={() => {
+              editDoctorHandler(doctor.id);
+            }}
+            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            editar
+          </button>
+          <button
+            onClick={() => {
+              deleteDoctorHandler(doctor.id);
+            }}
+            className="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+          >
+            borrar
+          </button>
+        </div>
+      ))}
+
+      <button
+        onClick={() => {
+          createDoctorHandler();
+        }}
+        className="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+      >
+        crear
+      </button>
+    </div>
+  );
+}
