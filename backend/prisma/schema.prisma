@@ -69,6 +69,7 @@ model Doctor {
   // Datos de contacto y profesionales
   telf      String       @db.VarChar(20)
   hours     DateTime     @db.Date
+
   specialty String       @db.VarChar(100)
   status    DoctorStatus @default(active)
 

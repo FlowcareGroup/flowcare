@@ -111,6 +111,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           email: token.email as string,
           name: token.name as string,
           role: token.role as string,
+          // AdapterUser requires emailVerified; set to null when unknown
+          emailVerified: null as Date | null,
         };
         
         // Incluir el token de acceso en la sesión si está disponible
@@ -136,6 +138,7 @@ declare module "next-auth" {
       email: string;
       name: string;
       role: string;
+      emailVerified?: Date | null;
     } & DefaultSession["user"];
     accessToken?: string; // Token de acceso opcional
   }
