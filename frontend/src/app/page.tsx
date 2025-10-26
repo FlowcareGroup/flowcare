@@ -1,15 +1,19 @@
 import Hero from '@/components/Hero'
-import PartnersSection from '@/components/PartnersSection'
-import NewsSection from '@/components/NewsSection'
+import InfoSection from '@/components/InfoSection'
+import CardsSection from '@/components/CardsSection'
 import NavBar from '@/components/Navbar'
+import TestimonialsSection from '@/components/TestimonialsSection'
+import GetInfo from '@/components/GetInfo'
 
 export default function HomePage() {
   return (
     <>
       <NavBar />
       <Hero />
-      <PartnersSection />
-      <NewsSection />
+      <CardsSection />
+      <InfoSection />
+      <TestimonialsSection />
+      <GetInfo />
     </>
   )
 }
