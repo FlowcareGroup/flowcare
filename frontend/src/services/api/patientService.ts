@@ -1,6 +1,6 @@
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:4000/api'
 
-interface PersonalData {
+export interface PersonalData {
   name_given: string
   name_family: string | null
   email: string
@@ -11,7 +11,7 @@ interface PersonalData {
   identifier: string | null
 }
 
-interface Appointment {
+export interface Appointment {
   id: number
   date: string
   time: string
@@ -22,7 +22,7 @@ interface Appointment {
   description: string
 }
 
-interface Observation {
+export interface Observation {
   id: number
   date: string
   time: string
@@ -33,7 +33,7 @@ interface Observation {
   doctor: string
 }
 
-interface PatientProfile {
+export interface PatientProfile {
   id: number
   personalData: PersonalData
   appointments: Appointment[]
