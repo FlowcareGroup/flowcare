@@ -50,6 +50,11 @@ export default function AppointmentForm({
   // 🔹 1. Cargar clínicas con sus doctores
   useEffect(() => {
     const fetchClinics = async () => {
+      if (!backendToken) {
+        console.warn('⚠️ No backend token available yet.')
+        return
+      }
+
       try {
         // Verificar que el token existe antes de proceder
         if (!backendToken || backendToken.trim() === '') {
