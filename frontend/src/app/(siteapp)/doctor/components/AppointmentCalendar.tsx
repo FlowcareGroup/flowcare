@@ -222,7 +222,7 @@ export default function AppointmentCalendar({
         </div>
 
         {/* Controles de navegación de fecha */}
-        <div className='flex items-center gap-4'>
+        <div className='flex items-center gap-2 sm:gap-4'>
           <button
             onClick={goToPreviousDay}
             className='p-2 border border-gray-300 rounded-md hover:bg-gray-100 transition'
@@ -231,9 +231,9 @@ export default function AppointmentCalendar({
             <FaChevronLeft size={18} />
           </button>
 
-          <div className='flex-1 flex items-center gap-3'>
+          <div className='flex-1  flex items-center gap-3'>
             <FaCalendarAlt
-              className='text-gray-600'
+              className='text-gray-600 hidden sm:block'
               size={20}
             />
             <input
@@ -254,10 +254,10 @@ export default function AppointmentCalendar({
         </div>
 
         {/* Fecha seleccionada + selector de items por página */}
-        <div className='mt-3 flex items-center justify-between'>
+        <div className='mt-3 flex gap-4 items-center justify-between'>
           <p className='text-gray-700 font-medium capitalize'>{formatDisplayDate(selectedDate)}</p>
 
-          <div className='flex items-center gap-2'>
+          <div className='flex flex-col sm:flex-row items-center gap-2'>
             <label className='text-sm text-gray-600'>Mostrar:</label>
             <select
               value={itemsPerPage}
@@ -317,9 +317,16 @@ export default function AppointmentCalendar({
                         <p className='text-sm text-gray-600 mt-1'>
                           <strong>Hora:</strong> {formattedTime} - {formattedEndTime}
                         </p>
+                        <div className="">
+                          <Link href={`/doctor/appointment/${appointment.id}`}>
+                            <p className='btn-primary mt-2 inline-block p-0 text-xs'>
+                              Ver datos de la cita
+                            </p>
+                          </Link>
+                        </div>
                       </div>
 
-                      <div className='flex items-center gap-2'>
+                      <div className='flex flex-col sm:flex-row  items-center gap-2'>
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-medium ${
                             appointment.status === "pending"

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+
 import { useSession } from "next-auth/react";
 import {
   FaCalendar,
@@ -23,55 +24,7 @@ import {
 } from "@/services/api/doctorService";
 import type { AddObservationPayload, AddPrescriptionPayload } from "@/services/api/doctorService";
 import AppointmentEditModal from "@/app/(siteapp)/doctor/components/AppointmentEditModal";
-
-interface Appointment {
-  id: number;
-  start_time: string;
-  end_time: string;
-  status: "pending" | "confirmed" | "completed" | "cancelled" | "noshow";
-  service_type: string;
-  description: string;
-  patient_id: number;
-  doctor_id: number;
-  createdAt: string;
-  patient: {
-    id: number;
-    name: string;
-    email: string;
-    phone: string;
-    date_of_birth: string;
-  };
-  doctor: {
-    id: number;
-    name: string;
-    speciality: string;
-  };
-  observations: Observation[];
-  previousAppointments: Appointment[];
-}
-
-interface Observation {
-  id: string;
-  category: string;
-  code: string;
-  value_string?: string;
-  value_unit?: string;
-  notes?: string;
-  status: string;
-  createdAt: string;
-}
-
-interface Prescription {
-  id: number;
-  identifier: string;
-  medication: string;
-  dose: string;
-  frequency: string;
-  duration: string;
-  instructions?: string;
-  status: string;
-  created_at: string;
-}
+import { Appointment, Prescription } from "@/services/types";
 
 export default function AppointmentDetailPage() {
   const params = useParams();
@@ -291,9 +244,9 @@ export default function AppointmentDetailPage() {
 
   if (loading) {
     return (
-      <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8'>
+      <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 px-4 py-10 md:p-8'>
         <div className='flex justify-center items-center h-96'>
-          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600'></div>
+          <div className='h-12 w-12 animate-spin rounded-full border-b-2 border-indigo-600'></div>
         </div>
       </div>
     );
@@ -301,15 +254,15 @@ export default function AppointmentDetailPage() {
 
   if (!appointment) {
     return (
-      <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8'>
-        <div className='max-w-4xl mx-auto'>
+      <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 px-4 py-10 md:p-8'>
+        <div className='mx-auto w-full max-w-4xl'>
           <button
             onClick={() => router.back()}
-            className='flex items-center gap-2 text-indigo-600 hover:text-indigo-800 mb-6'
+            className='mb-6 flex items-center gap-2 text-indigo-600 transition hover:text-indigo-800'
           >
             <FaArrowLeft /> Volver
           </button>
-          <div className='bg-white rounded-lg shadow p-6'>
+          <div className='rounded-lg bg-white p-6 shadow'>
             <p className='text-gray-600'>Cita no encontrada</p>
           </div>
         </div>
@@ -368,20 +321,20 @@ export default function AppointmentDetailPage() {
   };
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8'>
-      <div className='max-w-6xl mx-auto'>
+    <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 px-4 py-10 md:p-8'>
+      <div className='mx-auto w-full max-w-6xl'>
         {/* Header */}
-        <div className='flex items-center justify-between mb-8'>
+        <div className='mb-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between'>
           <button
             onClick={() => router.back()}
-            className='flex items-center gap-2 text-indigo-600 hover:text-indigo-800'
+            className='flex items-center gap-2 text-indigo-600 transition hover:text-indigo-800'
           >
             <FaArrowLeft /> Volver
           </button>
-          <h1 className='text-3xl font-bold text-gray-800'>Detalle de Cita</h1>
+          <h1 className='text-2xl font-bold text-gray-800 sm:text-3xl'>Detalle de Cita</h1>
           <button
             onClick={() => setEditingAppointment(true)}
-            className='flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700'
+            className='flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-white transition hover:bg-indigo-700'
           >
             <FaEdit /> Editar
           </button>
@@ -407,15 +360,15 @@ export default function AppointmentDetailPage() {
           />
         )}
 
-        <div className='grid grid-cols-1 lg:grid-cols-4 gap-6'>
+        <div className='grid grid-cols-1 gap-6 lg:grid-cols-4'>
           {/* Sidebar - Quick Info */}
           <div className='lg:col-span-1'>
-            <div className='bg-white rounded-lg shadow p-6 space-y-4'>
-              <h2 className='font-bold text-gray-800 mb-4'>Resumen</h2>
+            <div className='space-y-4 rounded-lg bg-white p-6 shadow sm:p-5'>
+              <h2 className='mb-4 text-lg font-bold text-gray-800'>Resumen</h2>
 
               {/* Status */}
               <div>
-                <p className='text-sm text-gray-500 mb-2'>Estado</p>
+                <p className='mb-2 text-sm text-gray-500'>Estado</p>
                 <span
                   className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${getStatusBadgeClass(
                     appointment.status
@@ -427,14 +380,14 @@ export default function AppointmentDetailPage() {
 
               {/* Patient */}
               <div>
-                <p className='text-sm text-gray-500 mb-2'>Paciente</p>
+                <p className='mb-2 text-sm text-gray-500'>Paciente</p>
                 <p className='font-semibold text-gray-800'>{appointment.patient.name}</p>
                 <p className='text-xs text-gray-600'>{appointment.patient.email}</p>
               </div>
 
               {/* Date */}
               <div>
-                <p className='text-sm text-gray-500 mb-2 flex items-center gap-2'>
+                <p className='mb-2 flex items-center gap-2 text-sm text-gray-500'>
                   <FaCalendar /> Fecha
                 </p>
                 <p className='font-semibold text-gray-800'>
@@ -444,7 +397,7 @@ export default function AppointmentDetailPage() {
 
               {/* Time */}
               <div>
-                <p className='text-sm text-gray-500 mb-2 flex items-center gap-2'>
+                <p className='mb-2 flex items-center gap-2 text-sm text-gray-500'>
                   <FaClock /> Hora
                 </p>
                 <p className='font-semibold text-gray-800'>
@@ -453,13 +406,13 @@ export default function AppointmentDetailPage() {
               </div>
 
               {/* Observations Count */}
-              <div className='pt-4 border-t'>
+              <div className='border-t pt-4'>
                 <p className='text-sm text-gray-500'>Observaciones</p>
                 <p className='text-2xl font-bold text-primary'>{appointment.observations.length}</p>
               </div>
 
               {/* Prescriptions Count */}
-              <div className='pt-4 border-t'>
+              <div className='border-t pt-4'>
                 <p className='text-sm text-gray-500'>Prescripciones</p>
                 <p className='text-2xl font-bold text-success'>{prescriptions.length}</p>
               </div>
@@ -469,11 +422,11 @@ export default function AppointmentDetailPage() {
           {/* Main Content */}
           <div className='lg:col-span-3'>
             {/* Tabs */}
-            <div className='bg-white rounded-lg shadow mb-6'>
-              <div className='flex border-b'>
+            <div className='mb-6 rounded-lg bg-white shadow'>
+              <div className='flex flex-wrap border-b'>
                 <button
                   onClick={() => setActiveTab("details")}
-                  className={`flex-1 px-6 py-4 font-semibold transition ${
+                  className={`flex-1 px-4 py-3 text-sm font-semibold transition sm:px-6 sm:py-4 ${
                     activeTab === "details"
                       ? "border-b-2 border-primary text-primary"
                       : "text-gray-600 hover:text-gray-800"
@@ -483,7 +436,7 @@ export default function AppointmentDetailPage() {
                 </button>
                 <button
                   onClick={() => setActiveTab("observations")}
-                  className={`flex-1 px-6 py-4 font-semibold transition ${
+                  className={`flex-1 px-4 py-3 text-sm font-semibold transition sm:px-6 sm:py-4 ${
                     activeTab === "observations"
                       ? "border-b-2 border-primary text-primary"
                       : "text-gray-600 hover:text-gray-800"
@@ -493,7 +446,7 @@ export default function AppointmentDetailPage() {
                 </button>
                 <button
                   onClick={() => setActiveTab("prescriptions")}
-                  className={`flex-1 px-6 py-4 font-semibold transition ${
+                  className={`flex-1 px-4 py-3 text-sm font-semibold transition sm:px-6 sm:py-4 ${
                     activeTab === "prescriptions"
                       ? "border-b-2 border-primary text-primary"
                       : "text-gray-600 hover:text-gray-800"
@@ -503,7 +456,7 @@ export default function AppointmentDetailPage() {
                 </button>
                 <button
                   onClick={() => setActiveTab("history")}
-                  className={`flex-1 px-6 py-4 font-semibold transition ${
+                  className={`flex-1 px-4 py-3 text-sm font-semibold transition sm:px-6 sm:py-4 ${
                     activeTab === "history"
                       ? "border-b-2 border-primary text-primary"
                       : "text-gray-600 hover:text-gray-800"
@@ -514,7 +467,7 @@ export default function AppointmentDetailPage() {
               </div>
 
               {/* Tab Content */}
-              <div className='p-6'>
+              <div className='p-4 sm:p-6'>
                 {/* Details Tab */}
                 {activeTab === "details" && (
                   <div className='space-y-6'>
@@ -523,15 +476,15 @@ export default function AppointmentDetailPage() {
                       <h3 className='text-lg font-bold text-gray-800 mb-4'>
                         Información de la Cita
                       </h3>
-                      <div className='grid grid-cols-2 gap-4'>
+                      <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
                         <div>
-                          <p className='text-sm text-gray-500 mb-1'>Tipo de Servicio</p>
+                          <p className='mb-1 text-sm text-gray-500'>Tipo de Servicio</p>
                           <p className='font-semibold text-gray-800'>
                             {appointment.service_type || "General"}
                           </p>
                         </div>
                         <div>
-                          <p className='text-sm text-gray-500 mb-1'>Creada</p>
+                          <p className='mb-1 text-sm text-gray-500'>Creada</p>
                           <p className='font-semibold text-gray-800'>
                             {formatDateTime(appointment.createdAt)}
                           </p>
@@ -554,21 +507,21 @@ export default function AppointmentDetailPage() {
                       <h3 className='text-lg font-bold text-gray-800 mb-4'>
                         Información del Paciente
                       </h3>
-                      <div className='grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded'>
+                      <div className='grid grid-cols-1 gap-4 rounded bg-gray-50 p-4 sm:grid-cols-2'>
                         <div>
-                          <p className='text-sm text-gray-500 mb-1'>Nombre</p>
+                          <p className='mb-1 text-sm text-gray-500'>Nombre</p>
                           <p className='font-semibold text-gray-800'>{appointment.patient.name}</p>
                         </div>
                         <div>
-                          <p className='text-sm text-gray-500 mb-1'>Email</p>
+                          <p className='mb-1 text-sm text-gray-500'>Email</p>
                           <p className='font-semibold text-gray-800'>{appointment.patient.email}</p>
                         </div>
                         <div>
-                          <p className='text-sm text-gray-500 mb-1'>Teléfono</p>
+                          <p className='mb-1 text-sm text-gray-500'>Teléfono</p>
                           <p className='font-semibold text-gray-800'>{appointment.patient.phone}</p>
                         </div>
                         <div>
-                          <p className='text-sm text-gray-500 mb-1'>Fecha de Nacimiento</p>
+                          <p className='mb-1 text-sm text-gray-500'>Fecha de Nacimiento</p>
                           <p className='font-semibold text-gray-800'>
                             {new Date(appointment.patient.date_of_birth).toLocaleDateString(
                               "es-ES"
@@ -581,7 +534,7 @@ export default function AppointmentDetailPage() {
                     {/* Status Change Buttons */}
                     <div>
                       <h3 className='text-lg font-bold text-darker mb-4'>Cambiar Estado</h3>
-                      <div className='grid grid-cols-2 gap-3'>
+                      <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
                         {[
                           "pending",
                           "confirmed",
@@ -621,7 +574,7 @@ export default function AppointmentDetailPage() {
                         onSubmit={handleAddObservation}
                         className='space-y-4'
                       >
-                        <div className='grid grid-cols-2 gap-4'>
+                        <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
                           <div>
                             <label className='block text-sm font-semibold text-gray-700 mb-2'>
                               Categoría
@@ -631,7 +584,7 @@ export default function AppointmentDetailPage() {
                               onChange={(e) =>
                                 setObservationForm({ ...observationForm, category: e.target.value })
                               }
-                              className='w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-600'
+                              className='w-full rounded border border-gray-300 px-3 py-2 focus:border-indigo-600 focus:outline-none'
                             >
                               <option value='clinical'>Clínica</option>
                               <option value='diagnostic'>Diagnóstico</option>
@@ -651,11 +604,11 @@ export default function AppointmentDetailPage() {
                               }
                               placeholder='Ej: HTN, DM2, etc.'
                               required
-                              className='w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-600'
+                              className='w-full rounded border border-gray-300 px-3 py-2 focus:border-indigo-600 focus:outline-none'
                             />
                           </div>
                         </div>
-                        <div className='grid grid-cols-2 gap-4'>
+                        <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
                           <div>
                             <label className='block text-sm font-semibold text-gray-700 mb-2'>
                               Valor
@@ -670,7 +623,7 @@ export default function AppointmentDetailPage() {
                                 })
                               }
                               placeholder='Ej: 140/90'
-                              className='w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-600'
+                              className='w-full rounded border border-gray-300 px-3 py-2 focus:border-indigo-600 focus:outline-none'
                             />
                           </div>
                           <div>
@@ -687,7 +640,7 @@ export default function AppointmentDetailPage() {
                                 })
                               }
                               placeholder='Ej: mmHg'
-                              className='w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-600'
+                              className='w-full rounded border border-gray-300 px-3 py-2 focus:border-indigo-600 focus:outline-none'
                             />
                           </div>
                         </div>
@@ -725,9 +678,9 @@ export default function AppointmentDetailPage() {
                           {appointment.observations.map((obs) => (
                             <div
                               key={obs.id}
-                              className='bg-white border border-gray-200 p-4 rounded'
+                              className='rounded border border-gray-200 bg-white p-4'
                             >
-                              <div className='flex justify-between items-start mb-2'>
+                              <div className='mb-2 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between'>
                                 <div>
                                   <p className='font-semibold text-gray-800'>
                                     {obs.category} - {obs.code}
@@ -761,15 +714,15 @@ export default function AppointmentDetailPage() {
                 {activeTab === "prescriptions" && (
                   <div className='space-y-6'>
                     {/* Add Prescription Form */}
-                    <div className='bg-green-50 p-6 rounded border border-green-200'>
-                      <h3 className='text-lg font-bold text-darker mb-4 flex items-center gap-2'>
+                    <div className='rounded border border-green-200 bg-green-50 p-6'>
+                      <h3 className='mb-4 flex items-center gap-2 text-lg font-bold text-darker'>
                         <FaPlus /> Agregar Prescripción
                       </h3>
                       <form
                         onSubmit={handleAddPrescription}
                         className='space-y-4'
                       >
-                        <div className='grid grid-cols-2 gap-4'>
+                        <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
                           <div>
                             <label className='block text-sm font-semibold text-gray-700 mb-2'>
                               Medicamento *
@@ -804,7 +757,7 @@ export default function AppointmentDetailPage() {
                             />
                           </div>
                         </div>
-                        <div className='grid grid-cols-2 gap-4'>
+                        <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
                           <div>
                             <label className='block text-sm font-semibold text-gray-700 mb-2'>
                               Frecuencia *
@@ -879,9 +832,9 @@ export default function AppointmentDetailPage() {
                           {prescriptions.map((presc) => (
                             <div
                               key={presc.id}
-                              className='bg-light border-l-4 border-success p-4 rounded'
+                              className='rounded border-success border-l-4 bg-light p-4'
                             >
-                              <div className='flex justify-between items-start mb-2'>
+                              <div className='mb-2 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between'>
                                 <div>
                                   <p className='font-semibold text-darker'>{presc.medication}</p>
                                   <div className='text-sm text-gray-600 mt-1 space-y-1'>
@@ -924,9 +877,9 @@ export default function AppointmentDetailPage() {
                         {appointment.previousAppointments.map((prev) => (
                           <div
                             key={prev.id}
-                            className='bg-gray-50 border border-gray-200 p-4 rounded hover:bg-gray-100 transition cursor-pointer'
+                            className='cursor-pointer rounded border border-gray-200 bg-gray-50 p-4 transition hover:bg-gray-100'
                           >
-                            <div className='flex justify-between items-start'>
+                            <div className='flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between'>
                               <div>
                                 <p className='font-semibold text-gray-800'>
                                   {formatDateTime(prev.start_time).split(" ").slice(0, 3).join(" ")}

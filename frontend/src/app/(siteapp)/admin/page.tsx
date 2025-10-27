@@ -1,21 +1,26 @@
 
 "use client";
 import { deleteClinic, getAllClinics } from "@/services/api/clinicsServices";
-import { clinics } from "@/types/auth.types";
+import { clinics } from "@/services/types";
 import {  useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
 
 export default function AdminPage() {
    const router = useRouter();
 const [dataClinics, setdataClinics] = useState<clinics[]>([]);
+  const { data: session } = useSession();
   useEffect(() => {
+    console.log("dataClinics", dataClinics);
     clinicsAll();
-  }, [dataClinics]);
+  }, []);
 
   const clinicsAll = async () => {
     try {
-      const response = await getAllClinics();
+      const accessToken = (session as any)?.accessToken;
+      if (!accessToken) return;
+      const response = await getAllClinics(accessToken as string);
       setdataClinics(response);
       console.log("✅ Get data:", response);
     } catch (error) {

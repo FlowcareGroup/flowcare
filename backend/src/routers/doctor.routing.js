@@ -5,7 +5,7 @@ import { body } from "express-validator";
 import validationChecker from "../middlewares/validationChecker.js";
 import { getAuthUser } from "../middlewares/auth.js";
 const router = express.Router();
-import { getAuthUser } from '../middlewares/auth.js';
+//import { getAuthUser } from '../middlewares/auth.js';
 
 
 //solo puede estrar si esta logueado
@@ -22,7 +22,6 @@ router.get("/getDoctorByIdClinic/:id", DoctorsController.getDoctorByIdClinic);
 
 //POST /api/doctors/createDoctor
 router.post("/createDoctor", DoctorsController.createDoctor);
-
 
 //PUT /api/doctors/editDoctor/:id
 router.put("/editDoctor/:id", DoctorsController.editDoctor);

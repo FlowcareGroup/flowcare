@@ -1,78 +1,67 @@
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:4000/api";
 
-
-
-
-
 import { DoctorEditSchema, DoctorSchema } from "@/app/lib/validations_schema";
 
-
-
-
-
-const API_CLINICS_URL = process.env.BACKEND_URL 
+const API_CLINICS_URL = process.env.BACKEND_URL
   ? `${process.env.BACKEND_URL}/doctors`
   : "http://localhost:4000/api/doctors";
 
-
 export const getAllDoctorsBYClinic = async (token: string) => {
-
   const response = await fetch(`${API_CLINICS_URL}/getAllDoctorsBYClinic`, {
     method: "GET",
     headers: {
-      "Content-Type": "application/json" , authorization: "Bearer " + token,
+      "Content-Type": "application/json",
+      authorization: "Bearer " + token,
     },
   });
   return response.json();
 };
 
-
-export const getDoctorByIdClinic = async (id: number,token: string) => {
+export const getDoctorByIdClinic = async (id: number, token: string) => {
   const response = await fetch(`${API_CLINICS_URL}/getDoctorByIdClinic/${id}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      authorization: "Bearer " + token
+      authorization: "Bearer " + token,
     },
-     });
+  });
   return response.json();
 };
 
-
 export const createDoctor = async (doctor: DoctorSchema, token: string) => {
-    const response = await fetch(`${API_CLINICS_URL}/createDoctor`, {
-      method: "POST",
-      headers: {    
-        "Content-Type": "application/json", authorization: "Bearer " + token,
-      },
-      body: JSON.stringify(doctor),
-    });
-    return response.json();
-  };
-
+  const response = await fetch(`${API_CLINICS_URL}/createDoctor`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: "Bearer " + token,
+    },
+    body: JSON.stringify(doctor),
+  });
+  return response.json();
+};
 
 export const editDoctor = async (id: number, doctor: DoctorEditSchema, token: string) => {
-    const response = await fetch(`${API_CLINICS_URL}/editDoctor/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json", authorization: "Bearer " + token,
-      },
-      body: JSON.stringify(doctor),
-    });
-    return response.json();
-  };
-
-
+  const response = await fetch(`${API_CLINICS_URL}/editDoctor/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: "Bearer " + token,
+    },
+    body: JSON.stringify(doctor),
+  });
+  return response.json();
+};
 
 export const deleteDoctor = async (id: number, token: string) => {
-    const response = await fetch(`${API_CLINICS_URL}/deleteDoctor/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json", authorization: "Bearer " + token,
-      },
-    });
-    return response.json();
-  }
+  const response = await fetch(`${API_CLINICS_URL}/deleteDoctor/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: "Bearer " + token,
+    },
+  });
+  return response.json();
+};
 
 // Interfaces para paginación
 interface PaginatedAppointments {
@@ -396,6 +385,8 @@ interface AddObservationPayload {
   value_string?: string;
   value_unit?: string;
   notes?: string;
+  date?: string;
+  time?: string;
 }
 
 const addObservationToAppointment = async (

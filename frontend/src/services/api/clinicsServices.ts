@@ -19,12 +19,12 @@ export const getAllClinics = async (token: string) => {
 
 
 
-export const getClinicById = async (id: number) => {
+export const getClinicById = async (id: number, token: string) => {
   const response = await fetch(`${API_CLINICS_URL}/getClinics/${id}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-     /*, authorization: "Bearer " + token*/
+      Authorization: "Bearer " + token,
     },
      });
   return response.json();

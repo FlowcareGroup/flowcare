@@ -1,7 +1,7 @@
 "use client";
 
 import { deleteDoctor, getAllDoctorsBYClinic } from "@/services/api/doctorService";
-import { doctors } from "@/types/auth.types";
+import { doctors } from "@/services/types";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -16,11 +16,11 @@ export default function ClinicPage() {
  
   useEffect(() => {
     doctorsAll();
-  }, [dataDoctors]);
+  }, []);
 
   const doctorsAll = async () => {
     try {
-      const response = await getAllDoctorsBYClinic(backendToken);
+      const response = await getAllDoctorsBYClinic(backendToken as string);
       setDataDoctors(response);
       console.log("✅ Get data:", response);
     } catch (error) {
@@ -39,7 +39,7 @@ export default function ClinicPage() {
 
   const deleteDoctorHandler = async (id: number) => {
     try {
-      const response = await deleteDoctor(id, backendToken);
+      const response = await deleteDoctor(id, backendToken as string);
       console.log("✅ Delete data:", response);
     } catch (error) {
       console.error("❌ Error in deleteDoctor:", error);
