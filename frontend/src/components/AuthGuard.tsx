@@ -34,11 +34,10 @@ export default function AuthGuard({ children }: AuthGuardProps) {
 
     // Si no está logueado y trata de acceder a ruta protegida
     if (!isLoggedIn && !isPublicPath) {
-      console.log("🚫 Redirecting to login - not authenticated");
-      router.push("/auth/login");
-      return;
+      console.log('🚫 Redirecting to login - not authenticated')
+      router.push('/auth/login')
+      return
     }
-
 
     // Si está logueado y trata de acceder a login/signup
     if (
