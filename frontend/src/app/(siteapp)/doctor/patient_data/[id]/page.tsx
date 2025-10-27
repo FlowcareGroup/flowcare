@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { FaArrowLeft, FaEnvelope, FaMapPin, FaCalendar } from "react-icons/fa";
-import { getPatientProfile, type PatientProfile } from "@/services/api/patientService";
+import { getPatientProfile, type PatientProfile  } from "@/services/api/patientService";
 
 interface PageProps {
   params: Promise<{
