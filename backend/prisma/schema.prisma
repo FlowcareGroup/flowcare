@@ -16,7 +16,220 @@ datasource db {
 
 // Agrega tus modelos aquí después
 model User {
-  id    Int    @id @default(autoincrement())
-  email String @unique
-  name  String?
+  id       Int     @id @default(autoincrement())
+  email    String  @unique
+  name     String?
+  password String  @db.VarChar(255)
+}
+
+model Patient {
+  // Clave Primaria y atributos únicos
+  id         Int     @id @default(autoincrement())
+  identifier String? @unique @db.VarChar(100)
+
+  // Autenticación y Rol
+  password String? @db.VarChar(255) // Aumentado para hashes de contraseña
+  role     Role    @default(patient)
+  active   Boolean @default(false)
+
+  // Datos Personales
+  name_family String?   @db.VarChar(100)
+  name_given  String?   @db.VarChar(100)
+  email       String    @unique @db.VarChar(100)
+  gender      Gender?
+  birth_date  DateTime? @db.Date
+
+  // Contacto y Ubicación
+  address String? @db.Text
+
+  // Otros datos
+  marital_status String? @db.VarChar(50)
+  language       String? @db.VarChar(50)
+
+  // Metadatos
+  created_at DateTime @default(now()) @db.Timestamp(0)
+  updated_at DateTime @updatedAt @db.Timestamp(0)
+
+  // Relaciones
+  appointments  Appointment[]
+  observations  Observation[]
+  prescriptions Prescription[]
+
+  @@map("Patients")
+}
+
+// Tabla: Doctors
+model Doctor {
+  // Clave Primaria y datos principales
+  id       Int    @id @default(autoincrement())
+  name     String @db.VarChar(200)
+  email    String @unique @db.VarChar(100)
+  password String @db.VarChar(255)
+
+  // Datos de contacto y profesionales
+  telf      String       @db.VarChar(20)
+  hours     DateTime     @db.Date // lunes a viernes  10:00 - 18:00
+
+
+
+  specialty String       @db.VarChar(100)
+  status    DoctorStatus @default(active)
+
+  // Relación con Clinic (Muchos a Uno)
+  clinic_id Int
+  clinic    Clinic @relation(fields: [clinic_id], references: [id], onDelete: Cascade)
+
+  // Relaciones
+  appointments  Appointment[]
+  observations  Observation[]
+  prescriptions Prescription[]
+
+  @@map("Doctors")
+}
+
+
+// Tabla: Clinics
+model Clinic {
+  id       Int    @id @default(autoincrement())
+  name     String @db.VarChar(200)
+  NIF      String @unique @db.VarChar(20)
+  email    String @db.VarChar(100)
+  telf     String @db.VarChar(20)
+  password String @db.VarChar(255)
+
+  // Relación
+  doctors Doctor[]
+
+  @@map("Clinics")
+}
+
+// Tabla: Appointments (Citas)
+model Appointment {
+  // Clave Primaria y atributos únicos
+  id         Int    @id @default(autoincrement())
+  identifier String @unique @db.VarChar(100)
+
+  // Detalles de la cita
+  status       AppointmentStatus @default(pending)
+  service_type String            @db.VarChar(100)
+  start_time   DateTime          @db.Timestamp(0)
+  end_time     DateTime          @db.Timestamp(0)
+  description  String            @db.Text
+
+  // Metadatos
+  created_at DateTime @default(now()) @db.Timestamp(0)
+
+  // Relaciones (Muchos a Uno)
+  patient_id Int
+  doctor_id  Int
+
+  patient Patient @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+  doctor  Doctor  @relation(fields: [doctor_id], references: [id], onDelete: Cascade)
+
+  // Relación con Prescriptions
+  prescriptions Prescription[]
+
+  @@map("Appointments")
+}
+
+// Tabla: Observations (Observaciones médicas)
+model Observation {
+  // Clave Primaria y atributos únicos
+  id         Int    @id @default(autoincrement())
+  identifier String @unique @db.VarChar(100)
+
+  // Detalles de la observación
+  status       ObservationStatus @default(registered)
+  category     String            @db.VarChar(100)
+  code         String            @db.VarChar(100)
+  code_display String            @db.VarChar(200)
+
+  // Fechas y horas
+  effective_datetime DateTime @db.Timestamp(0)
+  issued_datetime    DateTime @db.Timestamp(0)
+
+  // Valores
+  value_quantity Decimal? @db.Decimal(10, 2)
+  value_unit     String?  @db.VarChar(50)
+  value_string   String?  @db.Text
+
+  // Interpretación
+  interpretation  String? @db.VarChar(100)
+  reference_range String? @db.Text
+
+  // Metadatos
+  created_at DateTime @default(now()) @db.Timestamp(0)
+
+  // Relaciones (Muchos a Uno) - CORREGIDO: doctor_id ahora es Int
+  patient_id Int
+  doctor_id  Int // Cambiado a Int para coincidir con Doctor.id
+
+  patient Patient @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+  doctor  Doctor  @relation(fields: [doctor_id], references: [id], onDelete: Cascade)
+
+  @@map("Observations")
+}
+
+// Tabla: Prescriptions (Prescripciones médicas)
+model Prescription {
+  // Clave Primaria y atributos únicos
+  id         Int    @id @default(autoincrement())
+  identifier String @unique @db.VarChar(100)
+
+  // Detalles de la prescripción
+  medication   String  @db.VarChar(200) // Nombre del medicamento
+  dose         String  @db.VarChar(100) // Dosis (ej: 500mg)
+  frequency    String  @db.VarChar(100) // Frecuencia (ej: 2 veces al día)
+  duration     String  @db.VarChar(100) // Duración (ej: 7 días)
+  instructions String? @db.Text // Instrucciones especiales
+  status       String  @default("active") @db.VarChar(50)
+
+  // Metadatos
+  created_at DateTime @default(now()) @db.Timestamp(0)
+  updated_at DateTime @updatedAt @db.Timestamp(0)
+
+  // Relaciones (Muchos a Uno)
+  appointment_id Int
+  patient_id     Int
+  doctor_id      Int
+
+  appointment Appointment @relation(fields: [appointment_id], references: [id], onDelete: Cascade)
+  patient     Patient     @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+  doctor      Doctor      @relation(fields: [doctor_id], references: [id], onDelete: Cascade)
+
+  @@map("Prescriptions")
+}
+
+enum Role {
+  admin
+  patient
+}
+
+enum Gender {
+  male
+  female
+  other
+  unknown
+}
+
+enum AppointmentStatus {
+  proposed
+  pending
+  booked
+  arrived
+  fulfilled
+  cancelled
+  noshow
+}
+
+enum ObservationStatus {
+  registered
+  preliminary
+  final
+  amended
+}
+
+enum DoctorStatus {
+  active
+  inactive
 }

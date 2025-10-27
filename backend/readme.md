@@ -34,6 +34,10 @@ pnpm prisma:push
 
 # Iniciar backend
 pnpm dev:backend
+
+
+# ver la BD con sus datos 
+pnpm prisma:studio
 ```
 
 ### Desarrollo solo del backend
@@ -45,6 +49,8 @@ pnpm --filter backend dev
 # O desde /backend (solo si ya instalaste desde la raíz)
 cd backend
 pnpm dev
+
+
 ```
 
 El servidor estará disponible en: **http://localhost:4000**
@@ -75,3 +81,4 @@ backend/
 ---
 
 ## 🗄️ Base
+

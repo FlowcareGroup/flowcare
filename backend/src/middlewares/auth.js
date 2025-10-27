@@ -1,0 +1,21 @@
+import jwt from 'jsonwebtoken';
+
+ export const getAuthUser = (req, res, next) => {
+  const token = req.headers["authorization"];
+  if (!token) {
+    return res.status(401).json({ message: "No token provided" });
+  }
+  if (!token.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "Invalid token format" });
+  }
+  const tokenWithoutBearer = token.split(" ")[1];
+  // Verify the token
+  try {
+    const authUser = jwt.verify(tokenWithoutBearer, process.env.JWT_SECRET);
+    req.user = { id: authUser.id , role: authUser.role};
+    next();
+  } catch (e) {
+    return res.status(401).json({ message: `No autorizado ${e}` });
+  }
+};
+
