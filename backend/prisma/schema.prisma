@@ -68,7 +68,10 @@ model Doctor {
 
   // Datos de contacto y profesionales
   telf      String       @db.VarChar(20)
-  hours     DateTime     @db.Date
+  hours     DateTime     @db.Date // lunes a viernes  10:00 - 18:00
+
+
+
   specialty String       @db.VarChar(100)
   status    DoctorStatus @default(active)
 
@@ -83,6 +86,15 @@ model Doctor {
 
   @@map("Doctors")
 }
+
+// tabal dias de la semana
+/*
+id
+name  enum lunes, martes, miercoles, jueves, viernes, sabado, domingo
+hora inicio date time solo meter la hora 
+hora fin date time solo meter la hora 
+doctor_id int FK
+*/
 
 // Tabla: Clinics
 model Clinic {

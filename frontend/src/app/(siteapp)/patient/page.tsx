@@ -40,7 +40,11 @@ export default async function PatientPage() {
           consultas en línea.
         </p>
 
+<<<<<<< HEAD
         <PatientAppointments appointments={patientData.appointments} />
+=======
+        <PatientAppointments />
+>>>>>>> 348cb5b994368f3caeb83b6031aeb5e0dcac5dbf
         <PatientMiniCards patientId={patientId} />
       </div>
     </>

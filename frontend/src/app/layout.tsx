@@ -3,7 +3,11 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import '../app/globals.css'
 import { Providers } from './providers'
 import AuthGuard from '@/components/AuthGuard'
+<<<<<<< HEAD
 import { FooterGenerico } from '@/components/FooterGenerico'
+=======
+import FooterSelector from '@/components/FooterSelector'
+>>>>>>> 348cb5b994368f3caeb83b6031aeb5e0dcac5dbf
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -33,7 +37,7 @@ export default function RootLayout({
         <Providers>
           <AuthGuard>
             {children}
-            <FooterGenerico />
+            <FooterSelector />
           </AuthGuard>
         </Providers>
       </body>

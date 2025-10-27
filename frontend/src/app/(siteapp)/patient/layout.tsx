@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 import SidebarPatient from './components/SidebarPatient'
 
+=======
+>>>>>>> 348cb5b994368f3caeb83b6031aeb5e0dcac5dbf
 export default function PatientLayout({
   children
 }: {

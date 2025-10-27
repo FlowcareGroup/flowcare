@@ -38,11 +38,33 @@
   /* Border and Divider Colors */
   --color-border: #e5e7eb; /* Light gray for borders */
   --color-border-dark: #d1d5db; /* Darker gray for darker backgrounds */
+  --color-border-blue: var(
+    --color-primary
+  ); /* Light blue for emphasis borders */
 
   /* Background Colors */
   --color-bg-primary: #ffffff; /* White background */
   --color-bg-secondary: #f9fafb; /* Light gray background */
   --color-bg-tertiary: #f3f4f6; /* Medium gray background */
+  --color-bg-blue-light: var(--color-light-hover); /* Light blue background */
+
+  /* light */
+  --color-bg-primary-gradient-light: var(
+    --color-light
+  ); /* Card background gradient main color */
+  --color-bg-secondary-gradient-light: var(
+    --color-light-active
+  ); /* Card background gradient secondary color */
+
+  /* dark */
+  --color-bg-primary-gradient-dark: var(
+    --color-primary
+  ); /* Card background gradient main color */
+  --color-bg-secondary-gradient-dark: var(
+    --color-primary-active
+  ); /* Card background gradient secondary color */
+
+  --color-bg-card-icon: var(--color-light-active); /* Card icon background */
 }
 
 /* ==============================================
@@ -204,6 +226,12 @@
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(51, 173, 230, 0.1);
+}
+
+@layer utilities {
+  .placeholder-italic::placeholder {
+    font-style: italic;
+  }
 }
 
 /* Text Color Utilities */
@@ -404,13 +432,24 @@ a:hover {
   text-decoration: underline;
 }
 
+<<<<<<< HEAD
 nav a {
+=======
+nav a,
+footer a {
+>>>>>>> 348cb5b994368f3caeb83b6031aeb5e0dcac5dbf
   color: var(--color-text-secondary);
   text-decoration: none !important;
 }
 
+<<<<<<< HEAD
 nav a:hover {
   color: var(--color-primary);
+=======
+nav a:hover,
+footer a:hover {
+  color: var(--color-primary) !important;
+>>>>>>> 348cb5b994368f3caeb83b6031aeb5e0dcac5dbf
 }
 
 /* Code Block Styles */
@@ -482,17 +521,46 @@ select:focus {
   }
 }
 
+<<<<<<< HEAD
+=======
+/* Animation Utilities */
+@keyframes fade-slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-slide-down {
+  animation: fade-slide-down 0.3s ease-out;
+}
+
+>>>>>>> 348cb5b994368f3caeb83b6031aeb5e0dcac5dbf
 /* Responsive Typography */
+@media (max-width: 850px) {
+  a {
+    font-size: 0.75rem;
+  }
+}
+
 @media (max-width: 768px) {
   h1 {
-    font-size: 1.5rem;
+    font-size: 1.5rem !important;
   }
 
   h2 {
-    font-size: 1.25rem;
+    font-size: 1.25rem !important;
   }
 
   h3 {
-    font-size: 1.125rem;
+    font-size: 1.125rem !important;
+  }
+
+  p {
+    font-size: 0.875rem;
   }
 }

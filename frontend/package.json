@@ -10,10 +10,15 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
+<<<<<<< HEAD
+=======
+    "date-fns": "^4.1.0",
+>>>>>>> 348cb5b994368f3caeb83b6031aeb5e0dcac5dbf
     "lucide-react": "^0.546.0",
     "next": "15.5.4",
     "next-auth": "5.0.0-beta.29",
     "react": "19.1.0",
+    "react-day-picker": "^9.11.1",
     "react-dom": "19.1.0",
     "react-hook-form": "^7.64.0",
     "react-icons": "^5.5.0",
