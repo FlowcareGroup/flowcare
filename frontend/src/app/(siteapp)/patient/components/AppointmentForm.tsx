@@ -86,10 +86,10 @@ export default function AppointmentForm({
 
         setSpecialties(uniqueSpecialties)
       } catch (err) {
-        console.error('Error fetching clinics:', err)
-        setMessage('Error al cargar las clínicas. Intenta más tarde.')
+        console.error('❌ Error al cargar clínicas:', err)
       }
     }
+
     fetchClinics()
   }, [backendToken])
 
@@ -290,8 +290,9 @@ export default function AppointmentForm({
             onChange={(e) => setSelectedSpecialty(e.target.value || null)}
           >
             <option value=''>Seleccione</option>
-            {specialties.map((sp, idx) => (
-              <option key={`specialty-${sp}-${idx}`} value={sp}>
+
+            {specialties.map((sp) => (
+              <option key={sp} value={sp}>
                 {sp}
               </option>
             ))}
