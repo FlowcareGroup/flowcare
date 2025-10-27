@@ -1,7 +1,7 @@
 
 "use client";
 import { deleteClinic, getAllClinics } from "@/services/api/clinicsServices";
-import { clinics } from "@/types/auth.types";
+import { clinics } from "@/services/types";
 import {  useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";

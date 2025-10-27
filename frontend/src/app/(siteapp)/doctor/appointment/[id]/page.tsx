@@ -24,7 +24,7 @@ import {
 } from "@/services/api/doctorService";
 import type { AddObservationPayload, AddPrescriptionPayload } from "@/services/api/doctorService";
 import AppointmentEditModal from "@/app/(siteapp)/doctor/components/AppointmentEditModal";
-import { Appointment, Prescription } from "@/types";
+import { Appointment, Prescription } from "@/services/types";
 
 export default function AppointmentDetailPage() {
   const params = useParams();
