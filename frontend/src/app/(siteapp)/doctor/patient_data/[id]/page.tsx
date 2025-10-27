@@ -7,23 +7,26 @@ import { FaArrowLeft, FaEnvelope, FaMapPin, FaCalendar } from "react-icons/fa";
 import { getPatientProfile, type PatientProfile } from "@/services/api/patientService";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default function PatientDataPage({ params }: PageProps) {
-  console.log(params)
+  const [patientId, setPatientId] = useState<number | null>(null);
   const { data: session } = useSession();
   const accessToken = (session as any)?.accessToken;
-  const patientId = parseInt(params.id);
+
+  useEffect(() => {
+    params.then((p) => setPatientId(parseInt(p.id)));
+  }, [params]);
 
   const [patient, setPatient] = useState<PatientProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!accessToken) return;
+    if (!accessToken || patientId === null) return;
 
     const loadPatient = async () => {
       try {
