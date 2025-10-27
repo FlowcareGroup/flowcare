@@ -8,8 +8,10 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export default function createClinicPage() {
+  const { data: session } = useSession();
   const {
     register,
     handleSubmit,
@@ -21,7 +23,7 @@ export default function createClinicPage() {
 
   const onSubmit = async (data: ClinicSchema) => {
     try {
-      const response = await createClinic(data);
+      const response = await createClinic(data, (session as any).accessToken);
       console.log("✅ Clínica creada:", response);
       router.push("/admin");
     } catch (error) {
