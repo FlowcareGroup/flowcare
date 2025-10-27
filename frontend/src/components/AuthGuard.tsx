@@ -82,11 +82,11 @@ function getRoleBasedRoute(role: string | undefined): string {
     case 'patient':
       return '/patient'
     case 'doctor':
-      return '/doctor' // Hasta que exista /doctor
+      return '/patient' // Hasta que exista /doctor
     case 'admin':
       return '/admin'
     case 'clinic':
-      return '/patient' // Hasta que exista /center
+      return '/clinic' // Hasta que exista /center
     default:
       return '/patient'
   }

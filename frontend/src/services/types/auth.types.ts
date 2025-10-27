@@ -5,6 +5,8 @@
 // - response.types.ts for AuthResponse and Session
 // Or use: import * from './index'
 
+import { DateTime } from "next-auth/providers/kakao"
+
 export interface User {
   id: string
   email: string
@@ -45,4 +47,15 @@ export interface Session {
   role: string
   accessToken: string
   expiresAt: Date
+}
+
+
+
+export interface doctors {
+  id: number;
+  name: string;
+  email: string;
+  telf: string;
+  specialty: string;
+  hours: DateTime,
 }
