@@ -1,4 +1,5 @@
 import { Star } from 'lucide-react'
+import Image from 'next/image'
 
 export default function TestimonialsSection() {
   const testimonials = [
@@ -67,10 +68,12 @@ export default function TestimonialsSection() {
 
               <div className='flex items-center justify-start gap-4 mt-auto'>
                 <div className='w-12 h-12 aspect-square rounded-full overflow-hidden bg-(--color-primary)/10 flex items-center justify-center'>
-                  <img
+                  <Image
                     src={t.avatar}
                     alt={t.name}
                     className='size-full object-contain p-2 aspect-square'
+                    width={48}
+                    height={48}
                   />
                 </div>
                 <div className='text-left'>
