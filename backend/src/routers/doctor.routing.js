@@ -3,6 +3,7 @@ import express from "express";
 import DoctorsController from "../controllers/doctors.controller.js";
 import { body } from "express-validator";
 import validationChecker from "../middlewares/validationChecker.js";
+import { getAuthUser } from "../middlewares/auth.js";
 const router = express.Router();
 import { getAuthUser } from '../middlewares/auth.js';
 

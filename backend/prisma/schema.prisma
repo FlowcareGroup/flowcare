@@ -88,7 +88,6 @@ model Doctor {
 }
 
 
-
 // Tabla: Clinics
 model Clinic {
   id       Int    @id @default(autoincrement())
