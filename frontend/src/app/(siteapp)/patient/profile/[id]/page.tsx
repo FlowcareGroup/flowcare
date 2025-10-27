@@ -4,15 +4,16 @@ import { getPatientProfile } from '@/services/api/patientService'
 export default async function PatientProfilePage({
   params
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
+  const { id } = await params
   const session = await auth()
 
   if (!session || session.user?.role !== 'patient') {
     return <div>Acceso no autorizado.</div>
   }
 
-  const patientId = Number(params.id)
+  const patientId = Number(id)
   const accessToken: string = (session as any).accessToken
 
   const profile = await getPatientProfile(patientId, accessToken)
