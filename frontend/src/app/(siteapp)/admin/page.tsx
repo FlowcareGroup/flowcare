@@ -42,8 +42,7 @@ const [dataClinics, setdataClinics] = useState<clinics[]>([]);
 
    const deleteClinicHandler = async (id: number) => {
    try {
-      const response = await deleteClinic(id);
-      
+      const response = await deleteClinic(id, (session as any).accessToken);
       console.log("✅ Delete data:", response);
     } catch (error) {
       console.error("❌ Error in delete:", error);
