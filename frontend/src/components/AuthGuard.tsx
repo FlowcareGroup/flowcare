@@ -99,7 +99,7 @@ function checkRoleAccess(pathname: string, role: string | undefined): boolean {
     patient: ['/patient', '/home'],
     doctor: ['/doctor', '/doctor/patient/[id]', '/home'],
     admin: ['/admin', '/home'],
-    clinic: ['/patient', '/home']
+    clinic: ['/clinic', '/home', '/clinic/createDoctor', '/clinic/editDoctor/[id]'],
   }
 
   const allowedPaths = roleAccess[role as keyof typeof roleAccess] || []

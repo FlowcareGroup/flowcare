@@ -1,7 +1,7 @@
 "use client";
 
 import { deleteDoctor, getAllDoctorsBYClinic } from "@/services/api/doctorService";
-import { doctors } from "@/types/auth.types";
+import { doctors } from "@/services/types";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -16,7 +16,7 @@ export default function ClinicPage() {
  
   useEffect(() => {
     doctorsAll();
-  }, [dataDoctors]);
+  }, []);
 
   const doctorsAll = async () => {
     try {

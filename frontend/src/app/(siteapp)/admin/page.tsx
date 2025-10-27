@@ -20,7 +20,7 @@ const [dataClinics, setdataClinics] = useState<clinics[]>([]);
     try {
       const accessToken = (session as any)?.accessToken;
       if (!accessToken) return;
-      const response = await getAllClinics(accessToken);
+      const response = await getAllClinics(accessToken as string);
       setdataClinics(response);
       console.log("✅ Get data:", response);
     } catch (error) {
