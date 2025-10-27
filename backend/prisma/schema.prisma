@@ -87,6 +87,7 @@ model Doctor {
   @@map("Doctors")
 }
 
+
 // Tabla: Clinics
 model Clinic {
   id       Int    @id @default(autoincrement())

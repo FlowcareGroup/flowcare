@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* ==============================================
    Custom Color Palette - Blue Theme
@@ -38,11 +38,33 @@
   /* Border and Divider Colors */
   --color-border: #e5e7eb; /* Light gray for borders */
   --color-border-dark: #d1d5db; /* Darker gray for darker backgrounds */
+  --color-border-blue: var(
+    --color-primary
+  ); /* Light blue for emphasis borders */
 
   /* Background Colors */
   --color-bg-primary: #ffffff; /* White background */
   --color-bg-secondary: #f9fafb; /* Light gray background */
   --color-bg-tertiary: #f3f4f6; /* Medium gray background */
+  --color-bg-blue-light: var(--color-light-hover); /* Light blue background */
+
+  /* light */
+  --color-bg-primary-gradient-light: var(
+    --color-light
+  ); /* Card background gradient main color */
+  --color-bg-secondary-gradient-light: var(
+    --color-light-active
+  ); /* Card background gradient secondary color */
+
+  /* dark */
+  --color-bg-primary-gradient-dark: var(
+    --color-primary
+  ); /* Card background gradient main color */
+  --color-bg-secondary-gradient-dark: var(
+    --color-primary-active
+  ); /* Card background gradient secondary color */
+
+  --color-bg-card-icon: var(--color-light-active); /* Card icon background */
 }
 
 /* ==============================================
@@ -206,6 +228,12 @@
   box-shadow: 0 0 0 3px rgba(51, 173, 230, 0.1);
 }
 
+@layer utilities {
+  .placeholder-italic::placeholder {
+    font-style: italic;
+  }
+}
+
 /* Text Color Utilities */
 .text-primary {
   color: var(--color-primary);
@@ -302,15 +330,27 @@
 
 /* Gradient Backgrounds */
 .gradient-primary {
-  background: linear-gradient(135deg, var(--color-light) 0%, var(--color-light-hover) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-light) 0%,
+    var(--color-light-hover) 100%
+  );
 }
 
 .gradient-primary-dark {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-dark) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-dark) 100%
+  );
 }
 
 .gradient-primary-darker {
-  background: linear-gradient(135deg, var(--color-dark) 0%, var(--color-darker) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-dark) 0%,
+    var(--color-darker) 100%
+  );
 }
 
 /* Smooth Transitions */
@@ -350,8 +390,9 @@
 body {
   background-color: var(--color-bg-primary);
   color: var(--color-text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
-    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
 }
 
 /* Headings */
@@ -391,13 +432,26 @@ a:hover {
   text-decoration: underline;
 }
 
+
+nav a,
+footer a {
+  color: var(--color-text-secondary);
+  text-decoration: none !important;
+}
+
+
+nav a:hover,
+footer a:hover {
+  color: var(--color-primary) !important;
+}
+
 /* Code Block Styles */
 code {
   background-color: var(--color-bg-tertiary);
   color: var(--color-darker);
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
-  font-family: "Courier New", monospace;
+  font-family: 'Courier New', monospace;
   font-size: 0.875rem;
 }
 
@@ -447,17 +501,57 @@ select:focus {
   background-color: var(--color-dark);
 }
 
+@layer utilities {
+  html.no-scrollbar,
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  html.no-scrollbar::-webkit-scrollbar,
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+
+/* Animation Utilities */
+@keyframes fade-slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-slide-down {
+  animation: fade-slide-down 0.3s ease-out;
+}
+
 /* Responsive Typography */
+@media (max-width: 850px) {
+  a {
+    font-size: 0.75rem;
+  }
+}
+
 @media (max-width: 768px) {
   h1 {
-    font-size: 1.5rem;
+    font-size: 1.5rem !important;
   }
 
   h2 {
-    font-size: 1.25rem;
+    font-size: 1.25rem !important;
   }
 
   h3 {
-    font-size: 1.125rem;
+    font-size: 1.125rem !important;
+  }
+
+  p {
+    font-size: 0.875rem;
   }
 }

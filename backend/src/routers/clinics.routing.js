@@ -19,6 +19,7 @@ router.get("/getClinics/:id", ClinicsController.getClinics);
 
 //para que solo pueda entrar un admin
 router.use(requireRole("admin"));
+
 //POST /api/clinics/createClinic
 router.post(
   "/createClinic",

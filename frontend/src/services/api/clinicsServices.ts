@@ -5,13 +5,13 @@ const API_CLINICS_URL = process.env.BACKEND_URL //el .evn no funciona
   ? `${process.env.BACKEND_URL}/clinics`
   : "http://localhost:4000/api/clinics";
 
-export const getAllClinics = async () => {
+export const getAllClinics = async (token: string) => {
   console.log("🔗 Conectando a:", `${API_CLINICS_URL}/getAllClinics`);
 
   const response = await fetch(`${API_CLINICS_URL}/getAllClinics`, {
     method: "GET",
     headers: {
-      "Content-Type": "application/json" /*, authorization: "Bearer " + token*/,
+      "Content-Type": "application/json" , authorization: "Bearer " + token,
     },
   });
   return response.json();
