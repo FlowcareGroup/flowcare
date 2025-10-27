@@ -164,11 +164,11 @@ const getAllAppointmentsByDate = async (req, res) => {
       patientId: idPatient,
       ...(startDate &&
         endDate && {
-          created_at: {
-            gte: new Date(startDate),
-            lte: new Date(endDate),
-          },
-        }),
+        created_at: {
+          gte: new Date(startDate),
+          lte: new Date(endDate),
+        },
+      }),
     };
 
     const appointments = await prisma.appointment.findMany({
@@ -260,11 +260,87 @@ const getPatientProfile = async (req, res) => {
   }
 };
 
+const getAllAppointmentsByIdPatient = async (req, res) => {
+
+  try {
+    const { idPatient } = req.params.idPatient;
+    const appointments = await prisma.appointment.findMany({
+      where: { patientId: idPatient },
+      orderBy: { created_at: "desc" },
+    });
+    console.log('------->', appointments);
+    return res.json({ appointments });
+
+  } catch (error) {
+    console.error("Error fetching appointments by ID:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+
+}
+
+const editPatientProfile = async (req, res) => {
+  try {
+    const { idPatient } = req.params;
+    const { name_given, name_family, address, phone, gender, birth_date, marital_status, language } = req.body;
+
+    //Armar un objeto con los datos a actualizar
+    const dataToUpdate = {};
+    if (name_given !== undefined) dataToUpdate.name_given = name_given;
+    if (name_family !== undefined) dataToUpdate.name_family = name_family;
+    if (address !== undefined) dataToUpdate.address = address;
+    if (phone !== undefined) dataToUpdate.phone = phone;
+    if (gender !== undefined) dataToUpdate.gender = gender;
+    if (birth_date !== undefined) dataToUpdate.birth_date = birth_date;
+    if (marital_status !== undefined) dataToUpdate.marital_status = marital_status;
+    if (language !== undefined) dataToUpdate.language = language;
+
+    const updatedPatient = await prisma.patient.update({
+      where: { id: idPatient },
+      data: dataToUpdate,
+    });
+
+    res.json('UPDATE--->', updatedPatient);
+
+  } catch (error) {
+    console.error("Error editing patient profile:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+
+const createNewAppointment = async (req, res) => {
+  try {
+
+    const { idPatient } = req.params;
+    const { identifier,service_type, description, start_time, end_time, doctorId } = req.body;
+
+    const newAppointment = await prisma.appointment.create({
+      data: {
+        identifier,
+        service_type,
+        description,
+        start_time: new Date(start_time),
+        end_time: new Date(end_time),
+        doctor: { connect: { id: parseInt(doctorId) } },
+        patient: { connect: { id: parseInt(idPatient) } },
+      }
+    });
+    res.status(201).json(newAppointment);
+  } catch (error) {
+    console.error("Error creating new appointment:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+
 const PatientsController = {
   createPatient,
   loginPatient,
   getOrCreateUser,
   getAllAppointmentsByDate,
+  getAllAppointmentsByIdPatient,
+  createNewAppointment,
+  editPatientProfile,
   getPatientProfile,
 };
 
