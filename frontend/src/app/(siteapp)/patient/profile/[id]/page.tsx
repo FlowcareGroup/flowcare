@@ -1,31 +1,25 @@
-import { auth } from '../../../../../../auth'
-import { getPatientProfile } from '@/services/api/patientService'
+import { auth } from "../../../../../../auth";
+import { getPatientProfile } from "@/services/api/patientService";
 
-export default async function PatientProfilePage({
-  params
-}: {
-  params: Promise<{ id: string }>
-}) {
-  const { id } = await params
-  const session = await auth()
+export default async function PatientProfilePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const session = await auth();
 
-  if (!session || session.user?.role !== 'patient') {
-    return <div>Acceso no autorizado.</div>
+  if (!session || session.user?.role !== "patient") {
+    return <div>Acceso no autorizado.</div>;
   }
 
-  const patientId = Number(id)
-  const accessToken: string = (session as any).accessToken
+  const patientId = Number(id);
+  const accessToken: string = (session as any).accessToken;
 
-  const profile = await getPatientProfile(patientId, accessToken)
-  const personal = profile.personalData
-  const observations = profile.observations || []
+  const profile = await getPatientProfile(patientId, accessToken);
+  const personal = profile.personalData;
+  const observations = profile.observations || [];
 
   return (
     <div className='p-8'>
       <h1 className='text-2xl font-bold mb-4'>Tu ficha médica</h1>
-      <p className='text-gray-600 mb-8'>
-        Consulta tus datos personales y observaciones médicas.
-      </p>
+      <p className='text-gray-600 mb-8'>Consulta tus datos personales y observaciones médicas.</p>
 
       {/* Datos personales */}
       <section className='bg-white shadow rounded-xl p-6 mb-8'>
@@ -33,17 +27,32 @@ export default async function PatientProfilePage({
         <div className='grid sm:grid-cols-2 md:grid-cols-3 gap-4 text-sm'>
           <Info
             label='Nombre'
-            value={`${personal.name_given} ${personal.name_family || ''}`}
+            value={`${personal.name_given} ${personal.name_family || ""}`}
           />
-          <Info label='Email' value={personal.email} />
-          <Info label='Género' value={personal.gender || '—'} />
+          <Info
+            label='Email'
+            value={personal.email}
+          />
+          <Info
+            label='Género'
+            value={personal.gender || "—"}
+          />
           <Info
             label='Fecha de nacimiento'
-            value={personal.birth_date || '—'}
+            value={personal.birth_date || "—"}
           />
-          <Info label='Dirección' value={personal.address || '—'} />
-          <Info label='Estado civil' value={personal.marital_status || '—'} />
-          <Info label='Identificador' value={personal.identifier || '—'} />
+          <Info
+            label='Dirección'
+            value={personal.address || "—"}
+          />
+          <Info
+            label='Estado civil'
+            value={personal.marital_status || "—"}
+          />
+          <Info
+            label='Identificador'
+            value={personal.identifier || "—"}
+          />
         </div>
       </section>
 
@@ -66,12 +75,15 @@ export default async function PatientProfilePage({
             </thead>
             <tbody>
               {observations.map((obs) => (
-                <tr key={obs.id} className='border-b hover:bg-gray-50'>
+                <tr
+                  key={obs.id}
+                  className='border-b hover:bg-gray-50'
+                >
                   <td className='px-4 py-2'>{obs.date}</td>
                   <td className='px-4 py-2'>{obs.category}</td>
                   <td className='px-4 py-2'>{obs.code}</td>
                   <td className='px-4 py-2'>{obs.value}</td>
-                  <td className='px-4 py-2'>{obs.unit || '—'}</td>
+                  <td className='px-4 py-2'>{obs.unit || "—"}</td>
                   <td className='px-4 py-2'>{obs.doctor}</td>
                 </tr>
               ))}
@@ -80,7 +92,7 @@ export default async function PatientProfilePage({
         )}
       </section>
     </div>
-  )
+  );
 }
 
 function Info({ label, value }: { label: string; value: string }) {
@@ -89,7 +101,7 @@ function Info({ label, value }: { label: string; value: string }) {
       <p className='text-gray-500 text-xs uppercase tracking-wider'>{label}</p>
       <p className='text-gray-900 font-medium'>{value}</p>
     </div>
-  )
+  );
 }
 
 // // app/dashboard/patient/page.tsx
