@@ -20,7 +20,7 @@ export default function ClinicPage() {
 
   const doctorsAll = async () => {
     try {
-      const response = await getAllDoctorsBYClinic(backendToken);
+      const response = await getAllDoctorsBYClinic(backendToken as string);
       setDataDoctors(response);
       console.log("✅ Get data:", response);
     } catch (error) {
@@ -39,7 +39,7 @@ export default function ClinicPage() {
 
   const deleteDoctorHandler = async (id: number) => {
     try {
-      const response = await deleteDoctor(id, backendToken);
+      const response = await deleteDoctor(id, backendToken as string);
       console.log("✅ Delete data:", response);
     } catch (error) {
       console.error("❌ Error in deleteDoctor:", error);

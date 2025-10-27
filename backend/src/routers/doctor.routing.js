@@ -5,6 +5,8 @@ import { body } from "express-validator";
 import validationChecker from "../middlewares/validationChecker.js";
 import { getAuthUser } from "../middlewares/auth.js";
 const router = express.Router();
+import { getAuthUser } from '../middlewares/auth.js';
+
 
 //solo puede estrar si esta logueado
 router.use(getAuthUser);

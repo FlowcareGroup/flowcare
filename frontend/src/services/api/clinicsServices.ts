@@ -11,9 +11,7 @@ export const getAllClinics = async (token: string) => {
   const response = await fetch(`${API_CLINICS_URL}/getAllClinics`, {
     method: "GET",
     headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + token,
-      
+      "Content-Type": "application/json" , authorization: "Bearer " + token,
     },
   });
   return response.json();
