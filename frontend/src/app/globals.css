@@ -432,24 +432,17 @@ a:hover {
   text-decoration: underline;
 }
 
-<<<<<<< HEAD
-nav a {
-=======
+
 nav a,
 footer a {
->>>>>>> 348cb5b994368f3caeb83b6031aeb5e0dcac5dbf
   color: var(--color-text-secondary);
   text-decoration: none !important;
 }
 
-<<<<<<< HEAD
-nav a:hover {
-  color: var(--color-primary);
-=======
+
 nav a:hover,
 footer a:hover {
   color: var(--color-primary) !important;
->>>>>>> 348cb5b994368f3caeb83b6031aeb5e0dcac5dbf
 }
 
 /* Code Block Styles */
@@ -521,8 +514,7 @@ select:focus {
   }
 }
 
-<<<<<<< HEAD
-=======
+
 /* Animation Utilities */
 @keyframes fade-slide-down {
   from {
@@ -539,7 +531,6 @@ select:focus {
   animation: fade-slide-down 0.3s ease-out;
 }
 
->>>>>>> 348cb5b994368f3caeb83b6031aeb5e0dcac5dbf
 /* Responsive Typography */
 @media (max-width: 850px) {
   a {

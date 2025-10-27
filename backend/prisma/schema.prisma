@@ -87,14 +87,7 @@ model Doctor {
   @@map("Doctors")
 }
 
-// tabal dias de la semana
-/*
-id
-name  enum lunes, martes, miercoles, jueves, viernes, sabado, domingo
-hora inicio date time solo meter la hora 
-hora fin date time solo meter la hora 
-doctor_id int FK
-*/
+
 
 // Tabla: Clinics
 model Clinic {

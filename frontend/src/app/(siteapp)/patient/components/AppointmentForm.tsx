@@ -7,6 +7,7 @@ import {
   createAppointment
 } from '@/services/api/doctorService'
 import CalendarPicker from './CalendarPicker'
+import { useSession } from 'next-auth/react'
 
 interface Clinic {
   id: number
@@ -40,19 +41,23 @@ export default function AppointmentForm({
   const [selectedTime, setSelectedTime] = useState<string | null>(null)
   const [loadingSlots, setLoadingSlots] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
+    const { data: session } = useSession();
+  
+  const backendToken = session?.accessToken;
 
   // 🔹 1. Cargar clínicas con sus doctores
   useEffect(() => {
     const fetchClinics = async () => {
       try {
         // 👇 Forzamos el tipo de "data" para que TypeScript entienda la estructura
-        const data = (await getAllClinics()) as Clinic[]
+        const data = (await getAllClinics(backendToken)) as Clinic[]
         setClinics(data)
+         console.log('getAllClinics result:', data)
 
         // Crear lista de especialidades únicas
         const uniqueSpecialties: string[] = Array.from(
           new Set(
-            data.flatMap((clinic: Clinic) =>
+            data.map((clinic: Clinic) =>
               clinic.doctors.map((d: { specialty: string }) => d.specialty)
             )
           )

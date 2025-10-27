@@ -11,7 +11,7 @@ const router = express.Router();
 router.use(getAuthUser);
 
 //para que solo pueda entrar un admin
-router.use(requireRole("admin"));
+//router.use(requireRole("admin"));
 
 //GET /api/clinics/getAllClinics
 router.get("/getAllClinics", ClinicsController.getAllClinics);
