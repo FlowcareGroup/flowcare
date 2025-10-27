@@ -1,4 +1,4 @@
-import { LoginCredentials, SignUpData } from "@/types";
+import { LoginCredentials, SignUpData } from "@/services/types";
 
 // If you need the patients API URL, use the following:
 const API_PATIENTS_URL = process.env.BACKEND_URL
