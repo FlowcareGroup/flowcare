@@ -1,7 +1,7 @@
 import { ClinicEditSchema, ClinicSchema } from "@/app/lib/validations_schema";
 
-const API_CLINICS_URL = process.env.BACKEND_URL //el .evn no funciona
-  ? `${process.env.BACKEND_URL}/clinics`
+const API_CLINICS_URL = process.env.NEXT_PUBLIC_BACKEND_URL
+  ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/clinics`
   : "http://localhost:4000/api/clinics";
 
 export const getAllClinics = async (token: string) => {

@@ -1,9 +1,9 @@
-const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:4000/api";
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000/api";
 
 import { DoctorEditSchema, DoctorSchema } from "@/app/lib/validations_schema";
 
-const API_CLINICS_URL = process.env.BACKEND_URL
-  ? `${process.env.BACKEND_URL}/doctors`
+const API_CLINICS_URL = process.env.NEXT_PUBLIC_BACKEND_URL
+  ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/doctors`
   : "http://localhost:4000/api/doctors";
 
 export const getAllDoctorsBYClinic = async (token: string) => {
