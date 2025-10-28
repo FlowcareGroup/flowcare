@@ -3,16 +3,17 @@ import usersRouter from "./example/routers/users.routing.js";
 import patientsRouter from "./src/routers/patients.routing.js";
 import clinicsRouter from "./src/routers/clinics.routing.js";
 import doctorsRouter from "./src/routers/doctor.routing.js";
-import Server from "socket.io";
-
+import { createServer } from "http";
 import { getOrCreateUser } from "./src/controllers/patients.controller.js";
 import cors from "cors";
 import socketHandler from "./src/controllers/Soket.controller.js";
+import { Server } from "socket.io";
 
 // import  prisma  from "./.lib/prisma.js";
 const app = express();
+const httpServer = createServer(app);
 
-const io = new Server(http, {
+const io = new Server(httpServer, {
   cors: {
     origin: "*",
     methods: ["GET", "POST"],
@@ -36,6 +37,6 @@ socketHandler(io);
 //     res.send("Hello World!");
 // });
 
-app.listen(4000, () => {
+httpServer.listen(4000, () => {
   console.log("Server started on port 4000");
 });
