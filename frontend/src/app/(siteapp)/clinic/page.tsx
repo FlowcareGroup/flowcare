@@ -13,21 +13,32 @@ export default function ClinicPage() {
   const router = useRouter()
   const [dataDoctors, setDataDoctors] = useState<doctors[]>([])
   const { data: session, status } = useSession()
+
   if (status === 'loading' || !session) return <p>Cargando o no autenticado</p>
   const backendToken = session.accessToken
-  // const backendToken = "hash"
 
   useEffect(() => {
-    doctorsAll()
-  }, [])
+    if (session) {
+      doctorsAll()
+    }
+  }, [session])
 
   const doctorsAll = async () => {
     try {
       const response = await getAllDoctorsBYClinic(backendToken as string)
+
+      // Validate that response is an array
+      if (!Array.isArray(response)) {
+        console.error('Invalid response from getAllDoctorsBYClinic:', response)
+        setDataDoctors([])
+        return
+      }
+
       setDataDoctors(response)
       console.log('✅ Get data:', response)
     } catch (error) {
       console.error('❌ Error in getAllDoctors:', error)
+      setDataDoctors([])
     }
   }
 

@@ -14,7 +14,21 @@ export const getAllDoctorsBYClinic = async (token: string) => {
       authorization: "Bearer " + token,
     },
   });
-  return response.json();
+
+  if (!response.ok) {
+    console.error(`Error: ${response.status} ${response.statusText}`);
+    return [];
+  }
+
+  const data = await response.json();
+
+  // Ensure we always return an array
+  if (!Array.isArray(data)) {
+    console.error("Expected array from getAllDoctorsBYClinic, got:", data);
+    return [];
+  }
+
+  return data;
 };
 
 export const getDoctorByIdClinic = async (id: number, token: string) => {
