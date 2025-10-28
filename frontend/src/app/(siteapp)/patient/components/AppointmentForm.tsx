@@ -50,14 +50,18 @@ export default function AppointmentForm({
   // 🔹 1. Cargar clínicas con sus doctores
   useEffect(() => {
     const fetchClinics = async () => {
-      if (!backendToken) {
-        console.warn('⚠️ No backend token available yet.')
-        return
-      }
-
       try {
+        // Verificar que el token existe antes de proceder
+        if (!backendToken || backendToken.trim() === '') {
+          console.error('Token no disponible para getAllClinics')
+          setMessage('Error: Debe estar autenticado para ver las clínicas')
+          return
+        }
+
+        // 👇 Forzamos el tipo de "data" para que TypeScript entienda la estructura
         const data = (await getAllClinics(backendToken)) as Clinic[]
 
+        // Verificar que la respuesta es un array (no un error)
         if (!Array.isArray(data)) {
           console.error('Respuesta inválida de getAllClinics:', data)
           setMessage('Error al cargar las clínicas')
@@ -75,12 +79,13 @@ export default function AppointmentForm({
             })
           )
         )
+
         setSpecialties(uniqueSpecialties)
       } catch (err) {
-        console.error('❌ Error al cargar clínicas:', err)
+        console.error('Error fetching clinics:', err)
+        setMessage('Error al cargar las clínicas. Intenta más tarde.')
       }
     }
-
     fetchClinics()
   }, [backendToken])
 
