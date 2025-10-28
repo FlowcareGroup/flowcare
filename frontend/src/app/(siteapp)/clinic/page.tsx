@@ -57,36 +57,44 @@ export default function ClinicPage() {
   };
 
   return (
-    <div className='p-4'>
-      <h1 className='text-2xl font-bold mb-4'>Panel de Administración</h1>
-      <p>Bienvenido al panel de clicicas</p>
+    <div className='p-8'>
+      <h1 className='text-2xl font-bold mb-4'>
+        Panel de Administración de Clínica
+      </h1>
+      <p className='text-lg mb-8'>
+        Bienvenido. Aquí puedes gestionar los doctores de tu clínica.
+      </p>
 
       {dataDoctors.map((doctor) => (
         <div
           key={doctor.id}
-          className='border p-4 my-2 rounded'
+          className='card'
         >
-          <h2 className='text-xl font-semibold'>{doctor.name}</h2>
-          <p className='text-gray-600'>{doctor.email}</p>
-          <p className='text-gray-600'>Teléfono: {doctor.telf}</p>
-          <p className='text-gray-600'>Especialidad: {doctor.specialty}</p>
-          <p className='text-gray-600'>Horario: {doctor.hours}</p>
-          <button
-            onClick={() => {
-              editDoctorHandler(doctor.id);
-            }}
-            className='mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600'
-          >
-            editar
-          </button>
-          <button
-            onClick={() => {
-              deleteDoctorHandler(doctor.id);
-            }}
-            className='mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600'
-          >
-            borrar
-          </button>
+          <h2 className='text-lg font-semibold text-dark mb-3'>{doctor.name}</h2>
+          <div className='space-y-1 text-text-secondary mb-4'>
+            <p><span className='font-medium text-dark'>Email:</span> {doctor.email}</p>
+            <p><span className='font-medium text-dark'>Teléfono:</span> {doctor.telf}</p>
+            <p><span className='font-medium text-dark'>Especialidad:</span> {doctor.specialty}</p>
+            <p><span className='font-medium text-dark'>Horario:</span> {doctor.hours}</p>
+          </div>
+          <div className='flex gap-3'>
+            <button
+              onClick={() => {
+                editDoctorHandler(doctor.id);
+              }}
+              className='btn-primary'
+            >
+              Editar
+            </button>
+            <button
+              onClick={() => {
+                deleteDoctorHandler(doctor.id);
+              }}
+              className='btn-error'
+            >
+              Eliminar
+            </button>
+          </div>
         </div>
       ))}
 
@@ -94,9 +102,9 @@ export default function ClinicPage() {
         onClick={() => {
           createDoctorHandler();
         }}
-        className='mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600'
+        className='btn-success mt-6'
       >
-        crear
+        Crear Doctor
       </button>
     </div>
   );

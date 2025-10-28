@@ -62,50 +62,53 @@ export default function AdminPage() {
   };
 
   return (
-    <div className='p-4'>
-      <h1 className='text-2xl font-bold mb-4'>Panel de Administración</h1>
+    <div className='p-8'>
+      <h1 className='text-2xl font-bold mb-4'>
+        Bienvenido al Panel de Administración
+      </h1>
 
-      <p>
-        Bienvenido al panel de administración. Aquí puedes gestionar usuarios, roles y
-        configuraciones del sistema.
+      <p className='text-lg mb-8'>
+        Aquí puedes gestionar clínicas, doctores y configuraciones del sistema.
       </p>
 
       {dataClinics.map((clinic) => (
         <div
           key={clinic.id}
-          className='border p-4 my-2 rounded'
+          className='card'
         >
-          <h2 className='text-xl font-semibold'>{clinic.name}</h2>
-          <p className='text-gray-600'>{clinic.email}</p>
-          <p className='text-gray-600'>Teléfono: {clinic.telf}</p>
-          <p className='text-gray-600'>
-            Doctores: {clinic.doctors.map((doctor) => doctor.name).join(", ") || "No hay doctores"}
-          </p>
-          <button
-            onClick={() => {
-              editClinicHandler(clinic.id);
-            }}
-            className='mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600'
-          >
-            editar
-          </button>
-          <button
-            onClick={() => {
-              deleteClinicHandler(clinic.id);
-            }}
-            className='mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600'
-          >
-            borrar
-          </button>
+          <h2 className='text-lg font-semibold text-dark mb-3'>{clinic.name}</h2>
+          <div className='space-y-1 text-text-secondary mb-4'>
+            <p><span className='font-medium text-dark'>Email:</span> {clinic.email}</p>
+            <p><span className='font-medium text-dark'>Teléfono:</span> {clinic.telf}</p>
+            <p><span className='font-medium text-dark'>Doctores:</span> {clinic.doctors.map((doctor) => doctor.name).join(", ") || "No hay doctores"}</p>
+          </div>
+          <div className='flex gap-3'>
+            <button
+              onClick={() => {
+                editClinicHandler(clinic.id);
+              }}
+              className='btn-primary'
+            >
+              Editar
+            </button>
+            <button
+              onClick={() => {
+                deleteClinicHandler(clinic.id);
+              }}
+              className='btn-error'
+            >
+              Eliminar
+            </button>
+          </div>
         </div>
       ))}
       <button
         onClick={() => {
           createClinicHandler();
         }}
-        className='mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600'
+        className='btn-success mt-6'
       >
-        crear
+        Crear Clínica
       </button>
     </div>
   );
