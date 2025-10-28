@@ -41,11 +41,11 @@ export default function SignUp() {
   };
 
   return (
-    <div className='p-8 w-full max-w-md'>
-      <p className='text-gray-600 mb-2 text-center'>Completa el formulario para registrarte en FlowCare</p>
+    <div className='p-4 md:p-8 w-full'>
+      <p className='text-base md:text-lg text-gray-600 mb-4 text-center'>Completa el formulario para registrarte en FlowCare</p>
 
       {serverError && (
-        <div className='mb-4 p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm'>
+        <div className='mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm'>
           {serverError}
         </div>
       )}
@@ -58,7 +58,7 @@ export default function SignUp() {
         <div>
           <label
             htmlFor='name_given'
-            className='block text-sm font-medium mb-1'
+            className='block text-sm font-medium mb-2'
           >
             Nombre y Apellidos
           </label>
@@ -67,9 +67,9 @@ export default function SignUp() {
             type='text'
             {...register("name_given")}
             placeholder='Juan'
-            className={`border p-2 w-full rounded ${
+            className={`border p-3 w-full rounded-lg text-sm md:text-base ${
               errors.name_given ? "border-red-500" : "border-gray-300"
-            }`}
+            } focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500`}
             disabled={isLoading}
           />
           {errors.name_given && (
@@ -77,13 +77,11 @@ export default function SignUp() {
           )}
         </div>
 
-        
-
         {/* Email */}
         <div>
           <label
             htmlFor='email'
-            className='block text-sm font-medium mb-1'
+            className='block text-sm font-medium mb-2'
           >
             Correo Electrónico
           </label>
@@ -92,9 +90,9 @@ export default function SignUp() {
             type='email'
             {...register("email")}
             placeholder='juan.perez@ejemplo.com'
-            className={`border p-2 w-full rounded ${
+            className={`border p-3 w-full rounded-lg text-sm md:text-base ${
               errors.email ? "border-red-500" : "border-gray-300"
-            }`}
+            } focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500`}
             disabled={isLoading}
           />
           {errors.email && <p className='text-red-500 text-sm mt-1'>{errors.email.message}</p>}
@@ -104,7 +102,7 @@ export default function SignUp() {
         <div>
           <label
             htmlFor='password'
-            className='block text-sm font-medium mb-1'
+            className='block text-sm font-medium mb-2'
           >
             Contraseña
           </label>
@@ -113,9 +111,9 @@ export default function SignUp() {
             type='password'
             {...register("password")}
             placeholder='••••••••'
-            className={`border p-2 w-full rounded ${
+            className={`border p-3 w-full rounded-lg text-sm md:text-base ${
               errors.password ? "border-red-500" : "border-gray-300"
-            }`}
+            } focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500`}
             disabled={isLoading}
           />
           {errors.password && (
@@ -130,7 +128,7 @@ export default function SignUp() {
         <div>
           <label
             htmlFor='confirmPassword'
-            className='block text-sm font-medium mb-1'
+            className='block text-sm font-medium mb-2'
           >
             Confirmar Contraseña
           </label>
@@ -139,9 +137,9 @@ export default function SignUp() {
             type='password'
             {...register("confirmPassword")}
             placeholder='••••••••'
-            className={`border p-2 w-full rounded ${
+            className={`border p-3 w-full rounded-lg text-sm md:text-base ${
               errors.confirmPassword ? "border-red-500" : "border-gray-300"
-            }`}
+            } focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500`}
             disabled={isLoading}
           />
           {errors.confirmPassword && (
@@ -153,7 +151,7 @@ export default function SignUp() {
         <button
           type='submit'
           disabled={isLoading || isSubmitting}
-          className='bg-blue-500 hover:bg-blue-600 text-white p-2 w-full rounded disabled:opacity-50 disabled:cursor-not-allowed font-medium'
+          className='bg-blue-500 hover:bg-blue-600 text-white p-3 w-full rounded-lg disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-colors text-sm md:text-base'
         >
           {isLoading ? "Creando cuenta..." : "Crear Cuenta"}
         </button>
@@ -165,14 +163,12 @@ export default function SignUp() {
           ¿Ya tienes una cuenta?{" "}
           <Link
             href='/auth/login'
-            className='text-blue-500 hover:text-blue-600 font-medium'
+            className='text-blue-500 hover:text-blue-600 font-medium transition-colors'
           >
             Inicia sesión aquí
           </Link>
         </p>
       </div>
-
-      
     </div>
   );
 }
