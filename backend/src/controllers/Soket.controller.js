@@ -3,7 +3,7 @@ export default function socketHandler(io) {
 
   io.on("connection", async (socket) => {
     console.log("New client connected", socket.id);
-
+    //revisar para que me de el id y el rol si no quitarlo 
     socket.on("addNewUsers", (user) => {
       user &&
         !onlineUsers.some((u) => u?.userId === user.id) &&

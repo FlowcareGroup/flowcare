@@ -20,7 +20,7 @@ export const SocketContextProvider = ({children} : {children : React.ReactNode})
   const [isSocketConnected, setisSocketConnected] = useState(false) ;
   const [onlineUsers, setOnlineUsers] = useState<socketUser[] | null>(null) ;
    console.log("isConnected:",isSocketConnected) ;
-// console.log("socket_data:",user,status) ;
+ console.log("socket_data:",user,status) ;
 console.log("onlineUsers:", onlineUsers) ;
       console.log("User changed:", process.env.NEXT_PUBLIC_SOCKET_URL) ;
 
