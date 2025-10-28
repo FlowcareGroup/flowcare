@@ -62,8 +62,8 @@ export default function createDoctorPage() {
         {errors.specialty && <p className='text-red-500'>{errors.specialty.message}</p>}
 
         <input
-          type='date'
-          placeholder='hours'
+          type='text'
+          placeholder='Horario (ej: 09:00-18:00)'
           {...register("hours")}
           className='w-full p-2 border border-gray-300 rounded'
         />
