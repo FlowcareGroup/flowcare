@@ -34,18 +34,21 @@ Muchos sistemas de salud actuales son fragmentados, generando duplicación de da
 **Todas las funcionalidades core están implementadas y operativas:**
 
 #### 🔐 Autenticación y Autorización
+
 - ✅ NextAuth v5 con JWT y sesiones
-- ✅ Sistema de roles (patient, doctor, admin, clinic)  
+- ✅ Sistema de roles (patient, doctor, admin, clinic)
 - ✅ Middleware de protección en rutas
 - ✅ Login/Signup responsivo
 
-#### 👨‍⚕️ Panel del Doctor  
+#### 👨‍⚕️ Panel del Doctor
+
 - ✅ Dashboard con estadísticas diarias
 - ✅ Calendario de citas con filtrado por fecha
 - ✅ Búsqueda de pacientes
 - ✅ Detalles completos de citas
 
 #### 👤 Panel del Paciente
+
 - ✅ Listado de citas personales
 - ✅ Formulario de nueva cita con validaciones
 - ✅ Selector interactivo de clínica/doctor/especialidad
@@ -53,11 +56,13 @@ Muchos sistemas de salud actuales son fragmentados, generando duplicación de da
 - ✅ Perfil con historial médico
 
 #### 🏥 Gestión de Clínicas
+
 - ✅ Panel admin para crear/editar/eliminar clínicas
 - ✅ Panel de clínica para gestionar doctores
 - ✅ Relaciones bidireccionales configuradas
 
-#### 🎨 Interfaz de Usuario  
+#### 🎨 Interfaz de Usuario
+
 - ✅ Diseño responsive (mobile-first)
 - ✅ Tema Blue consistente en todas las páginas
 - ✅ Clases CSS personalizadas (btn-primary, btn-error, card, etc.)
@@ -65,6 +70,7 @@ Muchos sistemas de salud actuales son fragmentados, generando duplicación de da
 - ✅ Mensajes de error/éxito claros
 
 #### 🔧 Backend
+
 - ✅ Express.js en Koyeb
 - ✅ Prisma ORM con PostgreSQL
 - ✅ Migrations aplicadas
