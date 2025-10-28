@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Doctors" ALTER COLUMN "hours" SET DATA TYPE VARCHAR(100);

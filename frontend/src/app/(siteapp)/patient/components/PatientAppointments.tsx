@@ -1,29 +1,34 @@
+"use client";
 
-'use client'
-
-import { useEffect, useState } from 'react'
-import { getPatientProfile } from '@/services/api/patientService'
-import AppointmentList from './AppointmentsList'
-import AppointmentForm from './AppointmentForm'
+import { useEffect, useState } from "react";
+import { getPatientProfile } from "@/services/api/patientService";
+import AppointmentList from "./AppointmentsList";
+import AppointmentForm from "./AppointmentForm";
 
 export default function PatientAppointments() {
-  const patientId = 1 // mock o session.user.id
-  const accessToken = 'fake-token' // mock o session.accessToken
+  // NOTA: Estos valores están hardcodeados temporalmente.
+  // TODO: Obtener estos valores de la sesión de NextAuth en el futuro:
+  // import { useSession } from 'next-auth/react'
+  // const { data: session, status } = useSession()
+  // const patientId = session?.user?.id ? Number(session.user.id) : null
+  // const accessToken = (session as any)?.accessToken || null
+  const patientId = 1; // mock o session.user.id
+  const accessToken = "fake-token"; // mock o session.accessToken
 
-  const [appointments, setAppointments] = useState<any[]>([])
+  const [appointments, setAppointments] = useState<any[]>([]);
 
   const loadAppointments = async () => {
     try {
-      const profile = await getPatientProfile(patientId, accessToken)
-      setAppointments(profile.appointments)
+      const profile = await getPatientProfile(patientId, accessToken);
+      setAppointments(profile.appointments);
     } catch {
-      console.log('Error cargando citas')
+      console.log("Error cargando citas");
     }
-  }
+  };
 
   useEffect(() => {
-    loadAppointments()
-  }, [])
+    loadAppointments();
+  }, []);
 
   return (
     <div className='space-y-8'>
@@ -39,8 +44,95 @@ export default function PatientAppointments() {
         onAppointmentCreated={loadAppointments}
       />
     </div>
+  );
+}
+
+/* CÓDIGO FUTURO - Versión con NextAuth integrada:
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useSession } from 'next-auth/react'
+import { getPatientProfile } from '@/services/api/patientService'
+import AppointmentList from './AppointmentsList'
+import AppointmentForm from './AppointmentForm'
+
+export default function PatientAppointments() {
+  const { data: session, status } = useSession()
+  const [appointments, setAppointments] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  // Extract patient ID and token from session
+  const patientId = session?.user?.id ? Number(session.user.id) : null
+  const accessToken = (session as any)?.accessToken || null
+
+  const loadAppointments = async () => {
+    if (!patientId || !accessToken) {
+      setError('No autenticado')
+      setIsLoading(false)
+      return
+    }
+
+    setIsLoading(true)
+    setError(null)
+    try {
+      const profile = await getPatientProfile(patientId, accessToken)
+      setAppointments(profile.appointments || [])
+    } catch (err: any) {
+      console.error('Error cargando citas:', err)
+      setError(err.message || 'Error al cargar las citas')
+      setAppointments([])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if (status === 'authenticated' && patientId && accessToken) {
+      loadAppointments()
+    } else if (status === 'unauthenticated') {
+      setError('Debes estar autenticado')
+      setIsLoading(false)
+    }
+  }, [status, patientId, accessToken])
+
+  if (status === 'loading') {
+    return <div className='text-center py-8 text-gray-500'>Cargando sesión...</div>
+  }
+
+  if (!patientId || !accessToken) {
+    return <div className='text-center py-8 text-red-500'>No autenticado. Por favor inicia sesión.</div>
+  }
+
+  return (
+    <div className='space-y-8'>
+      {error && (
+        <div className='bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded'>
+          {error}
+        </div>
+      )}
+
+      {isLoading ? (
+        <div className='text-center py-8 text-gray-500'>Cargando citas...</div>
+      ) : (
+        <>
+          <AppointmentList
+            appointments={appointments}
+            accessToken={accessToken}
+            onRefresh={loadAppointments}
+          />
+
+          <AppointmentForm
+            patientId={patientId}
+            accessToken={accessToken}
+            onAppointmentCreated={loadAppointments}
+          />
+        </>
+      )}
+    </div>
   )
 }
+*/
 
 // 'use client'
 

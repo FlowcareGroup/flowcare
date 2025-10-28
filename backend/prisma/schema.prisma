@@ -67,12 +67,9 @@ model Doctor {
   password String @db.VarChar(255)
 
   // Datos de contacto y profesionales
-  telf      String       @db.VarChar(20)
-  hours     DateTime     @db.Date // lunes a viernes  10:00 - 18:00
-
-
-
-  specialty String       @db.VarChar(100)
+  telf      String @db.VarChar(20)
+  hours     String @db.VarChar(100) // Horario de trabajo, ej: "09:00-18:00"
+  specialty String @db.VarChar(100)
   status    DoctorStatus @default(active)
 
   // Relación con Clinic (Muchos a Uno)
