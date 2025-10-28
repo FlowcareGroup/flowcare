@@ -30,6 +30,7 @@ export default function editDoctorPage() {
   const backendToken = (session as any).accessToken || ''
   const params = useParams()
   const id = Number(params.id)
+  console.log('ID del doctor:', id)
 
   useEffect(() => {
     DoctorById(id)
@@ -39,6 +40,7 @@ export default function editDoctorPage() {
     try {
       const response = await getDoctorByIdClinic(id, backendToken)
       console.log('✅ Doctor obtenido:', response)
+
       reset(response)
     } catch (error) {
       console.error('❌ Error al obtener doctor:', error)
