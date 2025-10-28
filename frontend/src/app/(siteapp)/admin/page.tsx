@@ -63,9 +63,7 @@ export default function AdminPage() {
 
   return (
     <div className='p-8'>
-      <h1 className='text-2xl font-bold mb-4'>
-        Bienvenido al Panel de Administración
-      </h1>
+      <h1 className='text-2xl font-bold mb-4'>Bienvenido al Panel de Administración</h1>
 
       <p className='text-lg mb-8'>
         Aquí puedes gestionar clínicas, doctores y configuraciones del sistema.
@@ -78,9 +76,16 @@ export default function AdminPage() {
         >
           <h2 className='text-lg font-semibold text-dark mb-3'>{clinic.name}</h2>
           <div className='space-y-1 text-text-secondary mb-4'>
-            <p><span className='font-medium text-dark'>Email:</span> {clinic.email}</p>
-            <p><span className='font-medium text-dark'>Teléfono:</span> {clinic.telf}</p>
-            <p><span className='font-medium text-dark'>Doctores:</span> {clinic.doctors.map((doctor) => doctor.name).join(", ") || "No hay doctores"}</p>
+            <p>
+              <span className='font-medium text-dark'>Email:</span> {clinic.email}
+            </p>
+            <p>
+              <span className='font-medium text-dark'>Teléfono:</span> {clinic.telf}
+            </p>
+            <p>
+              <span className='font-medium text-dark'>Doctores:</span>{" "}
+              {clinic.doctors.map((doctor) => doctor.name).join(", ") || "No hay doctores"}
+            </p>
           </div>
           <div className='flex gap-3'>
             <button

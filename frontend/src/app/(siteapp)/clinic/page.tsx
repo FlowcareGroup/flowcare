@@ -58,12 +58,8 @@ export default function ClinicPage() {
 
   return (
     <div className='p-8'>
-      <h1 className='text-2xl font-bold mb-4'>
-        Panel de Administración de Clínica
-      </h1>
-      <p className='text-lg mb-8'>
-        Bienvenido. Aquí puedes gestionar los doctores de tu clínica.
-      </p>
+      <h1 className='text-2xl font-bold mb-4'>Panel de Administración de Clínica</h1>
+      <p className='text-lg mb-8'>Bienvenido. Aquí puedes gestionar los doctores de tu clínica.</p>
 
       {dataDoctors.map((doctor) => (
         <div
@@ -72,10 +68,18 @@ export default function ClinicPage() {
         >
           <h2 className='text-lg font-semibold text-dark mb-3'>{doctor.name}</h2>
           <div className='space-y-1 text-text-secondary mb-4'>
-            <p><span className='font-medium text-dark'>Email:</span> {doctor.email}</p>
-            <p><span className='font-medium text-dark'>Teléfono:</span> {doctor.telf}</p>
-            <p><span className='font-medium text-dark'>Especialidad:</span> {doctor.specialty}</p>
-            <p><span className='font-medium text-dark'>Horario:</span> {doctor.hours}</p>
+            <p>
+              <span className='font-medium text-dark'>Email:</span> {doctor.email}
+            </p>
+            <p>
+              <span className='font-medium text-dark'>Teléfono:</span> {doctor.telf}
+            </p>
+            <p>
+              <span className='font-medium text-dark'>Especialidad:</span> {doctor.specialty}
+            </p>
+            <p>
+              <span className='font-medium text-dark'>Horario:</span> {doctor.hours}
+            </p>
           </div>
           <div className='flex gap-3'>
             <button
