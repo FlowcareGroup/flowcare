@@ -34,6 +34,8 @@ export default async function DoctorPage() {
 
   // **AQUÍ REALIZAS LA LLAMADA A LA API CON EL doctorId**
   const initialDate = new Date().toISOString().split("T")[0];
+
+  // Fetch appointments - getAllAppointmentsByDoctorByDay handles errors internally
   const appointmentsData = await getAllAppointmentsByDoctorByDay(
     doctorId,
     initialDate,

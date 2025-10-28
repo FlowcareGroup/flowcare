@@ -143,21 +143,60 @@ const getAllAppointmentsByDoctorByDay = async (
   const url = `${BACKEND_URL}/doctors/${doctorId}/appointments?date=${date}&page=${page}&limit=${limit}`;
   console.log("Fetching appointments from:", url);
 
-  const response = await fetch(url, requestOptions);
-
   try {
+    const response = await fetch(url, requestOptions);
+
     if (!response.ok) {
       const errorBody = await response.text();
       console.error(`Backend returned status ${response.status}: ${errorBody}`);
-      throw new Error(`Failed to fetch appointments: HTTP ${response.status}`);
+      // Return empty data structure instead of throwing
+      return {
+        data: [],
+        pagination: {
+          total: 0,
+          page: 1,
+          limit: 4,
+          totalPages: 0,
+          hasNextPage: false,
+          hasPreviousPage: false,
+        },
+      };
     }
 
     const data = await response.json();
     console.log("Fetched appointments data:", data);
+
+    // Validate response structure
+    if (!data || !data.data || !Array.isArray(data.data)) {
+      console.warn("Invalid response structure, returning empty data");
+      return {
+        data: [],
+        pagination: {
+          total: 0,
+          page: 1,
+          limit: 4,
+          totalPages: 0,
+          hasNextPage: false,
+          hasPreviousPage: false,
+        },
+      };
+    }
+
     return data;
   } catch (error) {
     console.error("Error fetching appointments:", error);
-    throw error;
+    // Return empty data structure on error
+    return {
+      data: [],
+      pagination: {
+        total: 0,
+        page: 1,
+        limit: 4,
+        totalPages: 0,
+        hasNextPage: false,
+        hasPreviousPage: false,
+      },
+    };
   }
 };
 

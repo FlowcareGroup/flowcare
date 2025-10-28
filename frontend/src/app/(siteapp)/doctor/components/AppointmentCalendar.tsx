@@ -72,8 +72,32 @@ export default function AppointmentCalendar({
         page,
         limit
       );
-      setAppointments(response.data);
-      setPagination(response.pagination);
+
+      // Validate response structure
+      if (response && response.data && Array.isArray(response.data)) {
+        setAppointments(response.data);
+        setPagination(
+          response.pagination || {
+            total: 0,
+            page: 1,
+            limit: limit,
+            totalPages: 0,
+            hasNextPage: false,
+            hasPreviousPage: false,
+          }
+        );
+      } else {
+        console.warn("Invalid response structure:", response);
+        setAppointments([]);
+        setPagination({
+          total: 0,
+          page: 1,
+          limit: limit,
+          totalPages: 0,
+          hasNextPage: false,
+          hasPreviousPage: false,
+        });
+      }
       setCurrentPage(page);
     } catch (error) {
       console.error("Error loading appointments:", error);
@@ -317,7 +341,7 @@ export default function AppointmentCalendar({
                         <p className='text-sm text-gray-600 mt-1'>
                           <strong>Hora:</strong> {formattedTime} - {formattedEndTime}
                         </p>
-                        <div className="">
+                        <div className=''>
                           <Link href={`/doctor/appointment/${appointment.id}`}>
                             <p className='btn-primary mt-2 inline-block p-0 text-xs'>
                               Ver datos de la cita
