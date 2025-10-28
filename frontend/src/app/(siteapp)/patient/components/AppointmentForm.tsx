@@ -173,9 +173,9 @@ export default function AppointmentForm({ patientId, accessToken, onAppointmentC
             onChange={(e) => setSelectedSpecialty(e.target.value || null)}
           >
             <option value=''>Seleccione</option>
-            {specialties.map((sp) => (
+            {specialties.map((sp, idx) => (
               <option
-                key={sp}
+                key={`specialty-${sp}-${idx}`}
                 value={sp}
               >
                 {sp}
