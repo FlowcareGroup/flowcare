@@ -206,8 +206,8 @@ export default function AppointmentForm({
             onChange={(e) => setSelectedSpecialty(e.target.value || null)}
           >
             <option value=''>Seleccione</option>
-            {specialties.map((sp) => (
-              <option key={sp} value={sp}>
+            {specialties.map((sp, idx) => (
+              <option key={`specialty-${sp}-${idx}`} value={sp}>
                 {sp}
               </option>
             ))}
