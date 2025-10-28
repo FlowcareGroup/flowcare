@@ -6,7 +6,7 @@ export const requireRole = (requiredRole) => {
         return res.status(401).json({ message: "No authenticated" });
       }
       console.log(req.user);
-      if (rol !== requiredRole) {
+      if (req.user.role !== requiredRole) {
         return res.status(403).json({ message: "No tienes permiso para esa acción" });
       }
       next();

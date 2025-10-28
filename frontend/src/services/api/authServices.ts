@@ -1,10 +1,10 @@
 import { LoginCredentials, SignUpData } from "@/services/types";
 
 // If you need the patients API URL, use the following:
-const API_PATIENTS_URL = process.env.BACKEND_URL
-  ? `${process.env.BACKEND_URL}/patients`
+const API_PATIENTS_URL = process.env.NEXT_PUBLIC_BACKEND_URL
+  ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/patients`
   : "http://localhost:4000/api/patients";
-const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:4000/api";
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000/api";
 
 export const login = async (credentials: LoginCredentials) => {
   try {
