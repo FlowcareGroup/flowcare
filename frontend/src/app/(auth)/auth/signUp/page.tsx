@@ -25,11 +25,9 @@ export default function SignUp() {
     try {
       const response = await signUp(data);
 
-       
       console.log("✅ Registro exitoso, datos:", response);
       setIsLoading(false);
       router.push("/auth/login");
-      
     } catch (error) {
       console.error("❌ Error en registro:", error);
       setServerError(
@@ -42,7 +40,9 @@ export default function SignUp() {
 
   return (
     <div className='p-4 md:p-8 w-full'>
-      <p className='text-base md:text-lg text-gray-600 mb-4 text-center'>Completa el formulario para registrarte en FlowCare</p>
+      <p className='text-base md:text-lg text-gray-600 mb-4 text-center'>
+        Completa el formulario para registrarte en FlowCare
+      </p>
 
       {serverError && (
         <div className='mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm'>
