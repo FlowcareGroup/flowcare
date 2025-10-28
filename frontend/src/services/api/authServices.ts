@@ -64,6 +64,7 @@ export const getOrCreateUser = async (email: string, name: string) => {
 
 export const signUp = async (userData: SignUpData) => {
   try {
+    console.log("🔗 Conectando a:", `${API_PATIENTS_URL}`, userData);
     const response = await fetch(`${API_PATIENTS_URL}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

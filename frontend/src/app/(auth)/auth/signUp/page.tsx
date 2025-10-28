@@ -122,7 +122,7 @@ export default function SignUp() {
             <p className='text-red-500 text-sm mt-1'>{errors.password.message}</p>
           )}
           <p className='text-xs text-gray-500 mt-1'>
-            Mínimo 8 caracteres, incluye mayúsculas, minúsculas y números
+            Mínimo 8 caracteres, incluye mayúsculas, minúsculas, números y un caracter especial.
           </p>
         </div>
 

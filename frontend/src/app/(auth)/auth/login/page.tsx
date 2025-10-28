@@ -30,6 +30,7 @@ export default function Login() {
     setIsLoading(false)
 
     if (result?.error) {
+      console.log('🚫 Login failed', data);
       console.error('❌ Error de login:', result.error)
       // TODO: Mostrar mensaje de error al usuario
       alert('Credenciales incorrectas. Intenta de nuevo.')

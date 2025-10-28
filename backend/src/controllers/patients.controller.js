@@ -102,7 +102,6 @@ const createPatient = async (req, res) => {
         identifier: identifier || null,
         email: email,
         password: passwordHash,
-        role: "Patient",
         active: true,
         // Datos opcionales
         name_family: name_family || null,
