@@ -14,7 +14,21 @@ export const getAllDoctorsBYClinic = async (token: string) => {
       authorization: "Bearer " + token,
     },
   });
-  return response.json();
+
+  if (!response.ok) {
+    console.error(`Error: ${response.status} ${response.statusText}`);
+    return [];
+  }
+
+  const data = await response.json();
+
+  // Ensure we always return an array
+  if (!Array.isArray(data)) {
+    console.error("Expected array from getAllDoctorsBYClinic, got:", data);
+    return [];
+  }
+
+  return data;
 };
 
 export const getDoctorByIdClinic = async (id: number, token: string) => {
@@ -129,21 +143,60 @@ const getAllAppointmentsByDoctorByDay = async (
   const url = `${BACKEND_URL}/doctors/${doctorId}/appointments?date=${date}&page=${page}&limit=${limit}`;
   console.log("Fetching appointments from:", url);
 
-  const response = await fetch(url, requestOptions);
-
   try {
+    const response = await fetch(url, requestOptions);
+
     if (!response.ok) {
       const errorBody = await response.text();
       console.error(`Backend returned status ${response.status}: ${errorBody}`);
-      throw new Error(`Failed to fetch appointments: HTTP ${response.status}`);
+      // Return empty data structure instead of throwing
+      return {
+        data: [],
+        pagination: {
+          total: 0,
+          page: 1,
+          limit: 4,
+          totalPages: 0,
+          hasNextPage: false,
+          hasPreviousPage: false,
+        },
+      };
     }
 
     const data = await response.json();
     console.log("Fetched appointments data:", data);
+
+    // Validate response structure
+    if (!data || !data.data || !Array.isArray(data.data)) {
+      console.warn("Invalid response structure, returning empty data");
+      return {
+        data: [],
+        pagination: {
+          total: 0,
+          page: 1,
+          limit: 4,
+          totalPages: 0,
+          hasNextPage: false,
+          hasPreviousPage: false,
+        },
+      };
+    }
+
     return data;
   } catch (error) {
     console.error("Error fetching appointments:", error);
-    throw error;
+    // Return empty data structure on error
+    return {
+      data: [],
+      pagination: {
+        total: 0,
+        page: 1,
+        limit: 4,
+        totalPages: 0,
+        hasNextPage: false,
+        hasPreviousPage: false,
+      },
+    };
   }
 };
 
@@ -229,21 +282,54 @@ const getAvailableSlots = async (
   const url = `${BACKEND_URL}/doctors/${doctorId}/available-slots?date=${date}`;
   console.log("Fetching available slots from:", url);
 
-  const response = await fetch(url, requestOptions);
-
   try {
+    const response = await fetch(url, requestOptions);
+
     if (!response.ok) {
       const errorBody = await response.text();
       console.error(`Backend returned status ${response.status}: ${errorBody}`);
-      throw new Error(`Failed to fetch available slots: HTTP ${response.status}`);
+      // Return empty slots on error
+      return {
+        date: date,
+        doctorId: parseInt(doctorId),
+        workingHours: { start: "08:00", end: "14:00", sessionDuration: 15 },
+        slots: [],
+        summary: { total: 0, available: 0, occupied: 0 },
+        availableSlots: [],
+        occupiedSlots: [],
+      };
     }
 
     const data = await response.json();
     console.log("Available slots data:", data);
+
+    // Validate response structure
+    if (!data || !data.slots || !Array.isArray(data.slots)) {
+      console.warn("Invalid slots response structure, returning empty slots");
+      return {
+        date: date,
+        doctorId: parseInt(doctorId),
+        workingHours: { start: "08:00", end: "14:00", sessionDuration: 15 },
+        slots: [],
+        summary: { total: 0, available: 0, occupied: 0 },
+        availableSlots: [],
+        occupiedSlots: [],
+      };
+    }
+
     return data;
   } catch (error) {
     console.error("Error fetching available slots:", error);
-    throw error;
+    // Return empty slots on error instead of throwing
+    return {
+      date: date,
+      doctorId: parseInt(doctorId),
+      workingHours: { start: "08:00", end: "14:00", sessionDuration: 15 },
+      slots: [],
+      summary: { total: 0, available: 0, occupied: 0 },
+      availableSlots: [],
+      occupiedSlots: [],
+    };
   }
 };
 

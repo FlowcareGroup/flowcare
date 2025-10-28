@@ -25,6 +25,7 @@ export default function editDoctorPage() {
   const backendToken = (session as any).accessToken || "";
   const params = useParams();
   const id = Number(params.id);
+  console.log("ID del doctor:", id);
 
   useEffect(() => {
     DoctorById(id);
@@ -34,12 +35,8 @@ export default function editDoctorPage() {
     try {
       const response = await getDoctorByIdClinic(id, backendToken);
       console.log("✅ Doctor obtenido:", response);
-      const formattedResponse = {
-        ...response,
-        hours: response.hours ? new Date(response.hours).toISOString().split("T")[0] : "",
-      };
 
-      reset(formattedResponse);
+      reset(response);
     } catch (error) {
       console.error("❌ Error al obtener doctor:", error);
     }
@@ -87,8 +84,8 @@ export default function editDoctorPage() {
         {errors.specialty && <p className='text-red-500'>{errors.specialty.message}</p>}
 
         <input
-          type='date'
-          placeholder='hours'
+          type='text'
+          placeholder='Horario (ej: 09:00-18:00)'
           {...register("hours")}
           className='w-full p-2 border border-gray-300 rounded'
         />
