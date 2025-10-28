@@ -27,12 +27,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='es' className='no-scrollbar'>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
           <AuthGuard>
+            <main>
+
             {children}
+            </main>
             <FooterSelector />
           </AuthGuard>
         </Providers>
