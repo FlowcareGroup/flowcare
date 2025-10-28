@@ -90,7 +90,6 @@ export default function AppointmentForm({
         setMessage('Error al cargar las clínicas. Intenta más tarde.')
       }
     }
-
     fetchClinics()
   }, [backendToken])
 
