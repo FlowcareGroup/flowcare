@@ -1,5 +1,6 @@
 export interface Appointment {
   id: number;
+  identifier?: string;
   start_time: string;
   end_time: string;
   status: "pending" | "confirmed" | "completed" | "cancelled" | "noshow";
@@ -12,8 +13,11 @@ export interface Appointment {
     id: number;
     name: string;
     email: string;
-    phone: string;
-    date_of_birth: string;
+    phone?: string;
+    date_of_birth?: string;
+    gender?: string;
+    address?: string;
+    marital_status?: string;
   };
   doctor: {
     id: number;
@@ -39,5 +43,3 @@ interface Observation {
   value_unit?: string;
   notes?: string;
 }
-
-
