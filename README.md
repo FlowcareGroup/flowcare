@@ -9,21 +9,18 @@
 
 ## 📋 Descripción
 
-FlowCare es una plataforma web integral que permite a clínicas y centros de salud gestionar de manera eficiente:
+FlowCare es una plataforma web de gestión de citas médicas que centraliza la coordinación entre pacientes, doctores, clínicas y administradores en un único sistema seguro e interoperable.
 
-- **Citas presenciales y virtuales** con disponibilidad en tiempo real
-- **Historiales médicos** con integración FHIR
-- **Teleconsultas** con video y chat seguro
-- **Recordatorios automáticos** vía correo/SMS
-- **Gestión de agendas médicas** para profesionales de la salud
+**Funcionalidades principales:**
+
+- Gestión de citas con disponibilidad en tiempo real
+- Historiales médicos y observaciones clínicas
+- Prescripciones digitales
+- Autenticación por roles
 
 ### Sector
 
-**HealthTech** - Solución de gestión clínica y teleasistencia
-
-### Problema que resuelve
-
-Muchos sistemas de salud actuales son fragmentados, generando duplicación de datos, errores de agenda y mala experiencia de usuario. FlowCare centraliza la gestión de citas, historiales y comunicación paciente-médico en una única plataforma segura e interoperable.
+**HealthTech** - Solución de gestión clínica
 
 ---
 
@@ -91,14 +88,9 @@ Muchos sistemas de salud actuales son fragmentados, generando duplicación de da
 
 #### 🎨 Mejora de Navegación
 
-- ✅ **Tarjeta clickeable** en calendario de citas
-- ✅ **Efectos visuales** mejorados (hover states)
-- ✅ **UX optimizada** para acceso a detalles
-- ✅ **Separación de acciones** (ver vs cancelar)
+---
 
-### 📚 Documentación Nueva
-
-- `QUICK_REFERENCE_EDIT_CITAS.md` - Guía rápida ⭐ **EMPIEZA AQUÍ**\n- `BEFORE_AFTER_COMPARISON.md` - Comparación visual\n- `IMPLEMENTATION_EDIT_FLOW.md` - Flujo técnico completo\n- `TESTING_APPOINTMENT_EDIT.md` - Guía de testing\n- `IMPLEMENTATION_SUMMARY_EDIT_CITAS.md` - Resumen ejecutivo\n\n### 🔧 Cambios Técnicos\n- Importación de `AppointmentEditModal` en página de detalles\n- Nuevo estado `editingAppointment` para control de modal\n- Integración de `updateAppointmentTime` service\n- Refactor de tarjetas de cita para mejor UX\n\n👉 **Ver `QUICK_REFERENCE_EDIT_CITAS.md` para más detalles**\n\n---\n\n## �🚀 Inicio rápido
+## 🚀 Inicio rápido
 
 ### Requisitos previos
 
@@ -185,9 +177,6 @@ pnpm add -D -w <paquete>
 ```bash
 # Añadir express-validator al backend
 pnpm --filter backend add express-validator
-
-# Añadir axios al frontend
-pnpm --filter frontend add axios
 
 # Añadir prettier como herramienta global del monorepo
 pnpm add -D -w prettier
