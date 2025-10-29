@@ -1,4 +1,6 @@
-export default function socketHandler(io) {
+import { io } from "../../index.js";  
+import onCall from "../soket_event/onCall.js";
+export default function socketHandler() {
   let onlineUsers = [];
 
   io.on("connection", async (socket) => {
@@ -6,19 +8,21 @@ export default function socketHandler(io) {
     //revisar para que me de el id y el rol si no quitarlo 
     socket.on("addNewUsers", (user) => {
       user &&
-        !onlineUsers.some((u) => u?.userId === user.id) &&
+        !onlineUsers.some((u) => u?.userId === user.user.id) &&
         onlineUsers.push({
-          userId: user.id,
+          userId: user.user.id,
           socketId: socket.id,
-          role: user.role,
+          role: user.user.role,
           profile: user,
         });
         console.log("onlineUsers:", onlineUsers) ;
       io.emit("getUsers", onlineUsers);
     });
 
-    
 
+    
+    // llamar evento
+    socket.on("call", onCall);
 
     socket.on("disconnect", () => {
       onlineUsers = onlineUsers.filter((user) => user.socketId !== socket.id);

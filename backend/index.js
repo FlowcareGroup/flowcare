@@ -12,8 +12,8 @@ import { Server } from "socket.io";
 // import  prisma  from "./.lib/prisma.js";
 const app = express();
 const httpServer = createServer(app);
-
-const io = new Server(httpServer, {
+export let io;
+ io = new Server(httpServer, {
   cors: {
     origin: "*",
     methods: ["GET", "POST"],
@@ -31,7 +31,7 @@ app.use("/api/patients", patientsRouter);
 app.use("/api/clinics", clinicsRouter);
 app.use("/api/doctors", doctorsRouter);
 app.get("/api/get-or-create-user", getOrCreateUser);
-socketHandler(io);
+socketHandler();
 
 // app.get("/", (req, res) => {
 //     res.send("Hello World!");

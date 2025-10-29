@@ -1,96 +1,219 @@
-
-import { socketUser } from "@/types/socket.types";
+import { OngoinCall, Participants, PeerData, socketUser } from "@/types/socket.types";
 import { useSession } from "next-auth/react";
-import { createContext, useContext, useEffect, useState } from "react" ;
+import Peer from "simple-peer";
+import {
+  createContext,
+  use,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { io, Socket } from "socket.io-client";
 
-
-
 interface isosocketContext {
-onlineUsers: socketUser[] | null ;
-
+  onlineUsers: socketUser[] | null;
+  localStream: MediaStream | null;
+  ongoingCall: OngoinCall | null;
+  handleCall: (user: socketUser) => void;
+  handleJoinCall: (ongoingCall: OngoinCall) => void;
 }
 
-export const SocketContext = createContext<isosocketContext | null>(null) ;
+export const SocketContext = createContext<isosocketContext | null>(null);
 
+export const SocketContextProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const [socket, setsocket] = useState<Socket | null>(null);
+  const { data: user, status } = useSession();
+  const [isSocketConnected, setisSocketConnected] = useState(false);
+  const [onlineUsers, setOnlineUsers] = useState<socketUser[] | null>(null);
+  const [ongoingCall, setOngoingCall] = useState<OngoinCall | null>(null);
+  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+  const [peers, setPeers] = useState<PeerData | null>(null);
 
-export const SocketContextProvider = ({children} : {children : React.ReactNode}) => {
-  const [socket, setsocket] = useState<Socket | null>(null) ;
-  const { data: user, status } = useSession();  
-  const [isSocketConnected, setisSocketConnected] = useState(false) ;
-  const [onlineUsers, setOnlineUsers] = useState<socketUser[] | null>(null) ;
-   console.log("isConnected:",isSocketConnected) ;
- console.log("socket_data:",user,status) ;
-console.log("onlineUsers:", onlineUsers) ;
-      console.log("User changed:", process.env.NEXT_PUBLIC_SOCKET_URL) ;
+  console.log("isConnected:", isSocketConnected);
+  //  console.log("socket_data:",user,status) ;
+  // console.log("onlineUsers:", onlineUsers) ;
+  //       console.log("User changed:", process.env.NEXT_PUBLIC_SOCKET_URL) ;
+  const getMediaStream = useCallback(
+    async (faceMode?: string) => {
+      if (localStream) {
+        return localStream;
+      }
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(
+          (device) => device.kind === "videoinput"
+        );
+
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+          video: {
+            width: { min: 640, ideal: 1280, max: 1920 },
+            height: { min: 360, ideal: 720, max: 1080 },
+            frameRate: { min: 16, ideal: 30, max: 30 },
+            facingMode: videoDevices.length > 0 ? faceMode : undefined,
+          },
+        });
+        setLocalStream(stream);
+        return stream;
+      } catch (error) {
+        console.log("Error accessing media devices:", error);
+        throw error;
+      }
+    },
+    [localStream]
+  );
+  const currentSocketUser = onlineUsers?.find(
+    (onlineUser) => onlineUser.userId === user?.user.id
+  );
+
+  const handleCall = useCallback(
+    async (user: socketUser) => {
+      if (!currentSocketUser || !socket) return;
+
+      const stream = await getMediaStream();
+
+      if (!stream) {
+        console.log("No se pudo obtener el stream de medios");
+        return;
+      }
+
+      const participants = { caller: currentSocketUser, receiver: user };
+      setOngoingCall({
+        participants,
+        isRinging: false,
+      });
+      socket.emit("call", participants);
+    },
+    [socket, currentSocketUser, ongoingCall]
+  );
+
+      const createPeer = useCallback(async (stream: MediaStream,initiador: boolean) => {
+        const iceServers:RTCIceServer[]= [
+          { urls:[ 
+            "stun:stun.l.google.com:19302",
+            "stun:stun1.l.google.com:19302",
+            "stun:stun2.l.google.com:19302",
+            "stun:stun3.l.google.com:19302",
+          ] },
+        ]
+
+        const peer = new Peer({
+          stream,
+          initiator:initiador,
+          trickle:true,
+          config:{iceServers}
+        })
+        peer.on('stream',(stream)=>{
+          
+        })
+      }, [ongoingCall]);
+
+  const handleJoinCall = useCallback(async(ongoingCall: OngoinCall)=> {
+    setOngoingCall(prev=>{
+      if (prev) {
+        return { ...prev,isRinging: false,};
+      }
+      return prev;
+    })
+
+    const stream = await getMediaStream();
+    if (!stream) {
+      console.log("No se pudo obtener el stream de medios");
+      return;
+    }
+  },[socket, currentSocketUser]);
+
+  const onIncomingCall = useCallback(
+    (participants: Participants) => {
+      setOngoingCall({
+        participants,
+        isRinging: true,
+      });
+    },
+    [socket, user, ongoingCall]
+  );
 
   //inicializaciones y funciones para manejar el socket
   useEffect(() => {
     if (status === "loading") {
-        return; 
-     }
+      return;
+    }
     const newsocket = io(process.env.NEXT_PUBLIC_SOCKET_URL);
-    setsocket(newsocket) ;
+    setsocket(newsocket);
     return () => {
-      newsocket.disconnect() ;
+      newsocket.disconnect();
     };
-  }, [status]) ;
+  }, [status]);
 
   useEffect(() => {
-     if (!socket) return ;
-    if (socket.connected){
-        onConnect() ;
+    if (!socket) return;
+    if (socket.connected) {
+      onConnect();
     }
 
     function onConnect() {
-        setisSocketConnected(true) ;
-        console.log("socket conectado") ;    
+      setisSocketConnected(true);
+      console.log("socket conectado");
     }
 
     function onDisconnect() {
-        setisSocketConnected(false) ;
-        console.log("socket desconectado") ;    
+      setisSocketConnected(false);
+      console.log("socket desconectado");
     }
 
-    socket.on("connect", onConnect) ;
-    socket.on("disconnect", onDisconnect) ;
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
 
     return () => {
-        socket.off("connect", onConnect) ;
-        socket.off("disconnect", onDisconnect) ;
-    }
-    
-    }, [socket]) ;
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+    };
+  }, [socket]);
 
-    // set oline user
+  // set oline user
 
   useEffect(() => {
-  if (!socket || !isSocketConnected) return
+    if (!socket || !isSocketConnected) return;
 
-  socket.emit('addNewUsers', user)
-  socket.on('getUsers', (res) => {
-    setOnlineUsers(res)
-  })
+    socket.emit("addNewUsers", user);
+    socket.on("getUsers", (res) => {
+      setOnlineUsers(res);
+    });
 
-  return () => {
-    socket.off('getUsers', (res) => {
-      setOnlineUsers(res)
-    })
-  }
-}, [socket, isSocketConnected, user])
+    return () => {
+      socket.off("getUsers", (res) => {
+        setOnlineUsers(res);
+      });
+    };
+  }, [socket, isSocketConnected, user]);
 
-    return (
-    <SocketContext.Provider value={{onlineUsers}}>
-    {children}
-  </SocketContext.Provider>
+  //llamar
+
+  useEffect(() => {
+    if (!socket || !isSocketConnected) return;
+    socket.on("incomingCall", onIncomingCall);
+
+    return () => {
+      socket.off("incomingCall", onIncomingCall);
+    };
+  }, [socket, isSocketConnected, user, onIncomingCall]);
+
+  return (
+    <SocketContext.Provider value={{ onlineUsers, handleCall, ongoingCall ,localStream,handleJoinCall}}>
+      {children}
+    </SocketContext.Provider>
   );
-}
-
+};
 
 export const usesocket = () => {
-    const context =  useContext(SocketContext) ;
-    if (!context) {
-        throw new Error("usesocket must be used within a SocketProvider") ;
-    }
-    return context ;
-}
+  const context = useContext(SocketContext);
+  if (!context) {
+    throw new Error("usesocket must be used within a SocketProvider");
+  }
+  return context;
+};

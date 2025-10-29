@@ -1,7 +1,9 @@
 "use client";
 
 
+import CallNotification from "@/components/ui/CallNotification";
 import ListOnlineUsers from "@/components/ui/ListOnlineUsers";
+import VideoCall from "@/components/ui/VideoCall";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -17,9 +19,11 @@ export default function ClinicPage() {
   return (
     <div className="p-4">
         <h1 className="text-2xl font-bold mb-4">Página de Chat y Video</h1>
-        <button onClick={() => router.push("/")} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Salir</button>
+        {/* <button onClick={() => router.push("/")} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Salir</button> */}
         <p>Bienvenido a la página de Chat y Video.</p>
         <ListOnlineUsers/>
+        <CallNotification/>
+        <VideoCall/>
 
 
     </div>
