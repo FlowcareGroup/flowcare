@@ -22,16 +22,18 @@ const VideoContainer = ({ stream, isLocalStream, isOnCall }: IVideoContainer) =>
   }, [stream]); // Se ejecuta cada vez que 'stream' cambia
 
   return (
-    // Elemento <video>
-    <video
-      className="rounded border w-[800px]"
-      ref={videoRef}
-      autoPlay
-      playsInline
-      // Silencia el video si es el stream del usuario local para evitar eco
-      muted={isLocalStream}
-    />
-  );
+  <video 
+    className={`rounded border ${
+      isLocalStream && isOnCall 
+        ? "w-[200px] h-auto absolute border-blue-500 border-2"
+        : "w-[800px]"
+    }`}
+    ref={videoRef} 
+    autoPlay 
+    playsInline 
+    muted={isLocalStream} 
+  />
+);
 };
 
 export default VideoContainer;

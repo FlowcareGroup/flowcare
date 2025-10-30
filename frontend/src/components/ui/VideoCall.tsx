@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 import { MdMic, MdMicOff, MdVideocam, MdVideocamOff } from "react-icons/md";
 
 const VideoCall = () => {
-  const { localStream } = usesocket();
+  const { localStream, ongoingCall, peers, handleHangup,isOnCallEnded } = usesocket();
   const [isMicOn, setIsMicOn] = useState(true);
   const [isVidOn, setIsVideoOn] = useState(true);
 
@@ -35,15 +35,32 @@ const VideoCall = () => {
     }
   }, [localStream]);
 
+  const isOnCall = localStream && peers && ongoingCall ? true : false;
+
+  if (isOnCallEnded) return <div className="mt-5 text-rose-500 text-center">
+    Call Ended
+  </div>;
+
+
+  if(!localStream && !peers) return null
+
+
   return (
     <div>
       {/* Contenedor del video local (solo se muestra si localStream existe) */}
-      <div>
+      <div className="mt-4 relative">
         {localStream && (
           <VideoContainer
             stream={localStream}
             isLocalStream={true}
-            isOnCall={false}
+            isOnCall={isOnCall}
+          />
+        )}
+        {peers && peers.stream && (
+          <VideoContainer
+            stream={peers.stream}
+            isLocalStream={false}
+            isOnCall={isOnCall}
           />
         )}
       </div>
@@ -53,17 +70,19 @@ const VideoCall = () => {
         {/* Botón para Microfono */}
         <button onClick={toggleMic}>
           {/* Muestra un ícono si el micrófono está encendido */}
-          {isMicOn && <MdMicOff size={28} />}
+          {isMicOn && <MdMic size={28} />}
           {/* Muestra otro ícono si el micrófono está apagado */}
-          {!isMicOn && <MdMic size={28} />}
+          {!isMicOn && <MdMicOff size={28} />}
         </button>
 
         {/* Botón para Terminar la Llamada */}
         <button
           className="px-4 py-2 bg-rose-500 text-white rounded mx-4"
-          onClick={() => {
-            /* Lógica para colgar la llamada */
-          }}
+          onClick={() =>
+            handleHangup({
+              ongoingCall: ongoingCall ? ongoingCall : undefined,isEmitedHangup: true,
+            })
+          }
         >
           End Call
         </button>
@@ -71,9 +90,9 @@ const VideoCall = () => {
         {/* Botón para Cámara */}
         <button onClick={toggleCamera}>
           {/* Muestra un ícono si el video está encendido */}
-          {isVidOn && <MdVideocamOff size={28} />}
+          {isVidOn && <MdVideocam size={28} />}
           {/* Muestra otro ícono si el video está apagado */}
-          {!isVidOn && <MdVideocam size={28} />}
+          {!isVidOn && <MdVideocamOff size={28} />}
         </button>
       </div>
     </div>

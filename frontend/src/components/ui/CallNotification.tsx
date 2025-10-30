@@ -3,7 +3,7 @@ import { usesocket } from "@/context/SoketContext";
 import { MdCall, MdCallEnd } from "react-icons/md";
 
 const CallNotification = () => {    
-const {ongoingCall,handleJoinCall} = usesocket();
+const {ongoingCall,handleJoinCall,handleHangup} = usesocket();
 
 if (!ongoingCall?.isRinging) return;
 return (
@@ -28,7 +28,11 @@ return (
         </button>
         
         {/* Botón para Rechazar (rojo) */}
-        <button className="w-10 h-10 bg-rose-500 rounded-full flex items-center justify-center text-white">
+        <button    onClick={() =>
+            handleHangup({
+              ongoingCall: ongoingCall ? ongoingCall : undefined,isEmitedHangup: true,
+            })
+          } className="w-10 h-10 bg-rose-500 rounded-full flex items-center justify-center text-white">
           <MdCallEnd size={24} />
         </button>
         

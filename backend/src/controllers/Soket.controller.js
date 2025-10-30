@@ -1,5 +1,7 @@
 import { io } from "../../index.js";  
 import onCall from "../soket_event/onCall.js";
+import onHandgup from "../soket_event/onHandgup.js";
+import onWebrtcSignal from "../soket_event/onWebrtcSignal.js";
 export default function socketHandler() {
   let onlineUsers = [];
 
@@ -23,6 +25,8 @@ export default function socketHandler() {
     
     // llamar evento
     socket.on("call", onCall);
+    socket.on("webrtcSignal",onWebrtcSignal);
+    socket.on("handgup", onHandgup);
 
     socket.on("disconnect", () => {
       onlineUsers = onlineUsers.filter((user) => user.socketId !== socket.id);
