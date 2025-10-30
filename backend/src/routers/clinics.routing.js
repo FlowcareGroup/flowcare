@@ -7,13 +7,14 @@ import  {requireRole}  from "../middlewares/auth.rol.js";
 import { getAuthUser } from '../middlewares/auth.js';
 const router = express.Router();
 
-//solo puede estrar si esta logueado
-//router.use(getAuthUser);
-
 
 
 //GET /api/clinics/getAllClinics
 router.get("/getAllClinics", ClinicsController.getAllClinics);
+
+//solo puede estrar si esta logueado
+router.use(getAuthUser);
+
 
 //GET /api/clinics/getClinics/:id
 router.get("/getClinics/:id", ClinicsController.getClinics);
