@@ -21,6 +21,8 @@ items-center pb-2"
             >
               <div className="text-sm">
                 {onlineUser.profile.user.name?.split(" ")[0]}
+                ||
+                {onlineUser.role?.split(" ")[0]}
               </div>
             </div>
           );

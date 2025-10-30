@@ -42,7 +42,7 @@ const VideoCall = () => {
   </div>;
 
 
-  if(!localStream && !peers) return null
+  if(!localStream && !peers) return;
 
 
   return (
