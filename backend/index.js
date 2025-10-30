@@ -9,7 +9,8 @@ import { getOrCreateUser } from "./src/controllers/patients.controller.js";
 import cors from "cors";
 
 // import  prisma  from "./.lib/prisma.js";
-const app = express();
+// const app = express();
+import { app } from "./src/utils/socket.js";
 
 app.use(cors());
 

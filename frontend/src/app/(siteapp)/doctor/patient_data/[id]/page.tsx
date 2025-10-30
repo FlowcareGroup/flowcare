@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { FaArrowLeft, FaEnvelope, FaMapPin, FaCalendar } from "react-icons/fa";
+import { FaArrowLeft, FaEnvelope, FaMapPin, FaCalendar, FaRegCommentDots  } from "react-icons/fa";
 import { getPatientProfile, type PatientProfile } from "@/services/api/patientService";
 
 interface PageProps {
@@ -67,18 +67,25 @@ export default function PatientDataPage({ params }: PageProps) {
   return (
     <div className='p-8 max-w-6xl mx-auto'>
       {/* Header */}
-      <div className='flex items-center justify-between mb-6'>
-        <div className='flex items-center gap-3'>
-          <Link href='/doctor'>
-            <button className='flex items-center gap-2 px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition'>
-              <FaArrowLeft /> Volver
-            </button>
-          </Link>
-          <h1 className='text-3xl font-bold text-gray-800'>
-            {personalData.name_given} {personalData.name_family || ""}
-          </h1>
-        </div>
+        <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center gap-3">
+        <Link href="/doctor">
+          <button className="flex items-center gap-2 px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition">
+            <FaArrowLeft /> Volver
+          </button>
+        </Link>
+
+        <h1 className="text-3xl font-bold text-gray-800">
+          {personalData.name_given} {personalData.name_family || ""}
+        </h1>
       </div>
+
+      {/* 🗨️ Icono de chat */}
+      <button className="flex items-center gap-2 px-3 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition">
+        <FaRegCommentDots className="text-2xl" />
+        <span className="hidden sm:block font-medium">Chat</span>
+      </button>
+    </div>
 
       {/* Datos Personales */}
       <div className='bg-white rounded-lg shadow-md p-6 mb-6'>

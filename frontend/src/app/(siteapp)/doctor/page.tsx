@@ -10,6 +10,7 @@ import { auth } from "../../../../auth";
 import AppointmentCalendar from "./components/AppointmentCalendar";
 import DoctorDashboard from "./components/DoctorDashboard";
 import PatientSearch from "./components/PatientSearch";
+import { UserProvider } from "./context/doctorContext";
 
 export default async function DoctorPage() {
   // <-- Debe ser asíncrono!
@@ -68,10 +69,12 @@ export default async function DoctorPage() {
         />
 
         {/* Patient Search */}
-        <PatientSearch
-          doctorId={doctorId}
-          accessToken={accessToken}
-        />
+        <UserProvider>
+          <PatientSearch
+            doctorId={doctorId}
+            accessToken={accessToken}
+          />
+        </UserProvider>
       </div>
 
       <AppointmentCalendar
