@@ -25,6 +25,7 @@ import {
 import type { AddObservationPayload, AddPrescriptionPayload } from "@/services/api/doctorService";
 import AppointmentEditModal from "@/app/(siteapp)/doctor/components/AppointmentEditModal";
 import { Appointment, Prescription } from "@/services/types";
+import ClientNavigation from "@/components/ClientNavigation";
 
 export default function AppointmentDetailPage() {
   const params = useParams();
@@ -366,6 +367,14 @@ export default function AppointmentDetailPage() {
             <div className='space-y-4 rounded-lg bg-white p-6 shadow sm:p-5'>
               <h2 className='mb-4 text-lg font-bold text-gray-800'>Resumen</h2>
 
+              {/* Identifier */}
+              <div>
+                <p className='mb-2 text-sm text-gray-500'>ID Cita</p>
+                <p className='font-mono text-xs text-gray-700 bg-gray-50 px-2 py-1 rounded break-all'>
+                  {appointment.identifier}
+                </p>
+              </div>
+
               {/* Status */}
               <div>
                 <p className='mb-2 text-sm text-gray-500'>Estado</p>
@@ -499,6 +508,7 @@ export default function AppointmentDetailPage() {
                         <div className='bg-gray-50 p-4 rounded border border-gray-200'>
                           <p className='text-gray-800'>{appointment.description}</p>
                         </div>
+                         <ClientNavigation/>
                       </div>
                     )}
 
@@ -518,14 +528,43 @@ export default function AppointmentDetailPage() {
                         </div>
                         <div>
                           <p className='mb-1 text-sm text-gray-500'>Teléfono</p>
-                          <p className='font-semibold text-gray-800'>{appointment.patient.phone}</p>
+                          <p className='font-semibold text-gray-800'>
+                            {appointment.patient.phone || "No registrado"}
+                          </p>
                         </div>
                         <div>
                           <p className='mb-1 text-sm text-gray-500'>Fecha de Nacimiento</p>
                           <p className='font-semibold text-gray-800'>
-                            {new Date(appointment.patient.date_of_birth).toLocaleDateString(
-                              "es-ES"
-                            )}
+                            {appointment.patient.date_of_birth
+                              ? new Date(appointment.patient.date_of_birth).toLocaleDateString(
+                                  "es-ES"
+                                )
+                              : "No registrada"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Patient Health Data */}
+                    <div>
+                      <h3 className='text-lg font-bold text-gray-800 mb-4'>Datos de Salud</h3>
+                      <div className='grid grid-cols-1 gap-4 rounded bg-blue-50 border border-blue-200 p-4 sm:grid-cols-2'>
+                        <div>
+                          <p className='mb-1 text-sm text-gray-500'>Género</p>
+                          <p className='font-semibold text-gray-800'>
+                            {appointment.patient.gender || "No especificado"}
+                          </p>
+                        </div>
+                        <div>
+                          <p className='mb-1 text-sm text-gray-500'>Estado Civil</p>
+                          <p className='font-semibold text-gray-800'>
+                            {appointment.patient.marital_status || "No especificado"}
+                          </p>
+                        </div>
+                        <div className='sm:col-span-2'>
+                          <p className='mb-1 text-sm text-gray-500'>Dirección</p>
+                          <p className='font-semibold text-gray-800'>
+                            {appointment.patient.address || "No registrada"}
                           </p>
                         </div>
                       </div>

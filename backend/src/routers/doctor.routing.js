@@ -1,87 +1,107 @@
-import express from "express";
+import express from 'express'
 
-import DoctorsController from "../controllers/doctors.controller.js";
-import { body } from "express-validator";
-import validationChecker from "../middlewares/validationChecker.js";
-import { getAuthUser } from "../middlewares/auth.js";
-const router = express.Router();
+import DoctorsController from '../controllers/doctors.controller.js'
+import { body } from 'express-validator'
+import validationChecker from '../middlewares/validationChecker.js'
+import { getAuthUser } from '../middlewares/auth.js'
+const router = express.Router()
 //import { getAuthUser } from '../middlewares/auth.js';
 
 
+
+
+//GET /api/doctors/getAllDoctors
+router.get('/getAllDoctors', DoctorsController.getAllDoctors)
+
 //solo puede estrar si esta logueado
-router.use(getAuthUser);
+router.use(getAuthUser)
 
 //GET /api/doctors/getAllDoctors
-router.get("/getAllDoctorsBYClinic", DoctorsController.getAllDoctorsBYClinic);
-
-//GET /api/doctors/getAllDoctors
-router.get("/getAllDoctors", DoctorsController.getAllDoctors);
+router.get('/getAllDoctorsBYClinic', DoctorsController.getAllDoctorsBYClinic)
 
 //GET /api/doctors/getDoctorByIdClinic/:id
-router.get("/getDoctorByIdClinic/:id", DoctorsController.getDoctorByIdClinic);
+router.get('/getDoctorByIdClinic/:id', DoctorsController.getDoctorByIdClinic)
 
 //POST /api/doctors/createDoctor
-router.post("/createDoctor", DoctorsController.createDoctor);
+router.post('/createDoctor', DoctorsController.createDoctor)
 
 //PUT /api/doctors/editDoctor/:id
-router.put("/editDoctor/:id", DoctorsController.editDoctor);
+router.put('/editDoctor/:id', DoctorsController.editDoctor)
 
 //DELETE /api/doctors/deleteDoctor/:id
-router.delete("/deleteDoctor/:id", DoctorsController.deleteDoctor);
+router.delete('/deleteDoctor/:id', DoctorsController.deleteDoctor)
 
 //PATCH /api/doctors/appointments/:appointmentId/cancel
-router.patch("/appointments/:appointmentId/cancel", DoctorsController.cancelAppointment);
+router.patch(
+  '/appointments/:appointmentId/cancel',
+  DoctorsController.cancelAppointment
+)
 //PUT /api/doctors/appointments/:appointmentId
-router.put("/appointments/:appointmentId", DoctorsController.updateAppointmentTime);
+router.put(
+  '/appointments/:appointmentId',
+  DoctorsController.updateAppointmentTime
+)
 
 //GET /api/doctors/:id
-router.get("/:id", DoctorsController.doctorById);
+router.get('/:id', DoctorsController.doctorById)
 //GET /api/doctors/:id/appointments
-router.get("/:id/appointments", DoctorsController.getAllAppointmentsByDoctorByDay);
+router.get(
+  '/:id/appointments',
+  DoctorsController.getAllAppointmentsByDoctorByDay
+)
 //GET /api/doctors/:id/all-appointments (debug: list all)
-router.get("/:id/all-appointments", DoctorsController.getAllAppointmentsForDoctor);
+router.get(
+  '/:id/all-appointments',
+  DoctorsController.getAllAppointmentsForDoctor
+)
 //GET /api/doctors/:id/available-slots
-router.get("/:id/available-slots", DoctorsController.getAvailableSlots);
+router.get('/:id/available-slots', DoctorsController.getAvailableSlots)
 //POST /api/doctors/:id/test-appointments (create test data)
-router.post("/:id/test-appointments", DoctorsController.createTestAppointments);
+router.post('/:id/test-appointments', DoctorsController.createTestAppointments)
 //POST /api/doctors/:id/appointments (book appointment)
-router.post("/:id/appointments", DoctorsController.createAppointment);
+router.post('/:id/appointments', DoctorsController.createAppointment)
 //GET /api/doctors/:id/appointments/:appointmentId (appointment details)
-router.get("/:id/appointments/:appointmentId", DoctorsController.getAppointmentDetails);
+router.get(
+  '/:id/appointments/:appointmentId',
+  DoctorsController.getAppointmentDetails
+)
 //PATCH /api/doctors/:id/appointments/:appointmentId/status (update appointment status)
-router.patch("/:id/appointments/:appointmentId/status", DoctorsController.updateAppointmentStatus);
+router.patch(
+  '/:id/appointments/:appointmentId/status',
+  DoctorsController.updateAppointmentStatus
+)
 //POST /api/doctors/:id/appointments/:appointmentId/observations (add observation)
 router.post(
-  "/:id/appointments/:appointmentId/observations",
+  '/:id/appointments/:appointmentId/observations',
   DoctorsController.addObservationToAppointment
-);
+)
 //POST /api/doctors/:id/appointments/:appointmentId/prescriptions (add prescription)
 router.post(
-  "/:id/appointments/:appointmentId/prescriptions",
+  '/:id/appointments/:appointmentId/prescriptions',
   DoctorsController.addPrescriptionToAppointment
-);
+)
 //GET /api/doctors/:id/appointments/:appointmentId/prescriptions (get prescriptions)
 router.get(
-  "/:id/appointments/:appointmentId/prescriptions",
+  '/:id/appointments/:appointmentId/prescriptions',
   DoctorsController.getPrescriptionsForAppointment
-);
+)
 //GET /api/doctors/:id/search-patients (search patients)
-router.get("/:id/search-patients", DoctorsController.searchPatients);
+router.get('/:id/search-patients', DoctorsController.searchPatients)
 //GET /api/doctors/:id/statistics (doctor statistics)
-router.get("/:id/statistics", DoctorsController.getDoctorStatistics);
+router.get('/:id/statistics', DoctorsController.getDoctorStatistics)
 //POST /api/doctors/createDoctorAndPatient
 router.post(
-  "/createDoctorAndPatient",
+  '/createDoctorAndPatient',
   [
-    body("email").isEmail().withMessage("Invalid email format"),
-    body("password")
+    body('email').isEmail().withMessage('Invalid email format'),
+    body('password')
       .isLength({ min: 6 })
-      .withMessage("Password must be at least 6 characters long"),
-    body("telf").optional().isMobilePhone().withMessage("Invalid phone number"),
-    body("speciality").notEmpty().withMessage("Speciality is required"),
-    validationChecker,
+      .withMessage('Password must be at least 6 characters long'),
+    body('telf').optional().isMobilePhone().withMessage('Invalid phone number'),
+    body('speciality').notEmpty().withMessage('Speciality is required'),
+    validationChecker
   ],
   DoctorsController.createDoctorAndPatient
-);
+)
 
-export default router;
+export default router

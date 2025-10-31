@@ -57,7 +57,7 @@ export default function AdminPage() {
       const response = await deleteClinic(id, (session as any).accessToken);
       console.log("✅ Delete data:", response);
     } catch (error) {
-      console.error("❌ Error in delete:", error);
+      console.error('❌ Error in delete:', error)
     }
   };
 
@@ -116,5 +116,5 @@ export default function AdminPage() {
         Crear Clínica
       </button>
     </div>
-  );
+  )
 }

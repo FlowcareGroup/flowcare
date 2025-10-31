@@ -4,6 +4,7 @@ import '../app/globals.css'
 import { Providers } from './providers'
 import AuthGuard from '@/components/AuthGuard'
 import FooterSelector from '@/components/FooterSelector'
+import SocketProvider from '@/providers/SoketProvider'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -27,14 +28,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='es' className='no-scrollbar'>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
+          <SocketProvider>  
           <AuthGuard>
+            <main>
+
             {children}
+            </main>
             <FooterSelector />
           </AuthGuard>
+          </SocketProvider>
         </Providers>
       </body>
     </html>

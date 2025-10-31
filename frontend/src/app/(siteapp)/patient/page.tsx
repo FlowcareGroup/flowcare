@@ -7,7 +7,6 @@ import PatientMiniCards from './components/PatientMiniCards'
 export default async function PatientPage() {
   // 1️⃣ Autenticación
   const session = await auth()
-
   if (!session || !session.user?.id || session.user?.role !== 'patient') {
     return <div>Acceso no autorizado o ID de paciente no encontrado.</div>
   }
@@ -43,6 +42,8 @@ export default async function PatientPage() {
 
         <PatientAppointments />
         <PatientMiniCards patientId={patientId} />
+
+  
       </div>
     </>
   )
