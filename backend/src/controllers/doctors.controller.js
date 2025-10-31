@@ -6,8 +6,9 @@ import sendEmail from '../services/emailService.js'
 import {
   templateCancelledAppointment,
   templateNewAppointment,
-  templateRescheduledAppointment
-} from '../templetes/emailTempletes.js'
+  templateRescheduledAppointment,
+} from "../templetes/emailTempletes.js";
+
 
 /*
  * Obtener todas los doctores de una clinica
@@ -15,7 +16,7 @@ import {
  */
 const getAllDoctorsBYClinic = async (req, res) => {
   try {
-    const clinic = req.user.id
+    const clinic = req.user.id;
     const doctors = await prisma.doctor.findMany({
       where: { clinic_id: Number(clinic) },
       select: {
@@ -24,9 +25,10 @@ const getAllDoctorsBYClinic = async (req, res) => {
         email: true,
         telf: true,
         hours: true,
-        specialty: true
-      }
-    })
+        specialty: true,
+      },
+    });
+
     if (doctors.length === 0) {
       return res.status(200).json({ error: 'No doctors found' })
     }
@@ -35,7 +37,9 @@ const getAllDoctorsBYClinic = async (req, res) => {
     console.error('You have this error: ', error)
     res.status(500).json({ error: 'Internal Server Error' })
   }
-}
+
+};
+
 
 /*
  * Obtener todas los doctores
@@ -53,11 +57,11 @@ const getAllDoctors = async (req, res) => {
         specialty: true,
         clinic: {
           select: {
-            name: true // el nombre de la clínica
-          }
-        }
-      }
-    })
+            name: true, // el nombre de la clínica
+          },
+        },
+      },
+    });
     if (doctors.length === 0) {
       return res.status(200).json({ error: 'No doctors found' })
     }
@@ -66,15 +70,17 @@ const getAllDoctors = async (req, res) => {
     console.error('You have this error: ', error)
     res.status(500).json({ error: 'Internal Server Error' })
   }
-}
+};
+
 
 /* Obtener doctores
  * GET /api/doctors/getDoctors/:id
  */
 const getDoctorByIdClinic = async (req, res) => {
   try {
-    const clinic = req.user.id
-    const id = req.params.id
+    const clinic = req.user.id;
+    const id = req.params.id;
+
     if (!id) {
       return res.status(400).json({ error: 'Required data missing' })
     }
@@ -86,9 +92,9 @@ const getDoctorByIdClinic = async (req, res) => {
         email: true,
         telf: true,
         hours: true,
-        specialty: true
-      }
-    })
+        specialty: true,
+      },
+    });
     if (!doctors) {
       return res.status(200).json({ error: 'No doctors found' })
     }
@@ -97,7 +103,7 @@ const getDoctorByIdClinic = async (req, res) => {
     console.error('You have this error: ', error)
     res.status(500).json({ error: 'Internal Server Error' })
   }
-}
+};
 
 /*
  * crear un nuevo doctor
@@ -105,10 +111,10 @@ const getDoctorByIdClinic = async (req, res) => {
  */
 const createDoctor = async (req, res) => {
   try {
-    const clinic = req.user.id
-    const { name, email, hours, specialty, telf, password } = req.body
+    const clinic = req.user.id;
+    const { name, email, hours, specialty, telf, password } = req.body;
     if (!name || !email || !hours || !specialty || !telf || !password) {
-      return res.status(400).json({ error: 'Required data missing' })
+      return res.status(400).json({ error: "Required data missing" });
     }
 
     const salt = await bcrypt.genSalt(10)
@@ -129,10 +135,10 @@ const createDoctor = async (req, res) => {
         telf: telf,
         specialty: specialty,
         password: hashedPassword,
-        clinic_id: Number(clinic)
-      }
-    })
-    return res.status(200).json(newDoctor)
+        clinic_id: Number(clinic),
+      },
+    });
+    return res.status(200).json(newDoctor);
   } catch (error) {
     console.error('Error en createDoctor:', error)
     return res.status(500).json({ error: 'Internal server error' })
@@ -143,48 +149,48 @@ const createDoctor = async (req, res) => {
  * PUT /api/doctors/editDoctor/:id
  */
 const editDoctor = async (req, res) => {
-  const clinic = req.user.id
-  const id = req.params.id
+  const clinic = req.user.id;
+  const id = req.params.id;
   if (!id) {
-    return res.status(400).json({ error: 'Required data missing' })
+    return res.status(400).json({ error: "Required data missing" });
   }
 
-  const { name, email, hours, specialty, telf, password } = req.body
-  let hashedPassword
+  const { name, email, hours, specialty, telf, password } = req.body;
+  let hashedPassword;
 
   // Si se proporciona una nueva contraseña, hashearla
   if (password) {
-    const salt = await bcrypt.genSalt(10)
-    hashedPassword = await bcrypt.hash(password, salt)
+    const salt = await bcrypt.genSalt(10);
+    hashedPassword = await bcrypt.hash(password, salt);
   }
 
   // Construir el objeto de actualización solo con los campos presentes
-  const updateData = {}
-  if (name) updateData.name = name
-  if (email) updateData.email = email
-  if (hours) updateData.hours = hours
-  if (specialty) updateData.specialty = specialty
-  if (telf) updateData.telf = telf
-  if (hashedPassword) updateData.password = hashedPassword
+  const updateData = {};
+  if (name) updateData.name = name;
+  if (email) updateData.email = email;
+  if (hours) updateData.hours = hours;
+  if (specialty) updateData.specialty = specialty;
+  if (telf) updateData.telf = telf;
+  if (hashedPassword) updateData.password = hashedPassword;
 
   // Si no hay datos para actualizar, devolver un error
   if (Object.keys(updateData).length === 0) {
-    return res.status(400).json({ error: 'No data provided to update' })
+    return res.status(400).json({ error: "No data provided to update" });
   }
 
   try {
     // Actualizar la clínica en la base de datos
     const updatedClinic = await prisma.doctor.update({
       where: { id: Number(id), clinic_id: Number(clinic) },
-      data: updateData
-    })
+      data: updateData,
+    });
 
-    res.status(200).json(updatedClinic)
+    res.status(200).json(updatedClinic);
   } catch (error) {
-    console.error(error)
-    res.status(500).json({ error: 'Internal Server Error' })
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
-}
+};
 
 /*
  * eliminar una doctor existente
@@ -192,21 +198,21 @@ const editDoctor = async (req, res) => {
  */
 const deleteDoctor = async (req, res) => {
   try {
-    const clinic = req.user.id
-    const id = req.params.id
+    const clinic = req.user.id;
+    const id = req.params.id;
     if (!id) {
       return res.status(400).json({ error: 'Required data missing' })
     }
 
     // Consulta de borrado
     await prisma.doctor.delete({
-      where: { id: Number(id), clinic_id: Number(clinic) }
-    })
+      where: { id: Number(id), clinic_id: Number(clinic) },
+    });
 
-    res.status(200).send()
+    res.status(200).send();
   } catch (error) {
-    console.error(error)
-    res.status(500).json({ error: 'Failed to delete the clinic.' })
+    console.error(error);
+    res.status(500).json({ error: "Failed to delete the clinic." });
   }
 }
 
@@ -293,18 +299,18 @@ const getAllAppointmentsByDoctorByDay = async (req, res) => {
   try {
     // Crear rangos de fecha más amplios para capturar en cualquier timezone
     // Usa el día anterior y siguiente para ser más tolerante con diferencias de zona horaria
-    const requestedDate = new Date(date + 'T00:00:00Z')
-    const startOfDay = new Date(requestedDate)
-    startOfDay.setUTCDate(startOfDay.getUTCDate() - 1)
-    startOfDay.setUTCHours(0, 0, 0, 0)
+    const requestedDate = new Date(date + "T00:00:00Z");
+    const startOfDay = new Date(requestedDate);
+    startOfDay.setUTCDate(startOfDay.getUTCDate() - 1);
+    startOfDay.setUTCHours(0, 0, 0, 0);
 
-    const endOfDay = new Date(requestedDate)
-    endOfDay.setUTCDate(endOfDay.getUTCDate() + 2)
-    endOfDay.setUTCHours(23, 59, 59, 999)
+    const endOfDay = new Date(requestedDate);
+    endOfDay.setUTCDate(endOfDay.getUTCDate() + 2);
+    endOfDay.setUTCHours(23, 59, 59, 999);
 
-    console.log('Date query:', date)
-    console.log('Start of search range:', startOfDay.toISOString())
-    console.log('End of search range:', endOfDay.toISOString())
+    console.log("Date query:", date);
+    console.log("Start of search range:", startOfDay.toISOString());
+    console.log("End of search range:", endOfDay.toISOString());
 
     // Condición base de búsqueda con rango amplio
     const whereClause = {
@@ -335,26 +341,26 @@ const getAllAppointmentsByDoctorByDay = async (req, res) => {
 
     console.log(`Found ${appointmentsInRange.length} appointments in range`)
 
+    console.log(`Found ${appointmentsInRange.length} appointments in range`);
+
     // Filtrar para solo la fecha solicitada (por día calendario)
     // Comparar en local timezone para evitar problemas UTC
     const appointmentsForDate = appointmentsInRange.filter((apt) => {
-      const aptDate = new Date(apt.start_time)
+      const aptDate = new Date(apt.start_time);
       // Extraer la fecha en la zona local del servidor
-      const aptYear = aptDate.getUTCFullYear()
-      const aptMonth = String(aptDate.getUTCMonth() + 1).padStart(2, '0')
-      const aptDay = String(aptDate.getUTCDate()).padStart(2, '0')
-      const aptDateString = `${aptYear}-${aptMonth}-${aptDay}`
+      const aptYear = aptDate.getUTCFullYear();
+      const aptMonth = String(aptDate.getUTCMonth() + 1).padStart(2, "0");
+      const aptDay = String(aptDate.getUTCDate()).padStart(2, "0");
+      const aptDateString = `${aptYear}-${aptMonth}-${aptDay}`;
 
-      const match = aptDateString === date
+      const match = aptDateString === date;
       if (match) {
-        console.log(`Match found: ${aptDateString} === ${date}`)
+        console.log(`Match found: ${aptDateString} === ${date}`);
       }
-      return match
-    })
+      return match;
+    });
 
-    console.log(
-      `Filtered to ${appointmentsForDate.length} appointments for date ${date}`
-    )
+    console.log(`Filtered to ${appointmentsForDate.length} appointments for date ${date}`);
 
     // Aplicar paginación
     const appointments = appointmentsForDate.slice(skip, skip + limit)
@@ -549,14 +555,14 @@ const getAvailableSlots = async (req, res) => {
 
     // Obtener todas las citas del doctor para esa fecha
     // Usar un rango más amplio para capturar citas en cualquier timezone
-    const requestedDate = new Date(date + 'T00:00:00Z')
-    const startOfDay = new Date(requestedDate)
-    startOfDay.setUTCDate(startOfDay.getUTCDate() - 1)
-    startOfDay.setUTCHours(0, 0, 0, 0)
+    const requestedDate = new Date(date + "T00:00:00Z");
+    const startOfDay = new Date(requestedDate);
+    startOfDay.setUTCDate(startOfDay.getUTCDate() - 1);
+    startOfDay.setUTCHours(0, 0, 0, 0);
 
-    const endOfDay = new Date(requestedDate)
-    endOfDay.setUTCDate(endOfDay.getUTCDate() + 2)
-    endOfDay.setUTCHours(23, 59, 59, 999)
+    const endOfDay = new Date(requestedDate);
+    endOfDay.setUTCDate(endOfDay.getUTCDate() + 2);
+    endOfDay.setUTCHours(23, 59, 59, 999);
 
     console.log(
       'DEBUG: Querying date range - Start:',
@@ -583,13 +589,13 @@ const getAvailableSlots = async (req, res) => {
 
     // Filtrar para solo la fecha solicitada (por día calendario)
     const appointments = appointmentsInRange.filter((apt) => {
-      const aptDate = new Date(apt.start_time)
-      const aptYear = aptDate.getUTCFullYear()
-      const aptMonth = String(aptDate.getUTCMonth() + 1).padStart(2, '0')
-      const aptDay = String(aptDate.getUTCDate()).padStart(2, '0')
-      const aptDateString = `${aptYear}-${aptMonth}-${aptDay}`
-      return aptDateString === date
-    })
+      const aptDate = new Date(apt.start_time);
+      const aptYear = aptDate.getUTCFullYear();
+      const aptMonth = String(aptDate.getUTCMonth() + 1).padStart(2, "0");
+      const aptDay = String(aptDate.getUTCDate()).padStart(2, "0");
+      const aptDateString = `${aptYear}-${aptMonth}-${aptDay}`;
+      return aptDateString === date;
+    });
 
     console.log(
       'DEBUG: Filtered appointments count:',

@@ -24,13 +24,13 @@ export default function editDoctorPage() {
     ) as unknown as Resolver<DoctorEditSchema>
   })
 
-  const router = useRouter()
-  const { data: session, status } = useSession()
-  if (status === 'loading' || !session) return <p>Cargando o no autenticado</p>
-  const backendToken = (session as any).accessToken || ''
-  const params = useParams()
-  const id = Number(params.id)
-  console.log('ID del doctor:', id)
+  const router = useRouter();
+  const { data: session, status } = useSession();
+  if (status === "loading" || !session) return <p>Cargando o no autenticado</p>;
+  const backendToken = (session as any).accessToken || "";
+  const params = useParams();
+  const id = Number(params.id);
+  console.log("ID del doctor:", id);
 
   useEffect(() => {
     DoctorById(id)
@@ -38,10 +38,10 @@ export default function editDoctorPage() {
 
   const DoctorById = async (id: number) => {
     try {
-      const response = await getDoctorByIdClinic(id, backendToken)
-      console.log('✅ Doctor obtenido:', response)
+      const response = await getDoctorByIdClinic(id, backendToken);
+      console.log("✅ Doctor obtenido:", response);
 
-      reset(response)
+      reset(response);
     } catch (error) {
       console.error('❌ Error al obtener doctor:', error)
     }
@@ -91,7 +91,7 @@ export default function editDoctorPage() {
         <input
           type='text'
           placeholder='Horario (ej: 09:00-18:00)'
-          {...register('hours')}
+          {...register("hours")}
           className='w-full p-2 border border-gray-300 rounded'
         />
         {errors.hours && <p className='text-red-500'>{errors.hours.message}</p>}

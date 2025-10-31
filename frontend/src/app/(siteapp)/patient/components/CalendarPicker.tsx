@@ -1,19 +1,19 @@
-'use client'
+"use client";
 
-import { DayPicker } from 'react-day-picker'
-import 'react-day-picker/dist/style.css'
-import { isBefore, startOfDay } from 'date-fns'
+import { DayPicker } from "react-day-picker";
+import "react-day-picker/dist/style.css";
+import { isBefore, startOfDay } from "date-fns";
 
 interface CalendarPickerProps {
-  selectedDate: string | null
-  onSelectDate: (date: string) => void
-  availableDates?: string[] // formato "YYYY-MM-DD"
+  selectedDate: string | null;
+  onSelectDate: (date: string) => void;
+  availableDates?: string[]; // formato "YYYY-MM-DD"
 }
 
 export default function CalendarPicker({
   selectedDate,
   onSelectDate,
-  availableDates = []
+  availableDates = [],
 }: CalendarPickerProps) {
   const today = startOfDay(new Date())
 
@@ -47,7 +47,7 @@ export default function CalendarPicker({
         }}
       />
     </div>
-  )
+  );
 }
 
 // export default function CalendarPicker({

@@ -95,8 +95,8 @@ function checkRoleAccess(pathname: string, role: string | undefined): boolean {
   if (!role) return false
 
   const roleAccess = {
-    patient: ['/patient', '/home'],
-    doctor: ['/doctor', '/doctor/patient/[id]', '/home'],
+    patient: ['/patient', '/home','/ChatVideo'],
+    doctor: ['/doctor', '/doctor/patient/[id]', '/home','/ChatVideo'],
     admin: ['/admin', '/home'],
     clinic: ['/clinic', '/home', '/clinic/createDoctor', '/clinic/editDoctor/[id]'],
   }

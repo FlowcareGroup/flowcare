@@ -1,36 +1,35 @@
-const BACKEND_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000/api'
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000/api";
 
 import { DoctorEditSchema, DoctorSchema } from '@/app/lib/validations_schema'
 
 const API_CLINICS_URL = process.env.NEXT_PUBLIC_BACKEND_URL
   ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/doctors`
-  : 'http://localhost:4000/api/doctors'
+  : "http://localhost:4000/api/doctors";
 
 export const getAllDoctorsBYClinic = async (token: string) => {
   const response = await fetch(`${API_CLINICS_URL}/getAllDoctorsBYClinic`, {
     method: 'GET',
     headers: {
-      'Content-Type': 'application/json',
-      authorization: 'Bearer ' + token
-    }
-  })
+      "Content-Type": "application/json",
+      authorization: "Bearer " + token,
+    },
+  });
 
   if (!response.ok) {
-    console.error(`Error: ${response.status} ${response.statusText}`)
-    return []
+    console.error(`Error: ${response.status} ${response.statusText}`);
+    return [];
   }
 
-  const data = await response.json()
+  const data = await response.json();
 
   // Ensure we always return an array
   if (!Array.isArray(data)) {
-    console.error('Expected array from getAllDoctorsBYClinic, got:', data)
-    return []
+    console.error("Expected array from getAllDoctorsBYClinic, got:", data);
+    return [];
   }
 
-  return data
-}
+  return data;
+};
 
 export const getDoctorByIdClinic = async (id: number, token: string) => {
   const response = await fetch(`${API_CLINICS_URL}/getDoctorByIdClinic/${id}`, {
@@ -163,17 +162,17 @@ const getAllAppointmentsByDoctorByDay = async (
           limit: 4,
           totalPages: 0,
           hasNextPage: false,
-          hasPreviousPage: false
-        }
-      }
+          hasPreviousPage: false,
+        },
+      };
     }
 
-    const data = await response.json()
-    console.log('Fetched appointments data:', data)
+    const data = await response.json();
+    console.log("Fetched appointments data:", data);
 
     // Validate response structure
     if (!data || !data.data || !Array.isArray(data.data)) {
-      console.warn('Invalid response structure, returning empty data')
+      console.warn("Invalid response structure, returning empty data");
       return {
         data: [],
         pagination: {
@@ -182,14 +181,14 @@ const getAllAppointmentsByDoctorByDay = async (
           limit: 4,
           totalPages: 0,
           hasNextPage: false,
-          hasPreviousPage: false
-        }
-      }
+          hasPreviousPage: false,
+        },
+      };
     }
 
-    return data
+    return data;
   } catch (error) {
-    console.error('Error fetching appointments:', error)
+    console.error("Error fetching appointments:", error);
     // Return empty data structure on error
     return {
       data: [],
@@ -199,9 +198,9 @@ const getAllAppointmentsByDoctorByDay = async (
         limit: 4,
         totalPages: 0,
         hasNextPage: false,
-        hasPreviousPage: false
-      }
-    }
+        hasPreviousPage: false,
+      },
+    };
   }
 }
 
@@ -297,44 +296,44 @@ const getAvailableSlots = async (
       return {
         date: date,
         doctorId: parseInt(doctorId),
-        workingHours: { start: '08:00', end: '14:00', sessionDuration: 15 },
+        workingHours: { start: "08:00", end: "14:00", sessionDuration: 15 },
         slots: [],
         summary: { total: 0, available: 0, occupied: 0 },
         availableSlots: [],
-        occupiedSlots: []
-      }
+        occupiedSlots: [],
+      };
     }
 
-    const data = await response.json()
-    console.log('Available slots data:', data)
+    const data = await response.json();
+    console.log("Available slots data:", data);
 
     // Validate response structure
     if (!data || !data.slots || !Array.isArray(data.slots)) {
-      console.warn('Invalid slots response structure, returning empty slots')
+      console.warn("Invalid slots response structure, returning empty slots");
       return {
         date: date,
         doctorId: parseInt(doctorId),
-        workingHours: { start: '08:00', end: '14:00', sessionDuration: 15 },
+        workingHours: { start: "08:00", end: "14:00", sessionDuration: 15 },
         slots: [],
         summary: { total: 0, available: 0, occupied: 0 },
         availableSlots: [],
-        occupiedSlots: []
-      }
+        occupiedSlots: [],
+      };
     }
 
-    return data
+    return data;
   } catch (error) {
-    console.error('Error fetching available slots:', error)
+    console.error("Error fetching available slots:", error);
     // Return empty slots on error instead of throwing
     return {
       date: date,
       doctorId: parseInt(doctorId),
-      workingHours: { start: '08:00', end: '14:00', sessionDuration: 15 },
+      workingHours: { start: "08:00", end: "14:00", sessionDuration: 15 },
       slots: [],
       summary: { total: 0, available: 0, occupied: 0 },
       availableSlots: [],
-      occupiedSlots: []
-    }
+      occupiedSlots: [],
+    };
   }
 }
 

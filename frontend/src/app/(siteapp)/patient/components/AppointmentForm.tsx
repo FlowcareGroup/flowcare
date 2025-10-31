@@ -77,12 +77,12 @@ export default function AppointmentForm({
         )
         setSpecialties(uniqueSpecialties)
       } catch (err) {
-        console.error('Error fetching clinics:', err)
-        setMessage('Error al cargar las clínicas. Intenta más tarde.')
+        console.error("Error fetching clinics:", err);
+        setMessage("Error al cargar las clínicas. Intenta más tarde.");
       }
-    }
-    fetchClinics()
-  }, [backendToken])
+    };
+    fetchClinics();
+  }, [backendToken]);
 
   // 🔹 2. Lógica de interconexión entre selects
   const filteredDoctors = clinics
@@ -157,7 +157,7 @@ export default function AppointmentForm({
     loadSlots()
   }, [selectedDoctor, selectedDate, backendToken])
 
-  // 🔹 6. Crear cita
+
   const handleCreateAppointment = async () => {
     if (!selectedDoctor || !selectedTime || !selectedDate || !backendToken) {
       setMessage('⚠️ Por favor, completa todos los campos.')
@@ -194,6 +194,60 @@ export default function AppointmentForm({
       setMessage(err.message || 'Error creando cita.')
     }
   }
+
+  // TODO: Versión mejorada con validaciones adicionales (implementar después):
+  // const handleCreateAppointment = async () => {
+  //   if (!selectedDoctor || !selectedTime || !selectedDate || !backendToken) {
+  //     setMessage("⚠️ Por favor, completa todos los campos (Clínica, Doctor, Fecha y Hora).");
+  //     return;
+  //   }
+  //
+  //   try {
+  //     // Parse the time and create ISO strings
+  //     const [hours, minutes] = selectedTime.split(":").map(Number);
+  //     const appointmentDate = new Date(selectedDate);
+  //     appointmentDate.setHours(hours, minutes, 0, 0);
+  //
+  //     const startIso = appointmentDate.toISOString();
+  //     const endTime = new Date(appointmentDate.getTime() + 15 * 60 * 1000);
+  //     const endIso = endTime.toISOString();
+  //
+  //     console.log("Creating appointment:", {
+  //       doctor_id: selectedDoctor,
+  //       patient_id: patientId,
+  //       start_time: startIso,
+  //       end_time: endIso,
+  //       specialty: selectedSpecialty,
+  //     });
+  //
+  //     const payload = {
+  //       patient_id: patientId,
+  //       start_time: startIso,
+  //       end_time: endIso,
+  //       service_type: selectedSpecialty || "general",
+  //       description: "Reserva desde panel de paciente",
+  //     };
+  //
+  //     await createAppointment(selectedDoctor, payload, backendToken);
+  //
+  //     setMessage("✅ ¡Cita creada correctamente!");
+  //
+  //     // Reset form
+  //     setTimeout(() => {
+  //       setSelectedClinic(null);
+  //       setSelectedDoctor(null);
+  //       setSelectedSpecialty(null);
+  //       setSelectedDate("");
+  //       setAvailableSlots([]);
+  //       setSelectedTime(null);
+  //       setMessage(null);
+  //       onAppointmentCreated();
+  //     }, 1500);
+  //   } catch (err: any) {
+  //     console.error("Error creating appointment:", err);
+  //     setMessage(`❌ ${err.message || "Error creando cita. Intenta de nuevo."}`);
+  //   }
+  // };
 
   return (
     <div className='bg-white border border-gray-200 rounded-xl p-6 shadow-sm space-y-6 mt-8'>
@@ -282,6 +336,25 @@ export default function AppointmentForm({
           </div>
         </div>
       )}
+
+      {/* TODO: Versión futura - Permitir seleccionar cualquier fecha futura:
+      {selectedDoctor && (
+        <div className='space-y-2'>
+          <label className='text-sm font-medium text-gray-700'>Selecciona una fecha</label>
+
+          <div className='border border-gray-200 rounded-xl p-4 bg-white'>
+            <h3 className='text-emerald-700 font-semibold mb-2'>Selecciona una fecha</h3>
+            <CalendarPicker
+              selectedDate={selectedDate || null}
+              onSelectDate={(date) => setSelectedDate(date)}
+              availableDates={[]}
+              // Permitir seleccionar cualquier fecha futura
+              // Los slots específicos se mostrarán después de seleccionar la fecha
+            />
+          </div>
+        </div>
+      )}
+      */}
 
       {/* Horarios disponibles */}
       {loadingSlots && (

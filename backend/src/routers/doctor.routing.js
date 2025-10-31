@@ -7,6 +7,7 @@ import { getAuthUser } from '../middlewares/auth.js'
 const router = express.Router()
 //import { getAuthUser } from '../middlewares/auth.js';
 
+
 //GET /api/doctors/getAllDoctors
 router.get('/getAllDoctorsBYClinic', DoctorsController.getAllDoctorsBYClinic)
 
@@ -15,6 +16,9 @@ router.get('/getAllDoctors', DoctorsController.getAllDoctors)
 
 //solo puede estrar si esta logueado
 router.use(getAuthUser)
+
+//solo puede estrar si esta logueado
+router.use(getAuthUser);
 
 //GET /api/doctors/getDoctorByIdClinic/:id
 router.get('/getDoctorByIdClinic/:id', DoctorsController.getDoctorByIdClinic)
