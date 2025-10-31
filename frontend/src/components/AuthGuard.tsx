@@ -34,11 +34,10 @@ export default function AuthGuard({ children }: AuthGuardProps) {
 
     // Si no está logueado y trata de acceder a ruta protegida
     if (!isLoggedIn && !isPublicPath) {
-      console.log("🚫 Redirecting to login - not authenticated");
-      router.push("/auth/login");
-      return;
+      console.log('🚫 Redirecting to login - not authenticated')
+      router.push('/auth/login')
+      return
     }
-
 
     // Si está logueado y trata de acceder a login/signup
     if (
@@ -82,11 +81,11 @@ function getRoleBasedRoute(role: string | undefined): string {
     case 'patient':
       return '/patient'
     case 'doctor':
-      return '/doctor' // Hasta que exista /doctor
+      return '/patient' // Hasta que exista /doctor
     case 'admin':
       return '/admin'
     case 'clinic':
-      return '/patient' // Hasta que exista /center
+      return '/clinic' // Hasta que exista /center
     default:
       return '/patient'
   }
