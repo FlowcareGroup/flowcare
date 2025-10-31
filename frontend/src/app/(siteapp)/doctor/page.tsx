@@ -10,7 +10,6 @@ import { auth } from "../../../../auth";
 import AppointmentCalendar from "./components/AppointmentCalendar";
 import DoctorDashboard from "./components/DoctorDashboard";
 import PatientSearch from "./components/PatientSearch";
-import ClientNavigation from "@/components/ClientNavigation";
 
 export default async function DoctorPage() {
   // <-- Debe ser asíncrono!
@@ -76,7 +75,7 @@ export default async function DoctorPage() {
           accessToken={accessToken}
         />
       </div>
-             <ClientNavigation/>
+            
       
       <AppointmentCalendar
         doctorId={doctorId}

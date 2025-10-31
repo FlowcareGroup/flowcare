@@ -9,7 +9,7 @@ export default function PatientMiniCards({ patientId }: { patientId: number }) {
       title: 'Teleconsulta',
       desc: 'Accede a tu próxima cita virtual con tu médico.',
       icon: <Video className='w-6 h-6 text-blue-600' />,
-      href: `/patient/teleconsult/${patientId}`
+      href: `/ChatVideo`
     },
     {
       title: 'Historial de citas',

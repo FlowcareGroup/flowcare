@@ -17,6 +17,7 @@ export default function ClinicPage() {
   if (status === "loading" || !session) return <p>Cargando o no autenticado</p>;
   const backendToken = session.accessToken;
 
+
   useEffect(() => {
     if (session) {
       doctorsAll();

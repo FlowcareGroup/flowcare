@@ -8,8 +8,7 @@ import { getAuthUser } from '../middlewares/auth.js';
 const router = express.Router();
 
 
-//solo puede estrar si esta logueado
-router.use(getAuthUser)
+
 
 
 //GET /api/clinics/getAllClinics

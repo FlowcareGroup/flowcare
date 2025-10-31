@@ -136,6 +136,9 @@ export const clinicEditSchema = z.object({
     .min(9, 'El telf debe tener al menos 9 caracteres')
     .max(15, 'El telf es demasiado largo')
 })
+export type ClinicEditSchema = z.infer<typeof clinicEditSchema>
+
+
 
 export const doctorSchema = z.object({
   name: z

@@ -3,7 +3,6 @@ import { auth } from '../../../../auth'
 import { getPatientProfile } from '@/services/api/patientService'
 import PatientAppointments from './components/PatientAppointments'
 import PatientMiniCards from './components/PatientMiniCards'
-import ClientNavigation from '@/components/ClientNavigation'
 
 export default async function PatientPage() {
   // 1️⃣ Autenticación
@@ -44,7 +43,7 @@ export default async function PatientPage() {
         <PatientAppointments />
         <PatientMiniCards patientId={patientId} />
 
-       <ClientNavigation/>
+  
       </div>
     </>
   )
