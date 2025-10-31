@@ -69,4 +69,38 @@ const getPatientProfile = async (
   return data;
 };
 
-export { getPatientProfile };
+const updatePatientProfile = async (
+  patientId: number,
+  data: any,
+  accessToken: string
+) => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/patientspatients/${patientId}/EditProfile`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`
+      },
+      body: JSON.stringify(data)
+    }
+  )
+  if (!res.ok) throw new Error('Error updating profile')
+  return res.json()
+}
+
+const deletePatientAccount = async (patientId: number, accessToken: string) => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/patients/${patientId}`,
+    {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    }
+  )
+  if (!res.ok) throw new Error('Error deleting account')
+  return res.json()
+}
+
+export { getPatientProfile, updatePatientProfile, deletePatientAccount }

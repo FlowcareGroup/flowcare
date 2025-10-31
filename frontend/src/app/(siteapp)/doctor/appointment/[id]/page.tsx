@@ -25,6 +25,7 @@ import {
 import type { AddObservationPayload, AddPrescriptionPayload } from "@/services/api/doctorService";
 import AppointmentEditModal from "@/app/(siteapp)/doctor/components/AppointmentEditModal";
 import { Appointment, Prescription } from "@/services/types";
+import ClientNavigation from "@/components/ClientNavigation";
 
 export default function AppointmentDetailPage() {
   const params = useParams();
@@ -507,6 +508,7 @@ export default function AppointmentDetailPage() {
                         <div className='bg-gray-50 p-4 rounded border border-gray-200'>
                           <p className='text-gray-800'>{appointment.description}</p>
                         </div>
+                         <ClientNavigation/>
                       </div>
                     )}
 

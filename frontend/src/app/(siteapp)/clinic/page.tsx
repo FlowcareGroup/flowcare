@@ -1,10 +1,13 @@
-"use client";
+'use client'
 
-import { deleteDoctor, getAllDoctorsBYClinic } from "@/services/api/doctorService";
-import { doctors } from "@/services/types";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import {
+  deleteDoctor,
+  getAllDoctorsBYClinic
+} from '@/services/api/doctorService'
+import { doctors } from '@/services/types'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 export default function ClinicPage() {
   const router = useRouter();
@@ -13,6 +16,7 @@ export default function ClinicPage() {
 
   if (status === "loading" || !session) return <p>Cargando o no autenticado</p>;
   const backendToken = session.accessToken;
+
 
   useEffect(() => {
     if (session) {
@@ -49,12 +53,12 @@ export default function ClinicPage() {
 
   const deleteDoctorHandler = async (id: number) => {
     try {
-      const response = await deleteDoctor(id, backendToken as string);
-      console.log("✅ Delete data:", response);
+      const response = await deleteDoctor(id, backendToken as string)
+      console.log('✅ Delete data:', response)
     } catch (error) {
-      console.error("❌ Error in deleteDoctor:", error);
+      console.error('❌ Error in deleteDoctor:', error)
     }
-  };
+  }
 
   return (
     <div className='p-8'>
@@ -104,12 +108,12 @@ export default function ClinicPage() {
 
       <button
         onClick={() => {
-          createDoctorHandler();
+          createDoctorHandler()
         }}
         className='btn-success mt-6'
       >
         Crear Doctor
       </button>
     </div>
-  );
+  )
 }

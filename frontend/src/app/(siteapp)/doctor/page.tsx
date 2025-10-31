@@ -75,7 +75,8 @@ export default async function DoctorPage() {
           accessToken={accessToken}
         />
       </div>
-
+            
+      
       <AppointmentCalendar
         doctorId={doctorId}
         accessToken={accessToken}

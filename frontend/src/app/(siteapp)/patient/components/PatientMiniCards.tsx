@@ -1,4 +1,5 @@
 'use client'
+
 import Link from 'next/link'
 import { Video, Calendar, FileText } from 'lucide-react'
 
@@ -8,21 +9,19 @@ export default function PatientMiniCards({ patientId }: { patientId: number }) {
       title: 'Teleconsulta',
       desc: 'Accede a tu próxima cita virtual con tu médico.',
       icon: <Video className='w-6 h-6 text-blue-600' />,
-      href: `/dashboard/patient/teleconsult/${patientId}`
-
+      href: `/ChatVideo`
     },
     {
       title: 'Historial de citas',
       desc: 'Consulta tus citas pasadas y resultados.',
       icon: <Calendar className='w-6 h-6 text-emerald-600' />,
-      href: `/dashboard/patient/history`
+      href: `/patient/history`
     },
     {
       title: 'Ficha médica',
       desc: 'Revisa tus datos personales y observaciones clínicas.',
       icon: <FileText className='w-6 h-6 text-indigo-600' />,
-      href: `/dashboard/patient/profile/${patientId}`
-
+      href: `/patient/profile/${patientId}`
     }
   ]
 
@@ -32,7 +31,6 @@ export default function PatientMiniCards({ patientId }: { patientId: number }) {
         <Link
           href={card.href}
           key={card.title}
-
           className='bg-white shadow rounded-xl p-6 hover:shadow-lg transition flex flex-col justify-between focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
         >
           <div className='flex items-center gap-3 mb-3'>

@@ -1,4 +1,3 @@
-
 'use client'
 
 import { useState } from 'react'
@@ -14,9 +13,9 @@ export default function NavBar() {
   const closeMenu = () => setIsOpen(false)
 
   const links = [
-    { href: '/centros', label: 'Características' },
-    { href: '#partnersSection', label: 'Precios' },
-    { href: '#newsSection', label: 'FAQ' },
+    { href: '#', label: 'Características' },
+    { href: '#', label: 'Precios' },
+    { href: '#', label: 'FAQ' },
     { href: '/auth/login', label: 'Login' }
   ]
 

@@ -34,11 +34,10 @@ export default function AuthGuard({ children }: AuthGuardProps) {
 
     // Si no está logueado y trata de acceder a ruta protegida
     if (!isLoggedIn && !isPublicPath) {
-      console.log("🚫 Redirecting to login - not authenticated");
-      router.push("/auth/login");
-      return;
+      console.log('🚫 Redirecting to login - not authenticated')
+      router.push('/auth/login')
+      return
     }
-
 
     // Si está logueado y trata de acceder a login/signup
     if (
@@ -86,7 +85,7 @@ function getRoleBasedRoute(role: string | undefined): string {
     case 'admin':
       return '/admin'
     case 'clinic':
-      return '/patient' // Hasta que exista /center
+      return '/clinic' // Hasta que exista /center
     default:
       return '/patient'
   }
@@ -96,8 +95,8 @@ function checkRoleAccess(pathname: string, role: string | undefined): boolean {
   if (!role) return false
 
   const roleAccess = {
-    patient: ['/patient', '/home'],
-    doctor: ['/doctor', '/doctor/patient/[id]', '/home'],
+    patient: ['/patient', '/home','/ChatVideo'],
+    doctor: ['/doctor', '/doctor/patient/[id]', '/home','/ChatVideo'],
     admin: ['/admin', '/home'],
     clinic: ['/clinic', '/home', '/clinic/createDoctor', '/clinic/editDoctor/[id]'],
   }
